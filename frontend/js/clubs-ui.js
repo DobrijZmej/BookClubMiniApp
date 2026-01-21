@@ -47,7 +47,8 @@ const ClubsUI = {
                         ${club.description ? `<div class="club-description">${club.description}</div>` : ''}
                         <div class="club-stats">
                             <div class="club-stat">
-                                <span>📋 ${club.invite_code}</span>
+                                <button class="btn-copy" onclick="ClubsUI.copyInviteCode(event, '${club.invite_code}')" title="Копіювати код">📋</button>
+                                <span> ${club.invite_code}</span>
                             </div>
                             <div class="club-stat">
                                 <span>${club.is_public ? '🌐 Публічний' : '🔒 Приватний'}</span>
@@ -100,6 +101,60 @@ const ClubsUI = {
         
         document.getElementById('club-detail-view').classList.remove('active');
         document.getElementById('clubs-list-view').classList.add('active');
+    },
+    
+    /**
+     * Копіювати код запрошення в буфер обміну
+     */
+    async copyInviteCode(event, inviteCode) {
+        // Зупиняємо event propagation, щоб не відкрився клуб
+        event.stopPropagation();
+        
+        try {
+            // Спробуємо використати modern Clipboard API
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(inviteCode);
+                console.log('✅ Код скопійовано через Clipboard API:', inviteCode);
+            } else {
+                // Fallback для старих браузерів або HTTP
+                const textArea = document.createElement('textarea');
+                textArea.value = inviteCode;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                console.log('✅ Код скопійовано через fallback:', inviteCode);
+            }
+            
+            // Показуємо успішне повідомлення
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('success');
+            }
+            
+            if (tg.showAlert) {
+                tg.showAlert(`📋 Код скопійовано: ${inviteCode}`);
+            } else {
+                // Fallback для браузерів без Telegram WebApp
+                alert(`📋 Код скопійовано: ${inviteCode}`);
+            }
+            
+        } catch (error) {
+            console.error('❌ Помилка копіювання:', error);
+            
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('error');
+            }
+            
+            // Показуємо код користувачу для ручного копіювання
+            const message = `Не вдалося скопіювати автоматично.\nКод запрошення: ${inviteCode}`;
+            if (tg.showAlert) {
+                tg.showAlert(message);
+            } else {
+                alert(message);
+            }
+        }
     }
 };
 
