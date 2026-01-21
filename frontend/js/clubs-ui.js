@@ -8,26 +8,32 @@ const ClubsUI = {
     async loadMyClubs() {
         try {
             UI.setLoading(true);
+            console.log('🔍 Завантажую клуби користувача...');
             const clubs = await API.clubs.getMy();
             
             // ДІАГНОСТИКА
             console.log('Clubs loaded:', clubs);
+            console.log('Clubs count:', clubs.length);
             
             const container = document.getElementById('my-clubs-list');
             const emptyState = document.getElementById('clubs-empty-state');
             
             if (clubs.length === 0) {
+                console.log('📭 Клубів не знайдено, показую empty state');
                 container.style.display = 'none';
                 emptyState.style.display = 'block';
                 return;
             }
             
+            console.log('📚 Знайдено клубів:', clubs.length);
             emptyState.style.display = 'none';
             container.style.display = 'block';
             
             container.innerHTML = clubs.map(club => {
                 // Визначаємо роль користувача в клубі
-                const userTelegramId = Telegram.WebApp.initDataUnsafe?.user?.id?.toString();
+                const userTelegramId = tg.initDataUnsafe?.user?.id?.toString();
+                console.log('👤 User Telegram ID:', userTelegramId);
+                console.log('🏛️ Club owner ID:', club.owner_id);
                 const isOwner = club.owner_id === userTelegramId;
                 const roleText = isOwner ? 'Власник' : 'Учасник';
                 const roleClass = isOwner ? 'owner' : 'member';
@@ -55,7 +61,11 @@ const ClubsUI = {
             }).join('');
             
         } catch (error) {
-            console.error('Error loading clubs:', error);
+            console.error('❌ Error loading clubs:', error);
+            console.error('Error details:', error.message);
+            if (tg.showAlert) {
+                tg.showAlert(`Помилка завантаження клубів: ${error.message}`);
+            }
         } finally {
             UI.setLoading(false);
         }

@@ -288,6 +288,43 @@
     try {
         UI.setLoading(true);
         
+        // В dev режимі створюємо тестовий клуб якщо його немає
+        if (CONFIG.IS_DEV_MODE) {
+            try {
+                console.log('🔧 Dev режим: перевіряю чи є клуби...');
+                const clubs = await API.clubs.getMy();
+                
+                if (clubs.length === 0) {
+                    console.log('🔧 Dev режим: створюю тестовий клуб...');
+                    const testClub = await API.clubs.create({
+                        name: "🔧 Dev Test Club",
+                        description: "Тестовий клуб для розробки",
+                        is_public: false
+                    });
+                    console.log('🔧 Тестовий клуб створено:', testClub);
+                    
+                    // Додаємо тестові книги
+                    await API.books.create({
+                        title: "📚 Тестова книга 1",
+                        author: "Dev Author",
+                        description: "Перша тестова книга для розробки",
+                        club_id: testClub.id
+                    });
+                    
+                    await API.books.create({
+                        title: "📖 Тестова книга 2", 
+                        author: "Another Author",
+                        description: "Друга тестова книга",
+                        club_id: testClub.id
+                    });
+                    
+                    console.log('🔧 Тестові книги додано');
+                }
+            } catch (error) {
+                console.log('🔧 Dev режим: помилка створення тестових даних:', error);
+            }
+        }
+        
         // Завантажуємо список клубів користувача (початкова сторінка)
         await ClubsUI.loadMyClubs();
         

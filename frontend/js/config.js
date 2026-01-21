@@ -29,6 +29,11 @@ if (!tg || CONFIG.IS_DEV_MODE) {
         initData: '',
         initDataUnsafe: {
             user: CONFIG.DEV_USER,
+            chat: {
+                id: -123456789,
+                type: 'private',
+                title: 'Dev Chat'
+            },
             chat_instance: 'dev_mode',
             chat_type: 'private',
             auth_date: Math.floor(Date.now() / 1000)
@@ -38,7 +43,7 @@ if (!tg || CONFIG.IS_DEV_MODE) {
         expand: () => {},
         close: () => {},
         themeParams: {},
-        hapticFeedback: {
+        HapticFeedback: {
             impactOccurred: (style) => {
                 console.log(`🔧 Mock haptic feedback: ${style}`);
             },
