@@ -37,7 +37,24 @@ if (!tg || CONFIG.IS_DEV_MODE) {
         ready: () => {},
         expand: () => {},
         close: () => {},
-        themeParams: {}
+        themeParams: {},
+        hapticFeedback: {
+            impactOccurred: (style) => {
+                console.log(`🔧 Mock haptic feedback: ${style}`);
+            },
+            notificationOccurred: (type) => {
+                console.log(`🔧 Mock notification: ${type}`);
+            },
+            selectionChanged: () => {
+                console.log(`🔧 Mock selection changed`);
+            }
+        },
+        showAlert: (message) => {
+            alert(message);
+        },
+        showConfirm: (message, callback) => {
+            if (callback) callback(confirm(message));
+        }
     };
 }
 
