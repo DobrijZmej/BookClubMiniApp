@@ -139,4 +139,4 @@ class JoinRequestResponse(BaseModel):
 
 
 class JoinRequestAction(BaseModel):
-    action: str = Field(..., regex="^(approve|reject)$")
+    action: str = Field(..., pattern="^(approve|reject)$")
