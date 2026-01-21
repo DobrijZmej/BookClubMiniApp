@@ -13,11 +13,14 @@ from app.models.schemas import (
 router = APIRouter(prefix="/api/books", tags=["Books"])
 
 
-def ensure_club_exists(db: Session, chat_id: str, chat_name: str = None) -> Club:
+def ensure_club_exists(db: Session, chat_id: str, user_id: str, chat_name: str = None) -> Club:
     """Створити клуб якщо не існує"""
     club = db.query(Club).filter(Club.chat_id == chat_id).first()
     
     if not club:
+        import random
+        import string
+        
         # Генеруємо ім'я клубу
         if not chat_name:
             if chat_id.startswith('user_'):
@@ -25,9 +28,15 @@ def ensure_club_exists(db: Session, chat_id: str, chat_name: str = None) -> Club
             else:
                 chat_name = f"Клуб #{chat_id}"
         
+        # Генеруємо invite_code
+        invite_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+        
         club = Club(
             name=chat_name,
             chat_id=chat_id,
+            owner_id=user_id,
+            invite_code=invite_code,
+            is_public=False,
             status=ClubStatus.ACTIVE
         )
         db.add(club)
@@ -46,8 +55,11 @@ async def get_books(
     user: dict = Depends(get_current_user)
 ):
     """Отримати всі книги для чату з фільтрацією"""
+    telegram_user = user['user']
+    user_id = str(telegram_user['id'])
+    
     # Автоматично створюємо клуб якщо не існує
-    ensure_club_exists(db, chat_id)
+    ensure_club_exists(db, chat_id, user_id)
     
     query = db.query(Book).filter(Book.chat_id == chat_id)
     
@@ -109,9 +121,10 @@ async def create_book(
 ):
     """Створити нову книгу"""
     telegram_user = user['user']
+    user_id = str(telegram_user['id'])
     
     # Автоматично створюємо клуб якщо не існує
-    ensure_club_exists(db, book_data.chat_id)
+    ensure_club_exists(db, book_data.chat_id, user_id)
     
     # Формуємо повне ім'я
     first_name = telegram_user.get('first_name', '')
