@@ -4,14 +4,14 @@ from datetime import datetime
 from enum import Enum
 
 class BookStatus(str, Enum):
-    AVAILABLE = "available"
-    READING = "reading"
-    DELETED = "deleted"
+    AVAILABLE = "AVAILABLE"
+    READING = "READING"
+    DELETED = "DELETED"
 
 class LoanStatus(str, Enum):
-    READING = "reading"
-    RETURNED = "returned"
-    WAITING = "waiting"
+    READING = "READING"
+    RETURNED = "RETURNED"
+    WAITING = "WAITING"
 
 
 # Request schemas
