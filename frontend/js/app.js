@@ -1,0 +1,164 @@
+// Main App Module
+(async function() {
+    console.log('📱 Telegram Mini App Starting...');
+    
+    // Ініціалізація Telegram Web App
+    tg.ready();
+    tg.expand();
+    applyTelegramTheme();
+    
+    // Отримуємо chat_id з start_param або query_id
+    // ВАЖЛИВО: Ви повинні передати chat_id через URL при відкритті Mini App
+    const urlParams = new URLSearchParams(window.location.search);
+    CONFIG.CHAT_ID = urlParams.get('chat_id') || 
+                     tg.initDataUnsafe.start_param || 
+                     'default_chat'; // Для тестування
+    
+    console.log('Chat ID:', CONFIG.CHAT_ID);
+    console.log('User:', tg.initDataUnsafe.user);
+    
+    // Відображаємо username в header
+    if (tg.initDataUnsafe.user) {
+        const username = tg.initDataUnsafe.user.username || 
+                        tg.initDataUnsafe.user.first_name || 
+                        'Користувач';
+        document.getElementById('username').textContent = `@${username}`;
+    }
+    
+    // Перевірка здоров'я API (опціонально)
+    try {
+        await API.healthCheck();
+        console.log('✅ API is healthy');
+    } catch (error) {
+        console.error('⚠️ API health check failed:', error);
+        tg.showAlert('Не вдається підключитися до сервера');
+    }
+    
+    // ===== Event Listeners =====
+    
+    // Переключення табів
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', async (e) => {
+            const viewName = e.currentTarget.getAttribute('data-view');
+            tg.HapticFeedback.impactOccurred('soft');
+            UI.switchView(viewName);
+            
+            // Завантажуємо дані для view
+            if (viewName === 'library') {
+                await UI.loadBooks();
+            } else if (viewName === 'profile') {
+                await UI.renderProfile();
+            }
+        });
+    });
+    
+    // Пошук і фільтри
+    let searchTimeout;
+    document.getElementById('search-input').addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            UI.loadBooks();
+        }, 300); // Debounce 300ms
+    });
+    
+    document.getElementById('filter-status').addEventListener('change', () => {
+        UI.loadBooks();
+    });
+    
+    // Форма додавання книги
+    document.getElementById('add-book-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const title = document.getElementById('book-title').value.trim();
+        const author = document.getElementById('book-author').value.trim() || 'Невідомий автор';
+        const description = document.getElementById('book-description').value.trim();
+        
+        if (!title) {
+            tg.showAlert('Введіть назву книги');
+            return;
+        }
+        
+        try {
+            tg.HapticFeedback.impactOccurred('medium');
+            UI.setLoading(true);
+            
+            await API.books.create({
+                title,
+                author,
+                description,
+                chat_id: CONFIG.CHAT_ID
+            });
+            
+            // Очищуємо форму
+            document.getElementById('add-book-form').reset();
+            
+            // Показуємо повідомлення
+            tg.showAlert('✅ Книгу додано!');
+            
+            // Переключаємось на бібліотеку
+            UI.switchView('library');
+            await UI.loadBooks();
+            
+        } catch (error) {
+            console.error('Error adding book:', error);
+        } finally {
+            UI.setLoading(false);
+        }
+    });
+    
+    // Закриття модального вікна
+    document.getElementById('close-modal').addEventListener('click', () => {
+        UI.closeModal();
+    });
+    
+    document.getElementById('book-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'book-modal') {
+            UI.closeModal();
+        }
+    });
+    
+    // Back button у Telegram
+    tg.BackButton.onClick(() => {
+        const activeView = document.querySelector('.view.active').id;
+        
+        if (activeView === 'library-view') {
+            tg.close();
+        } else {
+            UI.switchView('library');
+            UI.loadBooks();
+        }
+    });
+    
+    // Показуємо Back button коли не на головній
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const viewName = tab.getAttribute('data-view');
+            if (viewName === 'library') {
+                tg.BackButton.hide();
+            } else {
+                tg.BackButton.show();
+            }
+        });
+    });
+    
+    // ===== Initial Load =====
+    
+    try {
+        UI.setLoading(true);
+        
+        // Завантажуємо бібліотеку (початковий view)
+        await UI.loadBooks();
+        
+        console.log('✅ App initialized successfully');
+    } catch (error) {
+        console.error('❌ Error initializing app:', error);
+        tg.showAlert('Помилка ініціалізації додатку');
+    } finally {
+        UI.setLoading(false);
+    }
+    
+    // Notification про готовність (для дебагу)
+    if (tg.initDataUnsafe.user) {
+        console.log(`👋 Hello, ${tg.initDataUnsafe.user.first_name}!`);
+    }
+})();

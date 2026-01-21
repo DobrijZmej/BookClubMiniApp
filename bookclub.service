@@ -1,0 +1,17 @@
+[Unit]
+Description=Book Club Mini App FastAPI
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/path/to/BookClubMiniApp/backend
+Environment="PATH=/path/to/BookClubMiniApp/backend/venv/bin"
+ExecStart=/path/to/BookClubMiniApp/backend/venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

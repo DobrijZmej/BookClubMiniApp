@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Книжковий Клуб</title>
+    
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Loader -->
+    <div id="loader" class="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Main App -->
+    <div id="app" style="display: none;">
+        <!-- Header -->
+        <header class="app-header">
+            <h1>📚 Бібліотека Клубу</h1>
+            <div class="user-info">
+                <span id="username">Завантаження...</span>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="tabs">
+            <button class="tab active" data-view="library">
+                <span class="tab-icon">📖</span>
+                <span>Бібліотека</span>
+            </button>
+            <button class="tab" data-view="add-book">
+                <span class="tab-icon">➕</span>
+                <span>Додати</span>
+            </button>
+            <button class="tab" data-view="profile">
+                <span class="tab-icon">👤</span>
+                <span>Профіль</span>
+            </button>
+        </nav>
+
+        <!-- Search Bar (only in library view) -->
+        <div id="search-bar" class="search-bar">
+            <input type="text" id="search-input" placeholder="Пошук книг...">
+            <select id="filter-status">
+                <option value="available">Доступні</option>
+                <option value="reading">Позичені</option>
+                <option value="all">Всі</option>
+            </select>
+        </div>
+
+        <!-- Content Views -->
+        <main class="content">
+            <!-- Library View -->
+            <div id="library-view" class="view active">
+                <div id="books-container" class="books-grid">
+                    <!-- Books will be loaded here -->
+                </div>
+                <div id="empty-state" class="empty-state" style="display: none;">
+                    <p>📚 Бібліотека порожня</p>
+                    <p>Додайте першу книгу!</p>
+                </div>
+            </div>
+
+            <!-- Add Book View -->
+            <div id="add-book-view" class="view">
+                <form id="add-book-form" class="form">
+                    <div class="form-group">
+                        <label for="book-title">Назва книги *</label>
+                        <input type="text" id="book-title" required maxlength="500">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="book-author">Автор</label>
+                        <input type="text" id="book-author" placeholder="Невідомий автор" maxlength="255">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="book-description">Опис</label>
+                        <textarea id="book-description" rows="4" maxlength="1000"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Додати книгу</button>
+                </form>
+            </div>
+
+            <!-- Profile View -->
+            <div id="profile-view" class="view">
+                <div class="profile-card">
+                    <div class="profile-avatar">
+                        <span id="profile-initials">👤</span>
+                    </div>
+                    <h2 id="profile-name">Ім'я користувача</h2>
+                    <p id="profile-username" class="text-muted">@username</p>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-value" id="stat-added">0</span>
+                            <span class="stat-label">Додано книг</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="stat-read">0</span>
+                            <span class="stat-label">Прочитано</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="stat-reading">0</span>
+                            <span class="stat-label">Читаю зараз</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Book Detail Modal -->
+    <div id="book-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="close-modal">&times;</button>
+            <div id="modal-body">
+                <!-- Content will be loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
