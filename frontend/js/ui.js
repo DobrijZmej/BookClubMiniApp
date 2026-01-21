@@ -214,10 +214,6 @@ const UI = {
     },
 
     /**
-     * Завантажити книги
-     */
-    async loadBooks() {
-    /**
      * Завантаження та відображення книг
      * @param {number} clubId - ID клубу (якщо null, використовується CONFIG.CHAT_ID)
      */
