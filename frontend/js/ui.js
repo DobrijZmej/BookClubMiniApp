@@ -56,12 +56,13 @@ const UI = {
             
             return `
                 <div class="book-card" data-book-id="${book.id}">
-                    <div class="book-card-header">
+                    <span class="book-status">${statusIcon}</span>
+                    
+                    <div class="book-header">
                         <div>
                             <div class="book-title">${this.escapeHtml(book.title)}</div>
                             <div class="book-author">${this.escapeHtml(book.author)}</div>
                         </div>
-                        <span class="book-status">${statusIcon}</span>
                     </div>
                     
                     <div class="book-owner">
@@ -173,7 +174,9 @@ const UI = {
             tg.showAlert('✅ Книгу успішно позичено!');
             
             // Оновлюємо список
-            await this.loadBooks();
+            if (ClubsUI.currentClubId) {
+                await this.loadBooks(ClubsUI.currentClubId);
+            }
         } catch (error) {
             console.error('Error borrowing book:', error);
         }
@@ -190,7 +193,9 @@ const UI = {
             tg.showAlert('✅ Книгу повернено!');
             
             // Оновлюємо список
-            await this.loadBooks();
+            if (ClubsUI.currentClubId) {
+                await this.loadBooks(ClubsUI.currentClubId);
+            }
         } catch (error) {
             console.error('Error returning book:', error);
         }
@@ -209,7 +214,9 @@ const UI = {
                     tg.showAlert('✅ Книгу видалено');
                     
                     // Оновлюємо список
-                    await this.loadBooks();
+                    if (ClubsUI.currentClubId) {
+                        await this.loadBooks(ClubsUI.currentClubId);
+                    }
                 } catch (error) {
                     console.error('Error deleting book:', error);
                 }
