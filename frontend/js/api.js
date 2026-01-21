@@ -57,8 +57,8 @@ const API = {
         },
         
         // Отримати деталі книги
-        async getDetails(clubId, bookId) {
-            return API.request(`/api/books/club/${clubId}/book/${bookId}`);
+        async getDetails(bookId) {
+            return API.request(`/api/books/book/${bookId}`);
         },
         
         // Створити книгу

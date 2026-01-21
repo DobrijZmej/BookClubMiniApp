@@ -111,7 +111,7 @@ const UI = {
         try {
             tg.HapticFeedback.impactOccurred('light');
             
-            const book = await API.books.getDetails(CONFIG.CHAT_ID, bookId);
+            const book = await API.books.getDetails(bookId);
             const modal = document.getElementById('book-modal');
             const modalBody = document.getElementById('modal-body');
             
@@ -121,7 +121,7 @@ const UI = {
                 <div style="margin-bottom: 16px;">
                     <strong>Автор:</strong> ${this.escapeHtml(book.author)}<br>
                     <strong>Додав:</strong> @${this.escapeHtml(book.owner_username || 'невідомо')}<br>
-                    <strong>Статус:</strong> ${book.status === 'available' ? '🟢 Доступна' : '🔴 Позичена'}
+                    <strong>Статус:</strong> ${book.status === 'AVAILABLE' ? '🟢 Доступна' : '🔴 Позичена'}
                 </div>
                 
                 ${book.description 
@@ -133,26 +133,54 @@ const UI = {
                 }
                 
                 <div>
-                    <strong>Історія читання:</strong>
-                    ${book.loans && book.loans.length > 0
-                        ? book.loans.map(loan => `
-                            <div class="history-item">
-                                <div class="history-item-header">
-                                    <span class="history-username">@${this.escapeHtml(loan.username)}</span>
-                                    <span class="history-status">${loan.status === 'reading' ? '📖 Читає' : '✅ Повернув'}</span>
-                                </div>
-                                <div class="history-date">
-                                    ${new Date(loan.borrowed_at).toLocaleDateString('uk-UA', { 
-                                        day: '2-digit', 
-                                        month: '2-digit', 
-                                        year: 'numeric',
-                                        hour: '2-digit',
-                                        minute: '2-digit'
-                                    })}
-                                </div>
+                    <strong>📅 Хронологія:</strong>
+                    <div style="background: rgba(6, 182, 212, 0.1); border-radius: 8px; padding: 12px; margin-top: 8px;">
+                        <div class="history-item">
+                            <div class="history-item-header">
+                                <span class="history-username">@${this.escapeHtml(book.owner_username || 'невідомо')}</span>
+                                <span class="history-status">📚 Створив книгу</span>
                             </div>
-                        `).join('')
-                        : '<p style="color: var(--tg-theme-hint-color); text-align: center; padding: 20px;">Історія порожня</p>'
+                            <div class="history-date">
+                                ${new Date(book.created_at).toLocaleDateString('uk-UA', { 
+                                    day: '2-digit', 
+                                    month: '2-digit', 
+                                    year: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    ${book.loans && book.loans.length > 0
+                        ? `<div style="margin-top: 12px;">
+                            <strong>📖 Історія читання:</strong>
+                            ${book.loans.map(loan => `
+                                <div class="history-item" style="background: rgba(16, 185, 129, 0.1); border-radius: 8px; padding: 8px; margin-top: 8px;">
+                                    <div class="history-item-header">
+                                        <span class="history-username">@${this.escapeHtml(loan.username)}</span>
+                                        <span class="history-status">${loan.status === 'READING' ? '📖 Читає' : '✅ Повернув'}</span>
+                                    </div>
+                                    <div class="history-date">
+                                        Взяв: ${new Date(loan.borrowed_at).toLocaleDateString('uk-UA', { 
+                                            day: '2-digit', 
+                                            month: '2-digit', 
+                                            year: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                        })}
+                                        ${loan.returned_at ? `<br>Повернув: ${new Date(loan.returned_at).toLocaleDateString('uk-UA', { 
+                                            day: '2-digit', 
+                                            month: '2-digit', 
+                                            year: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                        })}` : ''}
+                                    </div>
+                                </div>
+                            `).join('')}
+                           </div>`
+                        : '<div style="margin-top: 12px; color: var(--tg-theme-hint-color); text-align: center; padding: 20px; background: rgba(128, 128, 128, 0.1); border-radius: 8px;">📖 Ще ніхто не читав цю книгу</div>'
                     }
                 </div>
             `;
