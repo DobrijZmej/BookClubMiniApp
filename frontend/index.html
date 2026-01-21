@@ -12,7 +12,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <!-- Styles -->
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/styles.css?build=20260121-2010">
 </head>
 <body>
     <!-- Loader -->
@@ -21,123 +21,150 @@
     </div>
 
     <!-- Main App -->
-    <div id="app" style="display: none;">
-        <!-- Header -->
-        <header class="app-header">
-            <button id="back-button" class="header-back-btn" style="display: none;">← Назад</button>
-            <h1 id="header-title">📚 Мої клуби</h1>
-            <div class="user-info">
+    <div id="app" class="container" style="display: none;">
+        <!-- Navigation Header -->
+        <div class="nav-header">
+            <button id="back-button" class="nav-back" style="display: none;">← Назад</button>
+            <h1 id="header-title" class="nav-title">📚 Мої клуби</h1>
+            <div class="user-info text-sm text-muted">
                 <span id="username">Завантаження...</span>
             </div>
-        </header>
+        </div>
 
         <!-- Content Views -->
-        <main class="content">
+        <main>
             <!-- Clubs List View (Primary) -->
             <div id="clubs-list-view" class="view active">
-                <div id="my-clubs-list" class="clubs-list">
+                <div id="my-clubs-list" class="clubs-grid">
                     <!-- User's clubs will be loaded here -->
                 </div>
                 
                 <div id="clubs-empty-state" class="empty-state" style="display: none;">
-                    <p>🏛️ У вас поки немає клубів</p>
-                    <p>Створіть свій або приєднайтеся до існуючого!</p>
+                    <div class="empty-icon">🏛️</div>
+                    <div class="empty-title">У вас поки немає клубів</div>
+                    <div class="empty-description">Створіть свій або приєднайтеся до існуючого!</div>
                 </div>
                 
                 <!-- Action Buttons -->
-                <div class="fixed-bottom-actions">
-                    <button id="create-new-club-btn" class="btn btn-primary">Створити клуб</button>
-                    <button id="join-existing-club-btn" class="btn btn-secondary">Приєднатись до клубу</button>
+                <div class="flex gap-4 mt-4">
+                    <button id="create-new-club-btn" class="btn btn-primary btn-full">Створити клуб</button>
+                    <button id="join-existing-club-btn" class="btn btn-outline btn-full">Приєднатись до клубу</button>
                 </div>
             </div>
             
             <!-- Club Detail View (Books inside club) -->
             <div id="club-detail-view" class="view">
                 <!-- Search Bar -->
-                <div class="search-bar">
-                    <input type="text" id="search-input" placeholder="Пошук книг...">
-                    <select id="filter-status">
+                <div class="search-box">
+                    <input type="text" id="search-input" class="search-input" placeholder="🔍 Пошук книг...">
+                </div>
+                
+                <div class="mb-4">
+                    <select id="filter-status" class="form-input">
+                        <option value="all">Всі книги</option>
                         <option value="available">Доступні</option>
                         <option value="reading">Позичені</option>
-                        <option value="all">Всі</option>
                     </select>
                 </div>
                 
                 <div id="books-container" class="books-grid">
                     <!-- Books will be loaded here -->
                 </div>
+                
                 <div id="empty-state" class="empty-state" style="display: none;">
-                    <p>📚 Бібліотека порожня</p>
-                    <p>Додайте першу книгу!</p>
+                    <div class="empty-icon">📚</div>
+                    <div class="empty-title">Бібліотека порожня</div>
+                    <div class="empty-description">Додайте першу книгу!</div>
+                    <button id="add-first-book-btn" class="btn btn-primary">➕ Додати книгу</button>
                 </div>
                 
                 <!-- Add Book Button -->
-                <div class="fixed-bottom-actions">
-                    <button id="add-book-to-club-btn" class="btn btn-primary">➕ Додати книгу</button>
+                <div class="mt-4">
+                    <button id="add-book-to-club-btn" class="btn btn-primary btn-full">➕ Додати книгу</button>
                 </div>
             </div>
 
             <!-- Add Book View -->
             <div id="add-book-view" class="view">
-                <form id="add-book-form" class="form">
-                    <div class="form-group">
-                        <label for="book-title">Назва книги *</label>
-                        <input type="text" id="book-title" required maxlength="500">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">📚 Додати нову книгу</div>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="book-author">Автор</label>
-                        <input type="text" id="book-author" placeholder="Невідомий автор" maxlength="255">
+                    <div class="card-body">
+                        <form id="add-book-form">
+                            <div class="form-group">
+                                <label class="form-label" for="book-title">Назва книги *</label>
+                                <input type="text" id="book-title" class="form-input" required maxlength="500" placeholder="Введіть назву книги">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="book-author">Автор</label>
+                                <input type="text" id="book-author" class="form-input" placeholder="Невідомий автор" maxlength="255">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="book-description">Опис</label>
+                                <textarea id="book-description" class="form-textarea" rows="4" maxlength="1000" placeholder="Короткий опис книги..."></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-full">Додати книгу</button>
+                        </form>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="book-description">Опис</label>
-                        <textarea id="book-description" rows="4" maxlength="1000"></textarea>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">Додати книгу</button>
-                </form>
+                </div>
             </div>
 
             <!-- Create Club View -->
             <div id="create-club-view" class="view">
-                <form id="create-club-form" class="form">
-                    <div class="form-group">
-                        <label for="club-name">Назва клубу *</label>
-                        <input type="text" id="club-name" required maxlength="255" placeholder="Наприклад: Любителі фантастики">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">🏛️ Створити новий клуб</div>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="club-description">Опис клубу</label>
-                        <textarea id="club-description" rows="3" maxlength="500" placeholder="Коротко опишіть ваш клуб..."></textarea>
+                    <div class="card-body">
+                        <form id="create-club-form">
+                            <div class="form-group">
+                                <label class="form-label" for="club-name">Назва клубу *</label>
+                                <input type="text" id="club-name" class="form-input" required maxlength="255" placeholder="Наприклад: Любителі фантастики">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="club-description">Опис клубу</label>
+                                <textarea id="club-description" class="form-textarea" rows="3" maxlength="500" placeholder="Коротко опишіть ваш клуб..."></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <input type="checkbox" id="club-is-public"> Публічний клуб (видимий у пошуку)
+                                </label>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-full">Створити клуб</button>
+                        </form>
                     </div>
-                    
-                    <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="club-is-public">
-                            <span>Публічний клуб (видимий у пошуку)</span>
-                        </label>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">Створити клуб</button>
-                </form>
+                </div>
             </div>
 
             <!-- Join Club View -->
             <div id="join-club-view" class="view">
-                <form id="join-club-form" class="form">
-                    <div class="form-group">
-                        <label for="join-invite-code">Код запрошення *</label>
-                        <input type="text" id="join-invite-code" required maxlength="20" placeholder="Введіть код" style="text-transform: uppercase;">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">🔗 Приєднатися до клубу</div>
                     </div>
-                        
-                    <div class="form-group">
-                        <label for="join-message">Повідомлення (опціонально)</label>
-                        <textarea id="join-message" rows="2" maxlength="500" placeholder="Чому хочете приєднатися?"></textarea>
+                    <div class="card-body">
+                        <form id="join-club-form">
+                            <div class="form-group">
+                                <label class="form-label" for="join-invite-code">Код запрошення *</label>
+                                <input type="text" id="join-invite-code" class="form-input" required maxlength="20" placeholder="Введіть код запрошення" style="text-transform: uppercase;">
+                            </div>
+                                
+                            <div class="form-group">
+                                <label class="form-label" for="join-message">Повідомлення (опціонально)</label>
+                                <textarea id="join-message" class="form-textarea" rows="2" maxlength="500" placeholder="Чому хочете приєднатися до цього клубу?"></textarea>
+                            </div>
+                                
+                            <button type="submit" class="btn btn-primary btn-full">Надіслати запит</button>
+                        </form>
                     </div>
-                        
-                    <button type="submit" class="btn btn-primary">Надіслати запит</button>
-                </form>
+                </div>
             </div>
         </main>
     </div>
@@ -163,10 +190,10 @@
     </div>
 
     <!-- Scripts -->
-    <script src="js/config.js?build=20260121-1945"></script>
-    <script src="js/api.js?build=20260121-1945"></script>
-    <script src="js/ui.js?build=20260121-1945"></script>
-    <script src="js/clubs-ui.js?build=20260121-1945"></script>
-    <script src="js/app.js?build=20260121-1945"></script>
+    <script src="js/config.js?build=20260121-1950"></script>
+    <script src="js/api.js?build=20260121-1950"></script>
+    <script src="js/ui.js?build=20260121-1950"></script>
+    <script src="js/clubs-ui.js?build=20260121-2000"></script>
+    <script src="js/app.js?build=20260121-1950"></script>
 </body>
 </html>

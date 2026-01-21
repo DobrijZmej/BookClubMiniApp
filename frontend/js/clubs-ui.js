@@ -25,22 +25,34 @@ const ClubsUI = {
             emptyState.style.display = 'none';
             container.style.display = 'block';
             
-            container.innerHTML = clubs.map(club => `
-                <div class="club-card" data-club-id="${club.id}" onclick="ClubsUI.openClub(${club.id}, '${club.name}')">
-                    <div class="club-card-header">
-                        <div>
-                            <div class="club-card-title">${club.name}</div>
-                            <span class="club-role-badge club-role-${club.role}">${club.role}</span>
+            container.innerHTML = clubs.map(club => {
+                // Визначаємо роль користувача в клубі
+                const userTelegramId = Telegram.WebApp.initDataUnsafe?.user?.id?.toString();
+                const isOwner = club.owner_id === userTelegramId;
+                const roleText = isOwner ? 'Власник' : 'Учасник';
+                const roleClass = isOwner ? 'owner' : 'member';
+                
+                return `
+                    <div class="club-card" data-club-id="${club.id}" onclick="ClubsUI.openClub(${club.id}, '${club.name}')">
+                        <div class="club-header">
+                            <div class="club-name">${club.name}</div>
+                            <span class="status status-${roleClass}">${roleText}</span>
                         </div>
-                        <div class="club-card-code">📋 ${club.invite_code}</div>
+                        ${club.description ? `<div class="club-description">${club.description}</div>` : ''}
+                        <div class="club-stats">
+                            <div class="club-stat">
+                                <span>📋 ${club.invite_code}</span>
+                            </div>
+                            <div class="club-stat">
+                                <span>${club.is_public ? '🌐 Публічний' : '🔒 Приватний'}</span>
+                            </div>
+                            <div class="club-stat">
+                                <span>👥 ${club.members_count || 1}</span>
+                            </div>
+                        </div>
                     </div>
-                    ${club.description ? `<div class="club-card-description">${club.description}</div>` : ''}
-                    <div class="club-card-footer">
-                        <span>${club.is_public ? '🌐 Публічний' : '🔒 Приватний'}</span>
-                        <span>👥 ${club.members_count || 1} членів</span>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
             
         } catch (error) {
             console.error('Error loading clubs:', error);

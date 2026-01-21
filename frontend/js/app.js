@@ -35,11 +35,19 @@
     console.log('Chat:', tg.initDataUnsafe.chat);
     
     // Відображаємо username в header
-    if (tg.initDataUnsafe.user) {
-        const username = tg.initDataUnsafe.user.username || 
-                        tg.initDataUnsafe.user.first_name || 
+    const userData = tg.initDataUnsafe.user || CONFIG.DEV_USER;
+    if (userData) {
+        const username = userData.username || 
+                        userData.first_name || 
                         'Користувач';
-        document.getElementById('username').textContent = `@${username}`;
+        
+        // Dev режим індикація
+        if (CONFIG.IS_DEV_MODE) {
+            document.getElementById('username').textContent = `🔧 @${username} (Dev)`;
+            document.title = '🔧 Book Club (Dev Mode)';
+        } else {
+            document.getElementById('username').textContent = `@${username}`;
+        }
     }
     
     // Перевірка здоров'я API (опціонально)
