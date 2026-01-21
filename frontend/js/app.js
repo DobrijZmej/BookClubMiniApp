@@ -253,7 +253,6 @@
             }
         });
     }
-    });
     
     // Back button у Telegram
     tg.BackButton.onClick(() => {
