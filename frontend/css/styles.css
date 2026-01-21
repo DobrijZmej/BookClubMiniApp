@@ -1,6 +1,6 @@
 /* ===== Modern Minimalist Design ===== */
 :root {
-    /* Telegram Theme Variables */
+    /* Telegram Theme Variables - automatically updated by Telegram */
     --tg-theme-bg-color: #ffffff;
     --tg-theme-text-color: #000000;
     --tg-theme-hint-color: #6b7280;
@@ -9,25 +9,18 @@
     --tg-theme-button-text-color: #ffffff;
     --tg-theme-secondary-bg-color: #f8fafc;
     
-    /* Modern Color Palette */
-    --primary: #3b82f6;
+    /* Adaptive colors - work with both light and dark themes */
+    --primary: var(--tg-theme-button-color);
     --primary-dark: #2563eb;
     --secondary: #6366f1;
     --success: #10b981;
     --warning: #f59e0b;
     --error: #ef4444;
     
-    /* Neutrals */
-    --gray-50: #f9fafb;
-    --gray-100: #f3f4f6;
-    --gray-200: #e5e7eb;
-    --gray-300: #d1d5db;
-    --gray-400: #9ca3af;
-    --gray-500: #6b7280;
-    --gray-600: #4b5563;
-    --gray-700: #374151;
-    --gray-800: #1f2937;
-    --gray-900: #111827;
+    /* Adaptive neutrals */
+    --surface: var(--tg-theme-secondary-bg-color);
+    --border: rgba(128, 128, 128, 0.2);
+    --muted: var(--tg-theme-hint-color);
     
     /* Spacing */
     --space-xs: 0.25rem;
@@ -43,10 +36,10 @@
     --radius-lg: 12px;
     --radius-xl: 16px;
     
-    /* Shadows */
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    /* Shadows - adapted for theme */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
 }
 
 /* ===== Base Styles ===== */
@@ -83,7 +76,7 @@ body {
 .spinner {
     width: 32px;
     height: 32px;
-    border: 2px solid var(--gray-200);
+    border: 2px solid var(--border);
     border-top-color: var(--primary);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
@@ -143,7 +136,7 @@ body {
 }
 
 .text-muted {
-    color: var(--gray-500);
+    color: var(--muted);
 }
 
 .text-sm {
@@ -189,12 +182,14 @@ body {
 }
 
 .btn-secondary {
-    background: var(--gray-100);
-    color: var(--gray-700);
+    background: var(--surface);
+    color: var(--tg-theme-text-color);
+    border: 1px solid var(--border);
 }
 
 .btn-secondary:hover {
-    background: var(--gray-200);
+    background: var(--surface);
+    opacity: 0.8;
 }
 
 .btn-success {
@@ -208,13 +203,13 @@ body {
 
 .btn-outline {
     background: transparent;
-    color: var(--gray-700);
-    border: 1px solid var(--gray-300);
+    color: var(--tg-theme-text-color);
+    border: 1px solid var(--border);
 }
 
 .btn-outline:hover {
-    background: var(--gray-50);
-    border-color: var(--gray-400);
+    background: var(--surface);
+    border-color: var(--primary);
 }
 
 .btn-sm {
@@ -235,9 +230,9 @@ body {
 
 /* ===== Cards ===== */
 .card {
-    background: white;
+    background: var(--tg-theme-bg-color);
     border-radius: var(--radius-lg);
-    border: 1px solid var(--gray-200);
+    border: 1px solid var(--border);
     box-shadow: var(--shadow-sm);
     overflow: hidden;
     transition: all 0.2s ease;
@@ -254,8 +249,8 @@ body {
 
 .card-header {
     padding: var(--space-lg);
-    border-bottom: 1px solid var(--gray-200);
-    background: var(--gray-50);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
 }
 
 .card-title {
@@ -274,17 +269,18 @@ body {
     font-size: 0.875rem;
     font-weight: 500;
     margin-bottom: var(--space-sm);
-    color: var(--gray-700);
+    color: var(--tg-theme-text-color);
 }
 
 .form-input, .form-textarea {
     width: 100%;
     padding: 0.75rem;
     font-size: 1rem;
-    border: 1px solid var(--gray-300);
+    border: 1px solid var(--border);
     border-radius: var(--radius-md);
     transition: all 0.2s ease;
-    background: white;
+    background: var(--tg-theme-bg-color);
+    color: var(--tg-theme-text-color);
 }
 
 .form-input:focus, .form-textarea:focus {
@@ -305,12 +301,13 @@ body {
     justify-content: space-between;
     margin-bottom: var(--space-xl);
     padding-bottom: var(--space-lg);
-    border-bottom: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--border);
 }
 
 .nav-title {
     font-size: 1.5rem;
     font-weight: 700;
+    color: var(--tg-theme-text-color);
 }
 
 .nav-back {
@@ -319,13 +316,13 @@ body {
     cursor: pointer;
     padding: var(--space-sm);
     border-radius: var(--radius-md);
-    color: var(--gray-600);
+    color: var(--muted);
     transition: all 0.2s ease;
 }
 
 .nav-back:hover {
-    background: var(--gray-100);
-    color: var(--gray-800);
+    background: var(--surface);
+    color: var(--tg-theme-text-color);
 }
 
 /* ===== Lists ===== */
@@ -338,13 +335,13 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: var(--space-lg);
-    border-bottom: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--border);
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
 
 .list-item:hover {
-    background: var(--gray-50);
+    background: var(--surface);
 }
 
 .list-item:last-child {
@@ -358,9 +355,9 @@ body {
 }
 
 .club-card {
-    background: white;
+    background: var(--tg-theme-bg-color);
     border-radius: var(--radius-lg);
-    border: 1px solid var(--gray-200);
+    border: 1px solid var(--border);
     padding: var(--space-lg);
     cursor: pointer;
     transition: all 0.2s ease;
@@ -386,7 +383,7 @@ body {
 }
 
 .club-description {
-    color: var(--gray-600);
+    color: var(--muted);
     font-size: 0.875rem;
     line-height: 1.4;
 }
@@ -396,7 +393,7 @@ body {
     gap: var(--space-lg);
     margin-top: var(--space-md);
     padding-top: var(--space-md);
-    border-top: 1px solid var(--gray-200);
+    border-top: 1px solid var(--border);
 }
 
 .club-stat {
@@ -404,7 +401,7 @@ body {
     align-items: center;
     gap: var(--space-xs);
     font-size: 0.75rem;
-    color: var(--gray-500);
+    color: var(--muted);
 }
 
 /* ===== Books ===== */
@@ -415,9 +412,9 @@ body {
 }
 
 .book-card {
-    background: white;
+    background: var(--tg-theme-bg-color);
     border-radius: var(--radius-lg);
-    border: 1px solid var(--gray-200);
+    border: 1px solid var(--border);
     padding: var(--space-lg);
     cursor: pointer;
     transition: all 0.2s ease;
@@ -440,7 +437,7 @@ body {
     font-size: 1.25rem;
     padding: var(--space-xs);
     border-radius: var(--radius-sm);
-    background: var(--gray-100);
+    background: var(--surface);
 }
 
 .book-title {
@@ -448,11 +445,12 @@ body {
     font-weight: 600;
     margin-bottom: var(--space-xs);
     line-height: 1.4;
+    color: var(--tg-theme-text-color);
 }
 
 .book-author {
     font-size: 0.875rem;
-    color: var(--gray-600);
+    color: var(--muted);
     margin-bottom: var(--space-sm);
 }
 
@@ -461,9 +459,9 @@ body {
     align-items: center;
     justify-content: space-between;
     padding-top: var(--space-md);
-    border-top: 1px solid var(--gray-200);
+    border-top: 1px solid var(--border);
     font-size: 0.75rem;
-    color: var(--gray-500);
+    color: var(--muted);
 }
 
 .book-owner {
@@ -499,7 +497,7 @@ body {
 .empty-state {
     text-align: center;
     padding: var(--space-2xl);
-    color: var(--gray-500);
+    color: var(--muted);
 }
 
 .empty-icon {
@@ -512,12 +510,14 @@ body {
     font-size: 1.125rem;
     font-weight: 600;
     margin-bottom: var(--space-sm);
+    color: var(--tg-theme-text-color);
 }
 
 .empty-description {
     font-size: 0.875rem;
     line-height: 1.4;
     margin-bottom: var(--space-lg);
+    color: var(--muted);
 }
 
 /* ===== Search ===== */
@@ -530,9 +530,10 @@ body {
     width: 100%;
     padding: 0.75rem 1rem 0.75rem 2.5rem;
     font-size: 1rem;
-    border: 1px solid var(--gray-300);
+    border: 1px solid var(--border);
     border-radius: var(--radius-md);
-    background: white;
+    background: var(--tg-theme-bg-color);
+    color: var(--tg-theme-text-color);
 }
 
 .search-icon {
@@ -540,7 +541,7 @@ body {
     left: 0.75rem;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--gray-400);
+    color: var(--muted);
 }
 
 /* ===== Utilities ===== */
