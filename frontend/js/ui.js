@@ -217,11 +217,17 @@ const UI = {
      * Завантажити книги
      */
     async loadBooks() {
+    /**
+     * Завантаження та відображення книг
+     * @param {number} clubId - ID клубу (якщо null, використовується CONFIG.CHAT_ID)
+     */
+    async loadBooks(clubId = null) {
         try {
+            const chatId = clubId || CONFIG.CHAT_ID;
             const status = document.getElementById('filter-status').value;
             const search = document.getElementById('search-input').value;
             
-            const books = await API.books.getAll(CONFIG.CHAT_ID, { status, search });
+            const books = await API.books.getAll(chatId, { status, search });
             this.renderBooks(books);
         } catch (error) {
             console.error('Error loading books:', error);

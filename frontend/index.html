@@ -24,48 +24,56 @@
     <div id="app" style="display: none;">
         <!-- Header -->
         <header class="app-header">
-            <h1>📚 Бібліотека Клубу</h1>
+            <button id="back-button" class="header-back-btn" style="display: none;">← Назад</button>
+            <h1 id="header-title">📚 Мої клуби</h1>
             <div class="user-info">
                 <span id="username">Завантаження...</span>
             </div>
         </header>
 
-        <!-- Navigation Tabs -->
-        <nav class="tabs">
-            <button class="tab active" data-view="library">
-                <span class="tab-icon">📖</span>
-                <span>Бібліотека</span>
-            </button>
-            <button class="tab" data-view="clubs">
-                <span class="tab-icon">🏛️</span>
-                <span>Клуби</span>
-            </button>
-            <button class="tab" data-view="add-book">
-                <span class="tab-icon">➕</span>
-                <span>Додати</span>
-            </button>
-        </nav>
-
-        <!-- Search Bar (only in library view) -->
-        <div id="search-bar" class="search-bar">
-            <input type="text" id="search-input" placeholder="Пошук книг...">
-            <select id="filter-status">
-                <option value="available">Доступні</option>
-                <option value="reading">Позичені</option>
-                <option value="all">Всі</option>
-            </select>
-        </div>
-
         <!-- Content Views -->
         <main class="content">
-            <!-- Library View -->
-            <div id="library-view" class="view active">
+            <!-- Clubs List View (Primary) -->
+            <div id="clubs-list-view" class="view active">
+                <div id="my-clubs-list" class="clubs-list">
+                    <!-- User's clubs will be loaded here -->
+                </div>
+                
+                <div id="clubs-empty-state" class="empty-state" style="display: none;">
+                    <p>🏛️ У вас поки немає клубів</p>
+                    <p>Створіть свій або приєднайтеся до існуючого!</p>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="fixed-bottom-actions">
+                    <button id="create-new-club-btn" class="btn btn-primary">Створити клуб</button>
+                    <button id="join-existing-club-btn" class="btn btn-secondary">Приєднатись до клубу</button>
+                </div>
+            </div>
+            
+            <!-- Club Detail View (Books inside club) -->
+            <div id="club-detail-view" class="view">
+                <!-- Search Bar -->
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Пошук книг...">
+                    <select id="filter-status">
+                        <option value="available">Доступні</option>
+                        <option value="reading">Позичені</option>
+                        <option value="all">Всі</option>
+                    </select>
+                </div>
+                
                 <div id="books-container" class="books-grid">
                     <!-- Books will be loaded here -->
                 </div>
                 <div id="empty-state" class="empty-state" style="display: none;">
                     <p>📚 Бібліотека порожня</p>
                     <p>Додайте першу книгу!</p>
+                </div>
+                
+                <!-- Add Book Button -->
+                <div class="fixed-bottom-actions">
+                    <button id="add-book-to-club-btn" class="btn btn-primary">➕ Додати книгу</button>
                 </div>
             </div>
 
@@ -91,80 +99,51 @@
                 </form>
             </div>
 
-            <!-- Clubs View -->
-            <div id="clubs-view" class="view">
-                <!-- Active Club Selector -->
-                <div id="active-club-selector" class="club-selector" style="display: none;">
-                    <label>Активний клуб:</label>
-                    <select id="active-club-select">
-                        <option value="">Оберіть клуб...</option>
-                    </select>
-                </div>
+            <!-- Create Club View -->
+            <div id="create-club-view" class="view">
+                <form id="create-club-form" class="form">
+                    <div class="form-group">
+                        <label for="club-name">Назва клубу *</label>
+                        <input type="text" id="club-name" required maxlength="255" placeholder="Наприклад: Любителі фантастики">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="club-description">Опис клубу</label>
+                        <textarea id="club-description" rows="3" maxlength="500" placeholder="Коротко опишіть ваш клуб..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="club-is-public">
+                            <span>Публічний клуб (видимий у пошуку)</span>
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Створити клуб</button>
+                </form>
+            </div>
 
-                <!-- Clubs List -->
-                <div id="clubs-list-container">
-                    <div class="section-header">
-                        <h2>Мої клуби</h2>
-                        <button class="btn btn-primary btn-sm" id="create-club-btn">Створити клуб</button>
+            <!-- Join Club View -->
+            <div id="join-club-view" class="view">
+                <form id="join-club-form" class="form">
+                    <div class="form-group">
+                        <label for="join-invite-code">Код запрошення *</label>
+                        <input type="text" id="join-invite-code" required maxlength="20" placeholder="Введіть код" style="text-transform: uppercase;">
                     </div>
-                    <div id="clubs-list" class="clubs-list">
-                        <!-- Clubs will be loaded here -->
+                        
+                    <div class="form-group">
+                        <label for="join-message">Повідомлення (опціонально)</label>
+                        <textarea id="join-message" rows="2" maxlength="500" placeholder="Чому хочете приєднатися?"></textarea>
                     </div>
-                </div>
-
-                <!-- Create Club Form (hidden by default) -->
-                <div id="create-club-form-container" style="display: none;">
-                    <div class="section-header">
-                        <h2>Створити новий клуб</h2>
-                        <button class="btn btn-secondary btn-sm" id="cancel-create-club-btn">Скасувати</button>
-                    </div>
-                    <form id="create-club-form" class="form">
-                        <div class="form-group">
-                            <label for="club-name">Назва клубу *</label>
-                            <input type="text" id="club-name" required maxlength="255" placeholder="Наприклад: Любителі фантастики">
-                        </div>
                         
-                        <div class="form-group">
-                            <label for="club-description">Опис клубу</label>
-                            <textarea id="club-description" rows="3" maxlength="500" placeholder="Коротко опишіть ваш клуб..."></textarea>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="club-is-public">
-                                <span>Публічний клуб (видимий у пошуку)</span>
-                            </label>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary">Створити</button>
-                    </form>
-                </div>
-
-                <!-- Join Club Form -->
-                <div id="join-club-container">
-                    <div class="section-header">
-                        <h3>Приєднатися до клубу</h3>
-                    </div>
-                    <form id="join-club-form" class="form">
-                        <div class="form-group">
-                            <label for="join-invite-code">Код запрошення</label>
-                            <input type="text" id="join-invite-code" required maxlength="20" placeholder="Введіть код" style="text-transform: uppercase;">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="join-message">Повідомлення (опціонально)</label>
-                            <textarea id="join-message" rows="2" maxlength="500" placeholder="Чому хочете приєднатися?"></textarea>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-secondary">Надіслати запит</button>
-                    </form>
-                </div>
+                    <button type="submit" class="btn btn-primary">Надіслати запит</button>
+                </form>
             </div>
         </main>
     </div>
 
-    <!-- Club Detail Modal -->
-    <div id="club-modal" class="modal">
+    <!-- Book Detail Modal -->
+    <div id="book-modal" class="modal">
         <div class="modal-content">
             <button class="modal-close" id="close-club-modal">&times;</button>
             <div id="club-modal-body">

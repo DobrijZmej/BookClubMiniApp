@@ -48,50 +48,96 @@
         console.log('✅ API is healthy');
     } catch (error) {
         console.error('⚠️ API health check failed:', error);
-        tg.showAlert('Не вдається підключитися до сервера');
     }
     
     // ===== Event Listeners =====
     
-    // Переключення табів
-    document.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', async (e) => {
-            const viewName = e.currentTarget.getAttribute('data-view');
-            tg.HapticFeedback.impactOccurred('soft');
-            UI.switchView(viewName);
-            
-            // Завантажуємо дані для view
-            if (viewName === 'library') {
-                await UI.loadBooks();
-            } else if (viewName === 'clubs') {
-                await ClubsUI.loadClubs();
+    // Back button
+    document.getElementById('back-button').addEventListener('click', () => {
+        tg.HapticFeedback.impactOccurred('soft');
+        
+        // Перевірити поточний view
+        if (document.getElementById('club-detail-view').classList.contains('active')) {
+            ClubsUI.backToClubsList();
+        } else if (document.getElementById('add-book-view').classList.contains('active')) {
+            ClubsUI.openClub(ClubsUI.currentClubId, document.getElementById('header-title').textContent.replace('📚 ', ''));
+        } else if (document.getElementById('create-club-view').classList.contains('active') || 
+                   document.getElementById('join-club-view').classList.contains('active')) {
+            // Повернутися до списку клубів
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('clubs-list-view').classList.add('active');
+            document.getElementById('header-title').textContent = '📚 Мої клуби';
+            document.getElementById('back-button').style.display = 'none';
+        }
+    });
+    
+    // Кнопки на головній сторінці клубів
+    document.getElementById('create-new-club-btn').addEventListener('click', () => {
+        tg.HapticFeedback.impactOccurred('medium');
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById('create-club-view').classList.add('active');
+        document.getElementById('header-title').textContent = 'Створити клуб';
+        document.getElementById('back-button').style.display = 'block';
+    });
+    
+    document.getElementById('join-existing-club-btn').addEventListener('click', () => {
+        tg.HapticFeedback.impactOccurred('medium');
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById('join-club-view').classList.add('active');
+        document.getElementById('header-title').textContent = 'Приєднатися до клубу';
+        document.getElementById('back-button').style.display = 'block';
+    });
+    
+    // Кнопка "Додати книгу" в деталях клубу
+    const addBookToClubBtn = document.getElementById('add-book-to-club-btn');
+    if (addBookToClubBtn) {
+        addBookToClubBtn.addEventListener('click', () => {
+            tg.HapticFeedback.impactOccurred('medium');
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('add-book-view').classList.add('active');
+            document.getElementById('header-title').textContent = 'Додати книгу';
+            document.getElementById('back-button').style.display = 'block';
+        });
+    }
+    
+    // Фільтри та пошук (тільки в club-detail-view)
+    let searchTimeout;
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                if (ClubsUI.currentClubId) {
+                    UI.loadBooks(ClubsUI.currentClubId);
+                }
+            }, 300);
+        });
+    }
+    
+    const filterStatus = document.getElementById('filter-status');
+    if (filterStatus) {
+        filterStatus.addEventListener('change', () => {
+            if (ClubsUI.currentClubId) {
+                UI.loadBooks(ClubsUI.currentClubId);
             }
         });
-    });
-    
-    // Пошук і фільтри
-    let searchTimeout;
-    document.getElementById('search-input').addEventListener('input', (e) => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            UI.loadBooks();
-        }, 300); // Debounce 300ms
-    });
-    
-    document.getElementById('filter-status').addEventListener('change', () => {
-        UI.loadBooks();
-    });
+    }
     
     // Форма додавання книги
     document.getElementById('add-book-form').addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        if (!ClubsUI.currentClubId) {
+            console.error('No active club selected');
+            return;
+        }
         
         const title = document.getElementById('book-title').value.trim();
         const author = document.getElementById('book-author').value.trim() || 'Невідомий автор';
         const description = document.getElementById('book-description').value.trim();
         
         if (!title) {
-            tg.showAlert('Введіть назву книги');
+            alert('Введіть назву книги');
             return;
         }
         
@@ -103,10 +149,22 @@
                 title,
                 author,
                 description,
-                chat_id: CONFIG.CHAT_ID
+                chat_id: ClubsUI.currentClubId
             });
             
             // Очищуємо форму
+            document.getElementById('add-book-form').reset();
+            
+            // Повертаємось до деталей клубу
+            const clubName = document.getElementById('header-title').textContent.replace('📚 ', '');
+            await ClubsUI.openClub(ClubsUI.currentClubId, clubName);
+            
+        } catch (error) {
+            console.error('Error creating book:', error);
+        } finally {
+            UI.setLoading(false);
+        }
+    });
             document.getElementById('add-book-form').reset();
             
             // Показуємо повідомлення
@@ -134,148 +192,84 @@
         }
     });
     
-    // Закриття модального вікна клубу
-    const closeClubModalBtn = document.getElementById('close-club-modal');
-    if (closeClubModalBtn) {
-        closeClubModalBtn.addEventListener('click', () => {
-            ClubsUI.closeClubModal();
-        });
-    }
-    
-    const clubModal = document.getElementById('club-modal');
-    if (clubModal) {
-        clubModal.addEventListener('click', (e) => {
-            if (e.target.id === 'club-modal') {
-                ClubsUI.closeClubModal();
-            }
-        });
-    }
-    
-    // Кнопка "Створити клуб"
-    const createClubBtn = document.getElementById('create-club-btn');
-    if (createClubBtn) {
-        createClubBtn.addEventListener('click', () => {
-            console.log('Create club button clicked');
-            document.getElementById('clubs-list-container').style.display = 'none';
-            document.getElementById('create-club-form-container').style.display = 'block';
-            document.getElementById('join-club-container').style.display = 'none';
-        });
-    }
-    
-    // Кнопка "Скасувати створення клубу"
-    const cancelCreateClubBtn = document.getElementById('cancel-create-club-btn');
-    if (cancelCreateClubBtn) {
-        cancelCreateClubBtn.addEventListener('click', () => {
-            document.getElementById('clubs-list-container').style.display = 'block';
-            document.getElementById('create-club-form-container').style.display = 'none';
-            document.getElementById('join-club-container').style.display = 'block';
-            document.getElementById('create-club-form').reset();
-        });
-    }
-    
     // Форма створення клубу
-    const createClubForm = document.getElementById('create-club-form');
-    if (createClubForm) {
-        createClubForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const name = document.getElementById('club-name').value.trim();
-            const description = document.getElementById('club-description').value.trim();
-            const isPublic = document.getElementById('club-is-public').checked;
-            
-            if (!name) {
-                tg.showAlert('Введіть назву клубу');
-                return;
-            }
-            
-            try {
-                tg.HapticFeedback.impactOccurred('medium');
-                UI.setLoading(true);
-                
-                const club = await API.clubs.create({
-                    name,
-                    description,
-                    is_public: isPublic
-                });
-                
-                // Очищуємо форму
-                document.getElementById('create-club-form').reset();
-                
-                // Показуємо повідомлення
-                tg.showAlert(`✅ Клуб "${club.name}" створено!\nКод: ${club.invite_code}`);
-                
-                // Повертаємось до списку
-                document.getElementById('clubs-list-container').style.display = 'block';
-                document.getElementById('create-club-form-container').style.display = 'none';
-                document.getElementById('join-club-container').style.display = 'block';
-                
-                // Перезавантажуємо список клубів
-                await ClubsUI.loadClubs();
-                
-            } catch (error) {
-                console.error('Error creating club:', error);
-            } finally {
-                UI.setLoading(false);
-            }
-        });
-    }
-    
-    // Форма приєднання до клубу
-    const joinClubForm = document.getElementById('join-club-form');
-    if (joinClubForm) {
-        joinClubForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const inviteCode = document.getElementById('join-invite-code').value.trim().toUpperCase();
-            const message = document.getElementById('join-message').value.trim();
-            
-            if (!inviteCode) {
-                tg.showAlert('Введіть код запрошення');
-                return;
-            }
-            
-            try {
-                tg.HapticFeedback.impactOccurred('medium');
-                UI.setLoading(true);
-                
-                await API.clubs.requestJoin(inviteCode, message);
-                
-                // Очищуємо форму
-                document.getElementById('join-club-form').reset();
-                
-                // Показуємо повідомлення
-                tg.showAlert('✅ Запит надіслано! Очікуйте схвалення від адміністратора');
-                
-            } catch (error) {
-                console.error('Error joining club:', error);
-            } finally {
-                UI.setLoading(false);
-            }
-        });
-    }
-    
-    // Back button у Telegram
-    tg.BackButton.onClick(() => {
-        const activeView = document.querySelector('.view.active').id;
+    document.getElementById('create-club-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
         
-        if (activeView === 'library-view') {
-            tg.close();
-        } else {
-            UI.switchView('library');
-            UI.loadBooks();
+        const name = document.getElementById('club-name').value.trim();
+        const description = document.getElementById('club-description').value.trim();
+        const isPublic = document.getElementById('club-is-public').checked;
+        
+        if (!name) {
+            alert('Введіть назву клубу');
+            return;
+        }
+        
+        try {
+            tg.HapticFeedback.impactOccurred('medium');
+            UI.setLoading(true);
+            
+            const club = await API.clubs.create({
+                name,
+                description,
+                is_public: isPublic
+            });
+            
+            // Очищуємо форму
+            document.getElementById('create-club-form').reset();
+            
+            // Повертаємося до списку і перезавантажуємо
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('clubs-list-view').classList.add('active');
+            document.getElementById('header-title').textContent = '📚 Мої клуби';
+            document.getElementById('back-button').style.display = 'none';
+            
+            await ClubsUI.loadMyClubs();
+            
+            // Показуємо код запрошення
+            alert(`✅ Клуб "${club.name}" створено!\nКод запрошення: ${club.invite_code}`);
+            
+        } catch (error) {
+            console.error('Error creating club:', error);
+        } finally {
+            UI.setLoading(false);
         }
     });
     
-    // Показуємо Back button коли не на головній
-    document.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            const viewName = tab.getAttribute('data-view');
-            if (viewName === 'library') {
-                tg.BackButton.hide();
-            } else {
-                tg.BackButton.show();
-            }
-        });
+    // Форма приєднання до клубу
+    document.getElementById('join-club-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const inviteCode = document.getElementById('join-invite-code').value.trim().toUpperCase();
+        const message = document.getElementById('join-message').value.trim();
+        
+        if (!inviteCode) {
+            alert('Введіть код запрошення');
+            return;
+        }
+        
+        try {
+            tg.HapticFeedback.impactOccurred('medium');
+            UI.setLoading(true);
+            
+            await API.clubs.requestJoin(inviteCode, message);
+            
+            // Очищуємо форму
+            document.getElementById('join-club-form').reset();
+            
+            // Повертаємось до списку
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('clubs-list-view').classList.add('active');
+            document.getElementById('header-title').textContent = '📚 Мої клуби';
+            document.getElementById('back-button').style.display = 'none';
+            
+            alert('✅ Запит надіслано! Очікуйте схвалення від адміністратора');
+            
+        } catch (error) {
+            console.error('Error joining club:', error);
+        } finally {
+            UI.setLoading(false);
+        }
     });
     
     // ===== Initial Load =====
@@ -283,8 +277,8 @@
     try {
         UI.setLoading(true);
         
-        // Завантажуємо бібліотеку (початковий view)
-        await UI.loadBooks();
+        // Завантажуємо список клубів користувача (початкова сторінка)
+        await ClubsUI.loadMyClubs();
         
         console.log('✅ App initialized successfully');
     } catch (error) {
