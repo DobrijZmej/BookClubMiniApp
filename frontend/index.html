@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Книжковий Клуб</title>
     
     <!-- Telegram Web App SDK -->
@@ -181,10 +184,15 @@
     </div>
 
     <!-- Scripts -->
-    <script src="js/config.js?v=3"></script>
-    <script src="js/api.js?v=3"></script>
-    <script src="js/ui.js?v=3"></script>
-    <script src="js/clubs-ui.js?v=3"></script>
-    <script src="js/app.js?v=3"></script>
+    <script>
+        // Динамічне завантаження з timestamp для обходу кешування
+        const timestamp = Date.now();
+        const scripts = ['config', 'api', 'ui', 'clubs-ui', 'app'];
+        scripts.forEach(name => {
+            const script = document.createElement('script');
+            script.src = `js/${name}.js?t=${timestamp}`;
+            document.body.appendChild(script);
+        });
+    </script>
 </body>
 </html>
