@@ -165,21 +165,6 @@
             UI.setLoading(false);
         }
     });
-            document.getElementById('add-book-form').reset();
-            
-            // Показуємо повідомлення
-            tg.showAlert('✅ Книгу додано!');
-            
-            // Переключаємось на бібліотеку
-            UI.switchView('library');
-            await UI.loadBooks();
-            
-        } catch (error) {
-            console.error('Error adding book:', error);
-        } finally {
-            UI.setLoading(false);
-        }
-    });
     
     // Закриття модального вікна
     document.getElementById('close-modal').addEventListener('click', () => {
