@@ -110,7 +110,24 @@ async def get_my_clubs(
         Club.status == ClubStatus.ACTIVE
     ).order_by(desc(ClubMember.joined_at)).all()
     
-    return clubs
+    # Додаємо кількість членів для кожного клубу
+    result = []
+    for club in clubs:
+        club_dict = {
+            "id": club.id,
+            "name": club.name,
+            "description": club.description,
+            "chat_id": club.chat_id,
+            "owner_id": club.owner_id,
+            "invite_code": club.invite_code,
+            "is_public": club.is_public,
+            "status": club.status.value if hasattr(club.status, 'value') else club.status,
+            "created_at": club.created_at,
+            "members_count": db.query(ClubMember).filter(ClubMember.club_id == club.id).count()
+        }
+        result.append(club_dict)
+    
+    return result
 
 
 @router.get("/{club_id}", response_model=ClubDetailResponse)

@@ -127,6 +127,7 @@ class ClubResponse(BaseModel):
     is_public: bool
     status: str
     created_at: datetime
+    members_count: Optional[int] = None
     
     class Config:
         from_attributes = True
