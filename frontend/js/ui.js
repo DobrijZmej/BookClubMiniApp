@@ -388,7 +388,7 @@ const UI = {
             document.getElementById('header-title').textContent = '⭐ Відгук на книгу';
             document.getElementById('back-button').style.display = 'block';
             
-            // Спробувати завантажити існуючий відгук
+            // Спробувати завантажити існуючий відгук (тихо)
             try {
                 const existingReview = await API.books.getMyReview(bookId);
                 console.log('📝 Існуючий відгук:', existingReview);
@@ -403,14 +403,15 @@ const UI = {
                 document.getElementById('header-title').textContent = '⭐ Редагувати відгук';
                 
             } catch (error) {
+                // Тихо обробляємо відсутність відгука - просто показуємо нову форму
                 console.log('📝 Відгук не знайдено, показую нову форму');
-                // Очистити форму для нового відгука
                 this.clearReviewForm();
                 document.getElementById('delete-review-btn').style.display = 'none';
             }
             
         } catch (error) {
             console.error('Error showing review form:', error);
+            tg.showAlert('Помилка завантаження форми відгука');
         }
     },
 
