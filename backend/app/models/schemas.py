@@ -47,6 +47,7 @@ class BookResponse(BaseModel):
     title: str
     author: str
     owner_id: str
+    owner_name: Optional[str]
     owner_username: Optional[str]
     status: str
     cover_url: Optional[str]

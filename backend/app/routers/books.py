@@ -113,12 +113,18 @@ async def create_book(
     # Автоматично створюємо клуб якщо не існує
     ensure_club_exists(db, book_data.chat_id)
     
+    # Формуємо повне ім'я
+    first_name = telegram_user.get('first_name', '')
+    last_name = telegram_user.get('last_name', '')
+    owner_name = f"{first_name} {last_name}".strip() or "Користувач"
+    
     new_book = Book(
         title=book_data.title,
         author=book_data.author or "Невідомий автор",
         description=book_data.description,
         cover_url=book_data.cover_url,
         owner_id=str(telegram_user['id']),
+        owner_name=owner_name,
         owner_username=telegram_user.get('username', ''),
         chat_id=book_data.chat_id,
         status=BookStatus.AVAILABLE

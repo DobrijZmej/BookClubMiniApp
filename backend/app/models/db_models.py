@@ -39,7 +39,8 @@ class Book(Base):
     title = Column(String(500), nullable=False)
     author = Column(String(255), default="Невідомий автор")
     owner_id = Column(String(50), nullable=False)  # Telegram user ID
-    owner_username = Column(String(100))
+    owner_name = Column(String(255))  # Повне ім'я користувача (first_name + last_name)
+    owner_username = Column(String(100))  # @username з Telegram
     chat_id = Column(String(50), ForeignKey("clubs.chat_id"), nullable=False, index=True)
     status = Column(Enum(BookStatus), default=BookStatus.AVAILABLE)
     cover_url = Column(String(500))  # Для майбутньої можливості додавати обкладинки
