@@ -66,7 +66,7 @@ const UI = {
                     </div>
                     
                     <div class="book-owner">
-                        Додав: @${this.escapeHtml(book.owner_username || 'невідомо')}
+                        @${this.escapeHtml(book.owner_username || 'невідомо')}
                     </div>
                     
                     <div class="book-actions">
