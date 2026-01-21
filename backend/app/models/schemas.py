@@ -20,7 +20,7 @@ class BookCreate(BaseModel):
     author: Optional[str] = Field("Невідомий автор", max_length=255)
     description: Optional[str] = None
     cover_url: Optional[str] = None
-    chat_id: str
+    club_id: int  # Замість chat_id використовуємо club_id
 
 class BookUpdate(BaseModel):
     title: Optional[str] = Field(None, max_length=500)

@@ -20,7 +20,10 @@ const API = {
             
             if (!response.ok) {
                 const error = await response.json().catch(() => ({ detail: 'Unknown error' }));
-                throw new Error(error.detail || `HTTP ${response.status}`);
+                const errorMessage = typeof error.detail === 'string' 
+                    ? error.detail 
+                    : JSON.stringify(error.detail) || `HTTP ${response.status}`;
+                throw new Error(errorMessage);
             }
             
             // Для 204 No Content

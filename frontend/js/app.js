@@ -149,15 +149,14 @@
                 title,
                 author,
                 description,
-                chat_id: ClubsUI.currentClubId
+                club_id: ClubsUI.currentClubId
             });
             
             // Очищуємо форму
             document.getElementById('add-book-form').reset();
             
-            // Повертаємось до деталей клубу
-            const clubName = document.getElementById('header-title').textContent.replace('📚 ', '');
-            await ClubsUI.openClub(ClubsUI.currentClubId, clubName);
+            // Перезавантажуємо книги (використовуємо chat_id для API)
+            await UI.loadBooks(ClubsUI.currentChatId);
             
         } catch (error) {
             console.error('Error creating book:', error);

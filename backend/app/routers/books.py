@@ -123,8 +123,10 @@ async def create_book(
     telegram_user = user['user']
     user_id = str(telegram_user['id'])
     
-    # Автоматично створюємо клуб якщо не існує
-    ensure_club_exists(db, book_data.chat_id, user_id)
+    # Отримуємо клуб за ID
+    club = db.query(Club).filter(Club.id == book_data.club_id).first()
+    if not club:
+        raise HTTPException(status_code=404, detail="Club not found")
     
     # Формуємо повне ім'я
     first_name = telegram_user.get('first_name', '')
@@ -139,7 +141,7 @@ async def create_book(
         owner_id=str(telegram_user['id']),
         owner_name=owner_name,
         owner_username=telegram_user.get('username', ''),
-        chat_id=book_data.chat_id,
+        chat_id=club.chat_id,  # Беремо chat_id з клубу
         status=BookStatus.AVAILABLE
     )
     

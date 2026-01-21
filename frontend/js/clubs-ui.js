@@ -1,6 +1,7 @@
 // Clubs UI Module
 const ClubsUI = {
     currentClubId: null,
+    currentChatId: null,
     
     /**
      * Завантажити та відобразити список клубів користувача (головна сторінка)
@@ -23,7 +24,7 @@ const ClubsUI = {
             container.style.display = 'block';
             
             container.innerHTML = clubs.map(club => `
-                <div class="club-card" data-club-id="${club.id}" onclick="ClubsUI.openClub(${club.id}, '${club.name}')">
+                <div class="club-card" data-club-id="${club.id}" data-chat-id="${club.chat_id}" onclick="ClubsUI.openClub(${club.id}, '${club.chat_id}', '${club.name}')">
                     <div class="club-card-header">
                         <div>
                             <div class="club-card-title">${club.name}</div>
@@ -49,8 +50,9 @@ const ClubsUI = {
     /**
      * Відкрити деталі клубу (показати книги)
      */
-    async openClub(clubId, clubName) {
+    async openClub(clubId, chatId, clubName) {
         ClubsUI.currentClubId = clubId;
+        ClubsUI.currentChatId = chatId;
         
         // Оновити заголовок
         document.getElementById('header-title').textContent = `📚 ${clubName}`;
@@ -61,7 +63,7 @@ const ClubsUI = {
         document.getElementById('club-detail-view').classList.add('active');
         
         // Завантажити книги клубу
-        await UI.loadBooks(clubId);
+        await UI.loadBooks(chatId);
     },
     
     /**
@@ -69,6 +71,7 @@ const ClubsUI = {
      */
     backToClubsList() {
         ClubsUI.currentClubId = null;
+        ClubsUI.currentChatId = null;
         
         document.getElementById('header-title').textContent = '📚 Мої клуби';
         document.getElementById('back-button').style.display = 'none';
