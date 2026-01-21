@@ -31,7 +31,10 @@ const API = {
             return await response.json();
         } catch (error) {
             console.error('API Error:', error);
-            tg.showAlert(`Помилка: ${error.message}`);
+            // showAlert не підтримується в старих версіях Telegram WebApp
+            if (tg.showAlert && tg.version && parseFloat(tg.version) >= 6.1) {
+                tg.showAlert(`Помилка: ${error.message}`);
+            }
             throw error;
         }
     },

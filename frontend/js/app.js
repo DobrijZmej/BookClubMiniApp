@@ -1,6 +1,9 @@
 // Main App Module
 (async function() {
     console.log('📱 Telegram Mini App Starting...');
+    console.log('Telegram SDK version:', tg.version);
+    console.log('initData:', tg.initData ? 'present' : 'MISSING');
+    console.log('initDataUnsafe:', tg.initDataUnsafe);
     
     // Ініціалізація Telegram Web App
     tg.ready();
@@ -21,6 +24,7 @@
     // Fallback для тестування
     else {
         chatId = 'default_chat';
+        console.warn('⚠️ No Telegram user data! Using fallback chat_id. Make sure to open this app through Telegram bot.');
     }
     
     CONFIG.CHAT_ID = chatId;
