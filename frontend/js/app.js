@@ -60,7 +60,14 @@
         if (document.getElementById('club-detail-view').classList.contains('active')) {
             ClubsUI.backToClubsList();
         } else if (document.getElementById('add-book-view').classList.contains('active')) {
-            ClubsUI.openClub(ClubsUI.currentClubId, document.getElementById('header-title').textContent.replace('📚 ', ''));
+            // Повернутися до деталей клубу
+            document.getElementById('add-book-view').classList.remove('active');
+            document.getElementById('club-detail-view').classList.add('active');
+            // Відновлюємо назву клубу
+            const previousTitle = document.getElementById('header-title').dataset.previousTitle;
+            if (previousTitle) {
+                document.getElementById('header-title').textContent = previousTitle;
+            }
         } else if (document.getElementById('create-club-view').classList.contains('active') || 
                    document.getElementById('join-club-view').classList.contains('active')) {
             // Повернутися до списку клубів
@@ -93,9 +100,12 @@
     if (addBookToClubBtn) {
         addBookToClubBtn.addEventListener('click', () => {
             tg.HapticFeedback.impactOccurred('medium');
+            // Зберігаємо поточну назву клубу
+            const currentClubName = document.getElementById('header-title').textContent;
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById('add-book-view').classList.add('active');
             document.getElementById('header-title').textContent = 'Додати книгу';
+            document.getElementById('header-title').dataset.previousTitle = currentClubName;
             document.getElementById('back-button').style.display = 'block';
         });
     }
@@ -154,6 +164,10 @@
             
             // Очищуємо форму
             document.getElementById('add-book-form').reset();
+            
+            // Повертаємось до списку книг клубу
+            document.getElementById('add-book-view').classList.remove('active');
+            document.getElementById('club-detail-view').classList.add('active');
             
             // Перезавантажуємо книги
             await UI.loadBooks(ClubsUI.currentClubId);
