@@ -170,6 +170,12 @@ body {
     font-size: 0.75rem;
 }
 
+/* ===== Action Buttons ===== */
+.flex.gap-4.mt-4 {
+    margin-top: 2rem;
+    justify-content: center;
+}
+
 /* ===== Buttons ===== */
 .btn {
     display: inline-flex;
@@ -454,10 +460,6 @@ body {
 .club-card:hover {
     transform: translateY(-6px);
     box-shadow: var(--shadow-lg), var(--shadow-glow);
-}
-
-.club-card:hover:before {
-    opacity: 1;
 }
 
 .club-header {
