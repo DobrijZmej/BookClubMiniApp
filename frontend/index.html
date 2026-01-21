@@ -78,9 +78,12 @@
                     <button id="add-first-book-btn" class="btn btn-primary">➕ Додати книгу</button>
                 </div>
                 
-                <!-- Add Book Button -->
-                <div class="mt-4">
+                <!-- Club Actions -->
+                <div class="flex gap-4 mt-4">
                     <button id="add-book-to-club-btn" class="btn btn-primary btn-full">➕ Додати книгу</button>
+                    <button id="view-club-requests-btn" class="btn btn-secondary" style="display: none;">
+                        📝 Заявки <span id="requests-count" class="requests-badge">0</span>
+                    </button>
                 </div>
             </div>
 
@@ -163,6 +166,26 @@
                                 
                             <button type="submit" class="btn btn-primary btn-full">Надіслати запит</button>
                         </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Club Requests View -->
+            <div id="club-requests-view" class="view">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">📝 Заявки на вступ</div>
+                    </div>
+                    <div class="card-body">
+                        <div id="requests-container">
+                            <!-- Requests will be loaded here -->
+                        </div>
+                        
+                        <div id="requests-empty-state" class="empty-state" style="display: none;">
+                            <div class="empty-icon">📭</div>
+                            <div class="empty-title">Немає заявок на розгляді</div>
+                            <div class="empty-description">Коли хтось подасть заявку на вступ до клубу, вона з'явиться тут</div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -814,6 +814,127 @@ body {
     opacity: 0.8;
 }
 
+/* ===== Club Requests ===== */
+.requests-badge {
+    background: var(--error);
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: var(--space-xs);
+    min-width: 20px;
+    text-align: center;
+    display: inline-block;
+}
+
+.request-item {
+    background: var(--card-dark);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-dark);
+    padding: var(--space-md);
+    margin-bottom: var(--space-md);
+    transition: all 0.3s ease;
+}
+
+.request-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.request-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-sm);
+}
+
+.request-user {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.request-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.request-info h4 {
+    margin: 0;
+    color: var(--text-dark);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.request-info .username {
+    color: var(--muted-dark);
+    font-size: 0.875rem;
+    margin-top: 2px;
+}
+
+.request-date {
+    font-size: 0.75rem;
+    color: var(--muted-dark);
+}
+
+.request-message {
+    background: rgba(6, 182, 212, 0.1);
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm);
+    margin: var(--space-sm) 0;
+    font-style: italic;
+    color: var(--text-dark);
+}
+
+.request-actions {
+    display: flex;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+}
+
+.btn-approve {
+    background: linear-gradient(135deg, var(--success), #059669);
+    color: white;
+    border: none;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    flex: 1;
+}
+
+.btn-approve:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.btn-reject {
+    background: linear-gradient(135deg, var(--error), #dc2626);
+    color: white;
+    border: none;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    flex: 1;
+}
+
+.btn-reject:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
 /* ===== Status Badges ===== */
 .status {
     display: inline-flex;

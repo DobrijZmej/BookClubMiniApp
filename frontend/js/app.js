@@ -88,6 +88,9 @@
             document.getElementById('clubs-list-view').classList.add('active');
             document.getElementById('header-title').textContent = '📚 Мої клуби';
             document.getElementById('back-button').style.display = 'none';
+        } else if (document.getElementById('club-requests-view').classList.contains('active')) {
+            // Повернутися до деталей клубу
+            ClubsUI.backToClubDetails();
         }
     });
     
@@ -120,6 +123,20 @@
             document.getElementById('header-title').textContent = 'Додати книгу';
             document.getElementById('header-title').dataset.previousTitle = currentClubName;
             document.getElementById('back-button').style.display = 'block';
+        });
+    }
+    
+    // Кнопка "Заявки" в деталях клубу
+    const viewRequestsBtn = document.getElementById('view-club-requests-btn');
+    if (viewRequestsBtn) {
+        viewRequestsBtn.addEventListener('click', () => {
+            tg.HapticFeedback.impactOccurred('medium');
+            if (ClubsUI.currentClubId) {
+                // Зберігаємо назву клубу для навігації назад
+                const clubName = document.getElementById('header-title').textContent.replace('📚 ', '');
+                document.getElementById('header-title').dataset.clubName = clubName;
+                ClubsUI.showClubRequests(ClubsUI.currentClubId);
+            }
         });
     }
     
