@@ -1,9 +1,9 @@
 // Configuration
 const CONFIG = {
-    // ВАЖЛИВО: Змініть на ваш реальний API URL
+    // Автоматично визначає localhost для розробки або production URL
     API_BASE_URL: window.location.hostname === 'localhost' 
         ? 'http://localhost:8000'
-        : 'https://yourdomain.com',
+        : 'https://bookclub.uca.co.ua',
     
     // Chat ID буде отримано з Telegram
     CHAT_ID: null
