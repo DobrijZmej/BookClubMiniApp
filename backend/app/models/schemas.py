@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 from enum import Enum
 
@@ -58,7 +58,7 @@ class BookResponse(BaseModel):
 
 
 class BookDetailResponse(BookResponse):
-    loans: list[BookLoanResponse] = []
+    loans: List[BookLoanResponse] = []
     
     class Config:
         from_attributes = True
