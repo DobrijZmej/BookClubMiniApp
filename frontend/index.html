@@ -185,14 +185,24 @@
 
     <!-- Scripts -->
     <script>
-        // Динамічне завантаження з timestamp для обходу кешування
+        // Послідовне завантаження скриптів з timestamp
         const timestamp = Date.now();
         const scripts = ['config', 'api', 'ui', 'clubs-ui', 'app'];
-        scripts.forEach(name => {
+        
+        function loadScript(index) {
+            if (index >= scripts.length) return;
+            
             const script = document.createElement('script');
-            script.src = `js/${name}.js?t=${timestamp}`;
+            script.src = `js/${scripts[index]}.js?t=${timestamp}`;
+            script.onload = () => loadScript(index + 1);
+            script.onerror = () => {
+                console.error(`Failed to load ${scripts[index]}.js`);
+                loadScript(index + 1);
+            };
             document.body.appendChild(script);
-        });
+        }
+        
+        loadScript(0);
     </script>
 </body>
 </html>
