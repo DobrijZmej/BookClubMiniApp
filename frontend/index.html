@@ -184,25 +184,10 @@
     </div>
 
     <!-- Scripts -->
-    <script>
-        // Послідовне завантаження скриптів з timestamp
-        const timestamp = Date.now();
-        const scripts = ['config', 'api', 'ui', 'clubs-ui', 'app'];
-        
-        function loadScript(index) {
-            if (index >= scripts.length) return;
-            
-            const script = document.createElement('script');
-            script.src = `js/${scripts[index]}.js?t=${timestamp}`;
-            script.onload = () => loadScript(index + 1);
-            script.onerror = () => {
-                console.error(`Failed to load ${scripts[index]}.js`);
-                loadScript(index + 1);
-            };
-            document.body.appendChild(script);
-        }
-        
-        loadScript(0);
-    </script>
+    <script src="js/config.js?build=20260121-1640"></script>
+    <script src="js/api.js?build=20260121-1640"></script>
+    <script src="js/ui.js?build=20260121-1640"></script>
+    <script src="js/clubs-ui.js?build=20260121-1640"></script>
+    <script src="js/app.js?build=20260121-1640"></script>
 </body>
 </html>
