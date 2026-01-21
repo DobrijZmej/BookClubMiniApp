@@ -59,8 +59,8 @@
             // Завантажуємо дані для view
             if (viewName === 'library') {
                 await UI.loadBooks();
-            } else if (viewName === 'profile') {
-                await UI.renderProfile();
+            } else if (viewName === 'clubs') {
+                await ClubsUI.loadClubs();
             }
         });
     });
@@ -128,6 +128,108 @@
         if (e.target.id === 'book-modal') {
             UI.closeModal();
         }
+    });
+    
+    // Закриття модального вікна клубу
+    document.getElementById('close-club-modal').addEventListener('click', () => {
+        ClubsUI.closeClubModal();
+    });
+    
+    document.getElementById('club-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'club-modal') {
+            ClubsUI.closeClubModal();
+        }
+    });
+    
+    // Кнопка "Створити клуб"
+    document.getElementById('create-club-btn').addEventListener('click', () => {
+        document.getElementById('clubs-list-container').style.display = 'none';
+        document.getElementById('create-club-form-container').style.display = 'block';
+        document.getElementById('join-club-container').style.display = 'none';
+    });
+    
+    // Кнопка "Скасувати створення клубу"
+    document.getElementById('cancel-create-club-btn').addEventListener('click', () => {
+        document.getElementById('clubs-list-container').style.display = 'block';
+        document.getElementById('create-club-form-container').style.display = 'none';
+        document.getElementById('join-club-container').style.display = 'block';
+        document.getElementById('create-club-form').reset();
+    });
+    
+    // Форма створення клубу
+    document.getElementById('create-club-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const name = document.getElementById('club-name').value.trim();
+        const description = document.getElementById('club-description').value.trim();
+        const isPublic = document.getElementById('club-is-public').checked;
+        
+        if (!name) {
+            tg.showAlert('Введіть назву клубу');
+            return;
+        }
+        
+        try {
+            tg.HapticFeedback.impactOccurred('medium');
+            UI.setLoading(true);
+            
+            const club = await API.clubs.create({
+                name,
+                description,
+                is_public: isPublic
+            });
+            
+            // Очищуємо форму
+            document.getElementById('create-club-form').reset();
+            
+            // Показуємо повідомлення
+            tg.showAlert(`✅ Клуб "${club.name}" створено!\nКод: ${club.invite_code}`);
+            
+            // Повертаємось до списку
+            document.getElementById('clubs-list-container').style.display = 'block';
+            document.getElementById('create-club-form-container').style.display = 'none';
+            document.getElementById('join-club-container').style.display = 'block';
+            
+            // Перезавантажуємо список клубів
+            await ClubsUI.loadClubs();
+            
+        } catch (error) {
+            console.error('Error creating club:', error);
+        } finally {
+            UI.setLoading(false);
+        }
+    });
+    
+    // Форма приєднання до клубу
+    document.getElementById('join-club-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const inviteCode = document.getElementById('join-invite-code').value.trim().toUpperCase();
+        const message = document.getElementById('join-message').value.trim();
+        
+        if (!inviteCode) {
+            tg.showAlert('Введіть код запрошення');
+            return;
+        }
+        
+        try {
+            tg.HapticFeedback.impactOccurred('medium');
+            UI.setLoading(true);
+            
+            await API.clubs.requestJoin(inviteCode, message);
+            
+            // Очищуємо форму
+            document.getElementById('join-club-form').reset();
+            
+            // Показуємо повідомлення
+            tg.showAlert('✅ Запит надіслано! Очікуйте схвалення від адміністратора');
+            
+        } catch (error) {
+            console.error('Error joining club:', error);
+        } finally {
+            UI.setLoading(false);
+        }
+    });
     });
     
     // Back button у Telegram

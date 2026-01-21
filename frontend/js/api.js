@@ -102,6 +102,70 @@ const API = {
     },
 
     /**
+     * Clubs endpoints
+     */
+    clubs: {
+        // Створити клуб
+        async create(clubData) {
+            return API.request('/api/clubs', {
+                method: 'POST',
+                body: JSON.stringify(clubData)
+            });
+        },
+        
+        // Отримати мої клуби
+        async getMy() {
+            return API.request('/api/clubs/my');
+        },
+        
+        // Отримати деталі клубу
+        async getDetails(clubId) {
+            return API.request(`/api/clubs/${clubId}`);
+        },
+        
+        // Оновити клуб
+        async update(clubId, clubData) {
+            return API.request(`/api/clubs/${clubId}`, {
+                method: 'PATCH',
+                body: JSON.stringify(clubData)
+            });
+        },
+        
+        // Запит на приєднання
+        async requestJoin(inviteCode, message) {
+            return API.request('/api/clubs/join', {
+                method: 'POST',
+                body: JSON.stringify({ invite_code: inviteCode, message })
+            });
+        },
+        
+        // Отримати запити на приєднання
+        async getJoinRequests(clubId, status = 'pending') {
+            return API.request(`/api/clubs/${clubId}/requests?status=${status}`);
+        },
+        
+        // Схвалити/відхилити запит
+        async reviewJoinRequest(clubId, requestId, action) {
+            return API.request(`/api/clubs/${clubId}/requests/${requestId}`, {
+                method: 'POST',
+                body: JSON.stringify({ action })
+            });
+        },
+        
+        // Отримати учасників клубу
+        async getMembers(clubId) {
+            return API.request(`/api/clubs/${clubId}/members`);
+        },
+        
+        // Видалити учасника
+        async removeMember(clubId, userId) {
+            return API.request(`/api/clubs/${clubId}/members/${userId}`, {
+                method: 'DELETE'
+            });
+        }
+    },
+
+    /**
      * Health check
      */
     async healthCheck() {

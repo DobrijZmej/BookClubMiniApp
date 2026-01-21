@@ -444,6 +444,235 @@ body {
     background: rgba(0,0,0,0.05);
 }
 
+/* ===== Clubs Styles ===== */
+.club-selector {
+    padding: 15px;
+    background: var(--tg-theme-secondary-bg-color);
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.club-selector label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.club-selector select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--tg-theme-hint-color);
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.section-header h2, .section-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 14px;
+}
+
+.clubs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.club-card {
+    background: var(--tg-theme-secondary-bg-color);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.club-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.club-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 8px;
+}
+
+.club-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.club-card-code {
+    font-size: 12px;
+    color: var(--tg-theme-hint-color);
+    font-family: monospace;
+    background: rgba(0,0,0,0.05);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.club-card-description {
+    font-size: 14px;
+    color: var(--tg-theme-hint-color);
+    margin-bottom: 8px;
+}
+
+.club-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--tg-theme-hint-color);
+}
+
+.club-role-badge {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.role-owner {
+    background: #fbbf24;
+    color: #78350f;
+}
+
+.role-admin {
+    background: #60a5fa;
+    color: #1e3a8a;
+}
+
+.role-member {
+    background: #86efac;
+    color: #14532d;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+}
+
+.members-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.member-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: var(--tg-theme-secondary-bg-color);
+    border-radius: 8px;
+}
+
+.member-info {
+    flex: 1;
+}
+
+.member-name {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.member-username {
+    font-size: 12px;
+    color: var(--tg-theme-hint-color);
+}
+
+.member-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.request-item {
+    padding: 15px;
+    background: var(--tg-theme-secondary-bg-color);
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+.request-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 8px;
+}
+
+.request-user {
+    font-weight: 600;
+}
+
+.request-date {
+    font-size: 12px;
+    color: var(--tg-theme-hint-color);
+}
+
+.request-message {
+    font-size: 14px;
+    color: var(--tg-theme-text-color);
+    margin-bottom: 12px;
+    font-style: italic;
+}
+
+.request-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-approve {
+    background-color: #22c55e;
+}
+
+.btn-approve:hover {
+    background-color: #16a34a;
+}
+
+.btn-reject {
+    background-color: #ef4444;
+}
+
+.btn-reject:hover {
+    background-color: #dc2626;
+}
+
+.btn-danger {
+    background-color: #ef4444;
+}
+
+.btn-danger:hover {
+    background-color: #dc2626;
+}
+
+#join-club-container {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0,0,0,0.1);
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
     .books-grid {

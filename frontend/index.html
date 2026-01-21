@@ -33,13 +33,13 @@
                 <span class="tab-icon">📖</span>
                 <span>Бібліотека</span>
             </button>
+            <button class="tab" data-view="clubs">
+                <span class="tab-icon">🏛️</span>
+                <span>Клуби</span>
+            </button>
             <button class="tab" data-view="add-book">
                 <span class="tab-icon">➕</span>
                 <span>Додати</span>
-            </button>
-            <button class="tab" data-view="profile">
-                <span class="tab-icon">👤</span>
-                <span>Профіль</span>
             </button>
         </nav>
 
@@ -88,32 +88,86 @@
                 </form>
             </div>
 
-            <!-- Profile View -->
-            <div id="profile-view" class="view">
-                <div class="profile-card">
-                    <div class="profile-avatar">
-                        <span id="profile-initials">👤</span>
+            <!-- Clubs View -->
+            <div id="clubs-view" class="view">
+                <!-- Active Club Selector -->
+                <div id="active-club-selector" class="club-selector" style="display: none;">
+                    <label>Активний клуб:</label>
+                    <select id="active-club-select">
+                        <option value="">Оберіть клуб...</option>
+                    </select>
+                </div>
+
+                <!-- Clubs List -->
+                <div id="clubs-list-container">
+                    <div class="section-header">
+                        <h2>Мої клуби</h2>
+                        <button class="btn btn-primary btn-sm" id="create-club-btn">Створити клуб</button>
                     </div>
-                    <h2 id="profile-name">Ім'я користувача</h2>
-                    <p id="profile-username" class="text-muted">@username</p>
-                    
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <span class="stat-value" id="stat-added">0</span>
-                            <span class="stat-label">Додано книг</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-value" id="stat-read">0</span>
-                            <span class="stat-label">Прочитано</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-value" id="stat-reading">0</span>
-                            <span class="stat-label">Читаю зараз</span>
-                        </div>
+                    <div id="clubs-list" class="clubs-list">
+                        <!-- Clubs will be loaded here -->
                     </div>
+                </div>
+
+                <!-- Create Club Form (hidden by default) -->
+                <div id="create-club-form-container" style="display: none;">
+                    <div class="section-header">
+                        <h2>Створити новий клуб</h2>
+                        <button class="btn btn-secondary btn-sm" id="cancel-create-club-btn">Скасувати</button>
+                    </div>
+                    <form id="create-club-form" class="form">
+                        <div class="form-group">
+                            <label for="club-name">Назва клубу *</label>
+                            <input type="text" id="club-name" required maxlength="255" placeholder="Наприклад: Любителі фантастики">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="club-description">Опис клубу</label>
+                            <textarea id="club-description" rows="3" maxlength="500" placeholder="Коротко опишіть ваш клуб..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="club-is-public">
+                                <span>Публічний клуб (видимий у пошуку)</span>
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Створити</button>
+                    </form>
+                </div>
+
+                <!-- Join Club Form -->
+                <div id="join-club-container">
+                    <div class="section-header">
+                        <h3>Приєднатися до клубу</h3>
+                    </div>
+                    <form id="join-club-form" class="form">
+                        <div class="form-group">
+                            <label for="join-invite-code">Код запрошення</label>
+                            <input type="text" id="join-invite-code" required maxlength="20" placeholder="Введіть код" style="text-transform: uppercase;">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="join-message">Повідомлення (опціонально)</label>
+                            <textarea id="join-message" rows="2" maxlength="500" placeholder="Чому хочете приєднатися?"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-secondary">Надіслати запит</button>
+                    </form>
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- Club Detail Modal -->
+    <div id="club-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="close-club-modal">&times;</button>
+            <div id="club-modal-body">
+                <!-- Content will be loaded dynamically -->
+            </div>
+        </div>
     </div>
 
     <!-- Book Detail Modal -->
@@ -130,6 +184,7 @@
     <script src="js/config.js"></script>
     <script src="js/api.js"></script>
     <script src="js/ui.js"></script>
+    <script src="js/clubs-ui.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
