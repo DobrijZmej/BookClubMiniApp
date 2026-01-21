@@ -4,13 +4,37 @@ from sqlalchemy import desc
 from typing import List
 from app.database import get_db
 from app.auth import get_current_user
-from app.models.db_models import Book, BookLoan, BookStatus, LoanStatus
+from app.models.db_models import Book, BookLoan, BookStatus, LoanStatus, Club, ClubStatus
 from app.models.schemas import (
     BookCreate, BookUpdate, BookResponse, 
     BookDetailResponse, BorrowBookRequest
 )
 
 router = APIRouter(prefix="/api/books", tags=["Books"])
+
+
+def ensure_club_exists(db: Session, chat_id: str, chat_name: str = None) -> Club:
+    """Створити клуб якщо не існує"""
+    club = db.query(Club).filter(Club.chat_id == chat_id).first()
+    
+    if not club:
+        # Генеруємо ім'я клубу
+        if not chat_name:
+            if chat_id.startswith('user_'):
+                chat_name = "Особиста бібліотека"
+            else:
+                chat_name = f"Клуб #{chat_id}"
+        
+        club = Club(
+            name=chat_name,
+            chat_id=chat_id,
+            status=ClubStatus.ACTIVE
+        )
+        db.add(club)
+        db.commit()
+        db.refresh(club)
+    
+    return club
 
 
 @router.get("/{chat_id}", response_model=List[BookResponse])
@@ -22,6 +46,9 @@ async def get_books(
     user: dict = Depends(get_current_user)
 ):
     """Отримати всі книги для чату з фільтрацією"""
+    # Автоматично створюємо клуб якщо не існує
+    ensure_club_exists(db, chat_id)
+    
     query = db.query(Book).filter(Book.chat_id == chat_id)
     
     # Фільтр по статусу
@@ -82,6 +109,9 @@ async def create_book(
 ):
     """Створити нову книгу"""
     telegram_user = user['user']
+    
+    # Автоматично створюємо клуб якщо не існує
+    ensure_club_exists(db, book_data.chat_id)
     
     new_book = Book(
         title=book_data.title,

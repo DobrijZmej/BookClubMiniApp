@@ -7,15 +7,28 @@
     tg.expand();
     applyTelegramTheme();
     
-    // Отримуємо chat_id з start_param або query_id
-    // ВАЖЛИВО: Ви повинні передати chat_id через URL при відкритті Mini App
-    const urlParams = new URLSearchParams(window.location.search);
-    CONFIG.CHAT_ID = urlParams.get('chat_id') || 
-                     tg.initDataUnsafe.start_param || 
-                     'default_chat'; // Для тестування
+    // Отримуємо chat_id автоматично з Telegram
+    let chatId = null;
+    
+    // Якщо відкрито в групі/каналі - використовуємо chat.id
+    if (tg.initDataUnsafe.chat && tg.initDataUnsafe.chat.id) {
+        chatId = String(tg.initDataUnsafe.chat.id);
+    }
+    // Якщо приватний чат - використовуємо user.id як chat_id
+    else if (tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
+        chatId = `user_${tg.initDataUnsafe.user.id}`;
+    }
+    // Fallback для тестування
+    else {
+        chatId = 'default_chat';
+    }
+    
+    CONFIG.CHAT_ID = chatId;
     
     console.log('Chat ID:', CONFIG.CHAT_ID);
+    console.log('Chat Type:', tg.initDataUnsafe.chat_type || 'private');
     console.log('User:', tg.initDataUnsafe.user);
+    console.log('Chat:', tg.initDataUnsafe.chat);
     
     // Відображаємо username в header
     if (tg.initDataUnsafe.user) {
