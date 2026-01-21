@@ -143,6 +143,7 @@
     
     // Кнопка "Створити клуб"
     document.getElementById('create-club-btn').addEventListener('click', () => {
+        console.log('Create club button clicked');
         document.getElementById('clubs-list-container').style.display = 'none';
         document.getElementById('create-club-form-container').style.display = 'block';
         document.getElementById('join-club-container').style.display = 'none';
