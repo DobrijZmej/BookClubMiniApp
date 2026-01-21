@@ -69,12 +69,74 @@ class BorrowBookRequest(BaseModel):
     chat_id: str
 
 
+# Club Management Schemas
+class ClubCreate(BaseModel):
+    name: str = Field(..., min_length=1, max_length=255)
+    description: Optional[str] = None
+    is_public: bool = False
+
+
+class ClubUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=255)
+    description: Optional[str] = None
+    is_public: Optional[bool] = None
+
+
+class ClubMemberResponse(BaseModel):
+    id: int
+    user_id: str
+    user_name: Optional[str]
+    username: Optional[str]
+    role: str
+    joined_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+
 class ClubResponse(BaseModel):
     id: int
     name: str
+    description: Optional[str]
     chat_id: str
+    owner_id: str
+    invite_code: str
+    is_public: bool
     status: str
     created_at: datetime
     
     class Config:
         from_attributes = True
+
+
+class ClubDetailResponse(ClubResponse):
+    members: List[ClubMemberResponse] = []
+    member_count: Optional[int] = None
+    
+    class Config:
+        from_attributes = True
+
+
+class JoinRequestCreate(BaseModel):
+    invite_code: str
+    message: Optional[str] = Field(None, max_length=500)
+
+
+class JoinRequestResponse(BaseModel):
+    id: int
+    club_id: int
+    user_id: str
+    user_name: Optional[str]
+    username: Optional[str]
+    message: Optional[str]
+    status: str
+    created_at: datetime
+    reviewed_at: Optional[datetime]
+    reviewed_by: Optional[str]
+    
+    class Config:
+        from_attributes = True
+
+
+class JoinRequestAction(BaseModel):
+    action: str = Field(..., regex="^(approve|reject)$")

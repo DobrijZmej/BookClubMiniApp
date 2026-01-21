@@ -1,8 +1,9 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Text, Enum
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Text, Enum, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
 import enum
+import secrets
 
 class ClubStatus(str, enum.Enum):
     ACTIVE = "active"
@@ -18,18 +19,67 @@ class LoanStatus(str, enum.Enum):
     RETURNED = "returned"
     WAITING = "waiting"
 
+class MemberRole(str, enum.Enum):
+    OWNER = "owner"
+    ADMIN = "admin"
+    MEMBER = "member"
+
+class JoinRequestStatus(str, enum.Enum):
+    PENDING = "pending"
+    APPROVED = "approved"
+    REJECTED = "rejected"
+
 
 class Club(Base):
     __tablename__ = "clubs"
     
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), nullable=False)
+    description = Column(Text)
     chat_id = Column(String(50), unique=True, nullable=False, index=True)
+    owner_id = Column(String(50), nullable=False, index=True)  # Telegram user ID засновника
+    invite_code = Column(String(20), unique=True, nullable=False, index=True)  # Унікальний код для приєднання
+    is_public = Column(Boolean, default=False)  # Публічний клуб (видимий у пошуку)
     status = Column(Enum(ClubStatus), default=ClubStatus.ACTIVE)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
     # Relationships
     books = relationship("Book", back_populates="club")
+    members = relationship("ClubMember", back_populates="club", cascade="all, delete-orphan")
+    join_requests = relationship("ClubJoinRequest", back_populates="club", cascade="all, delete-orphan")
+
+
+class ClubMember(Base):
+    __tablename__ = "club_members"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    club_id = Column(Integer, ForeignKey("clubs.id"), nullable=False, index=True)
+    user_id = Column(String(50), nullable=False, index=True)  # Telegram user ID
+    user_name = Column(String(255))  # Повне ім'я
+    username = Column(String(100))  # @username
+    role = Column(Enum(MemberRole), default=MemberRole.MEMBER)
+    joined_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    # Relationships
+    club = relationship("Club", back_populates="members")
+
+
+class ClubJoinRequest(Base):
+    __tablename__ = "club_join_requests"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    club_id = Column(Integer, ForeignKey("clubs.id"), nullable=False, index=True)
+    user_id = Column(String(50), nullable=False, index=True)  # Telegram user ID
+    user_name = Column(String(255))  # Повне ім'я
+    username = Column(String(100))  # @username
+    message = Column(Text)  # Повідомлення від користувача
+    status = Column(Enum(JoinRequestStatus), default=JoinRequestStatus.PENDING)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    reviewed_at = Column(DateTime(timezone=True))
+    reviewed_by = Column(String(50))  # User ID хто розглянув запит
+    
+    # Relationships
+    club = relationship("Club", back_populates="join_requests")
 
 
 class Book(Base):

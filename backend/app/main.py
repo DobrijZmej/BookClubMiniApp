@@ -8,7 +8,7 @@ import os
 load_dotenv()
 
 # Імпорт роутерів
-from app.routers import books, user
+from app.routers import books, user, clubs
 
 # Створення FastAPI app
 app = FastAPI(
@@ -30,6 +30,7 @@ app.add_middleware(
 # Реєстрація роутерів
 app.include_router(books.router)
 app.include_router(user.router)
+app.include_router(clubs.router)
 
 
 @app.get("/")
