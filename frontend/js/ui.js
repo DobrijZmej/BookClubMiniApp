@@ -38,8 +38,7 @@ const UI = {
         const container = document.getElementById('books-container');
         const emptyState = document.getElementById('empty-state');
         
-        // ДІАГНОСТИКА
-        alert(`renderBooks: отримано ${books ? books.length : 0} книг`);
+        console.log(`renderBooks: ${books ? books.length : 0} books`);
         
         if (!books || books.length === 0) {
             container.innerHTML = '';
@@ -50,8 +49,10 @@ const UI = {
         emptyState.style.display = 'none';
         
         container.innerHTML = books.map(book => {
-            const statusIcon = book.status === 'available' ? '🟢' : '🔴';
+            const statusIcon = (book.status === 'available' || book.status === 'AVAILABLE') ? '🟢' : '🔴';
             const isOwner = book.owner_id === String(tg.initDataUnsafe.user?.id);
+            
+            console.log(`Book ${book.title}: status="${book.status}", isOwner=${isOwner}`);
             
             return `
                 <div class="book-card" data-book-id="${book.id}">
@@ -72,18 +73,18 @@ const UI = {
                             Деталі
                         </button>
                         
-                        ${book.status === 'available' 
+                        ${(book.status === 'available' || book.status === 'AVAILABLE') 
                             ? `<button class="btn-small btn-borrow" onclick="UI.borrowBook(${book.id})">
                                 Взяти
                                </button>`
-                            : book.status === 'reading' && !isOwner
+                            : (book.status === 'reading' || book.status === 'READING') && !isOwner
                                 ? `<button class="btn-small btn-details" disabled>
                                     Зайнято
                                    </button>`
                                 : ''
                         }
                         
-                        ${book.status === 'reading' && isOwner
+                        ${(book.status === 'reading' || book.status === 'READING') && isOwner
                             ? `<button class="btn-small btn-return" onclick="UI.returnBook(${book.id})">
                                 Повернути
                                </button>`
@@ -225,18 +226,18 @@ const UI = {
             const status = document.getElementById('filter-status').value;
             const search = document.getElementById('search-input').value;
             
-            // ДІАГНОСТИКА
-            alert(`Завантажуємо книги для клубу ID: ${clubId}`);
+            console.log(`Loading books for club ${clubId}, status: ${status}`);
             
             const books = await API.books.getAll(clubId, { status, search });
             
-            // ДІАГНОСТИКА
-            alert(`Отримано ${books.length} книг\nПерша книга: ${books[0] ? JSON.stringify(books[0]).substring(0, 150) : 'немає'}`);
+            console.log(`Received ${books.length} books:`, books);
             
             this.renderBooks(books);
         } catch (error) {
             console.error('Error loading books:', error);
-            alert(`Помилка завантаження книг: ${error.message}`);
+            if (tg.showAlert) {
+                tg.showAlert(`Помилка: ${error.message.substring(0, 100)}`);
+            }
         }
     },
 

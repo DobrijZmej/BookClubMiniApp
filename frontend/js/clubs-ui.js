@@ -11,7 +11,7 @@ const ClubsUI = {
             const clubs = await API.clubs.getMy();
             
             // ДІАГНОСТИКА
-            alert(`Завантажено ${clubs.length} клубів\nПерший клуб: ${JSON.stringify(clubs[0], null, 2).substring(0, 200)}`);
+            console.log('Clubs loaded:', clubs);
             
             const container = document.getElementById('my-clubs-list');
             const emptyState = document.getElementById('clubs-empty-state');
