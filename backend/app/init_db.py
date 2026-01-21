@@ -12,5 +12,8 @@ if __name__ == "__main__":
     print("✅ База даних успішно ініціалізована!")
     print("\nСтворені таблиці:")
     print("  - clubs")
+    print("  - club_members") 
+    print("  - club_join_requests")
     print("  - books")
     print("  - book_loans")
+    print("  - book_reviews")

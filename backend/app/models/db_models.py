@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Text, Enum, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Text, Enum, Boolean, Index
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
@@ -100,6 +100,7 @@ class Book(Base):
     # Relationships
     club = relationship("Club", back_populates="books")
     loans = relationship("BookLoan", back_populates="book")
+    reviews = relationship("BookReview", back_populates="book", cascade="all, delete-orphan")
 
 
 class BookLoan(Base):
@@ -115,3 +116,25 @@ class BookLoan(Base):
     
     # Relationships
     book = relationship("Book", back_populates="loans")
+
+
+class BookReview(Base):
+    __tablename__ = "book_reviews"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    book_id = Column(Integer, ForeignKey("books.id"), nullable=False, index=True)
+    user_id = Column(String(50), nullable=False, index=True)  # Telegram user ID
+    user_name = Column(String(255))  # Повне ім'я користувача
+    username = Column(String(100))  # @username з Telegram
+    rating = Column(Integer, nullable=False)  # Рейтинг від 1 до 5
+    comment = Column(Text)  # Коментар до відгука
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), nullable=True)
+    
+    # Relationships
+    book = relationship("Book", back_populates="reviews")
+    
+    # Унікальний індекс: один користувач може залишити тільки один відгук на книгу
+    __table_args__ = (
+        Index('idx_book_user_review', 'book_id', 'user_id', unique=True),
+    )

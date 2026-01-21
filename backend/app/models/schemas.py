@@ -28,6 +28,14 @@ class BookUpdate(BaseModel):
     description: Optional[str] = None
     cover_url: Optional[str] = None
 
+class BookReviewCreate(BaseModel):
+    rating: int = Field(..., ge=1, le=5)  # Рейтинг від 1 до 5 зірок
+    comment: Optional[str] = Field(None, max_length=1000)
+
+class BookReviewUpdate(BaseModel):
+    rating: Optional[int] = Field(None, ge=1, le=5)
+    comment: Optional[str] = Field(None, max_length=1000)
+
 
 # Response schemas
 class BookLoanResponse(BaseModel):
@@ -37,6 +45,20 @@ class BookLoanResponse(BaseModel):
     status: str
     borrowed_at: datetime
     returned_at: Optional[datetime]
+    
+    class Config:
+        from_attributes = True
+
+class BookReviewResponse(BaseModel):
+    id: int
+    book_id: int
+    user_id: str
+    user_name: Optional[str]
+    username: Optional[str]
+    rating: int
+    comment: Optional[str]
+    created_at: datetime
+    updated_at: Optional[datetime]
     
     class Config:
         from_attributes = True
@@ -60,6 +82,7 @@ class BookResponse(BaseModel):
 
 class BookDetailResponse(BookResponse):
     loans: List[BookLoanResponse] = []
+    reviews: List[BookReviewResponse] = []
     
     class Config:
         from_attributes = True

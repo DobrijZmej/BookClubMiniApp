@@ -70,7 +70,9 @@
         tg.HapticFeedback.impactOccurred('soft');
         
         // Перевірити поточний view
-        if (document.getElementById('club-detail-view').classList.contains('active')) {
+        if (document.getElementById('book-review-view').classList.contains('active')) {
+            UI.goBackFromReview();
+        } else if (document.getElementById('club-detail-view').classList.contains('active')) {
             ClubsUI.backToClubsList();
         } else if (document.getElementById('add-book-view').classList.contains('active')) {
             // Повернутися до деталей клубу
@@ -299,6 +301,22 @@
             UI.setLoading(false);
         }
     });
+
+    // Обробники для форми відгука
+    const reviewForm = document.getElementById('book-review-form');
+    if (reviewForm) {
+        reviewForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await UI.saveBookReview();
+        });
+    }
+
+    const deleteReviewBtn = document.getElementById('delete-review-btn');
+    if (deleteReviewBtn) {
+        deleteReviewBtn.addEventListener('click', async () => {
+            await UI.deleteBookReview();
+        });
+    }
     
     // ===== Initial Load =====
     

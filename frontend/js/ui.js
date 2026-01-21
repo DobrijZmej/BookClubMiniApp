@@ -74,6 +74,10 @@ const UI = {
                             Деталі
                         </button>
                         
+                        <button class="btn-small btn-review" onclick="UI.showBookReview(${book.id})">
+                            ⭐ Відгук
+                        </button>
+                        
                         ${(book.status === 'available' || book.status === 'AVAILABLE') 
                             ? `<button class="btn-small btn-borrow" onclick="UI.borrowBook(${book.id})">
                                 Взяти
@@ -129,6 +133,66 @@ const UI = {
             if (!modalBody) {
                 console.error('❌ Modal body element not found!');
                 return;
+            }
+
+            // Завантажити відгуки
+            let reviewsHtml = '';
+            try {
+                const reviews = await API.books.getReviews(bookId);
+                console.log('📝 Отримано відгуки:', reviews);
+                
+                if (reviews && reviews.length > 0) {
+                    // Розрахувати середній рейтинг
+                    const avgRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
+                    const avgStars = this.generateStarRating(avgRating);
+                    
+                    reviewsHtml = `
+                        <div style="margin-top: 16px;">
+                            <strong>⭐ Відгуки:</strong>
+                            <div class="reviews-stats">
+                                <div class="avg-rating">
+                                    <span class="avg-stars">${avgStars}</span>
+                                    <span class="avg-number">${avgRating.toFixed(1)} з 5</span>
+                                    <span class="reviews-count">(${reviews.length} ${this.getPluralForm(reviews.length, 'відгук', 'відгуки', 'відгуків')})</span>
+                                </div>
+                            </div>
+                            ${reviews.map(review => {
+                                const stars = this.generateStarRating(review.rating);
+                                const date = new Date(review.created_at).toLocaleDateString('uk-UA');
+                                
+                                return `
+                                    <div class="review-item">
+                                        <div class="review-header">
+                                            <span class="review-user">👤 ${this.escapeHtml(review.user_name || review.username || 'Анонім')}</span>
+                                            <span class="review-date">${date}</span>
+                                        </div>
+                                        <div class="review-rating">${stars}</div>
+                                        ${review.comment ? `<div class="review-comment">${this.escapeHtml(review.comment)}</div>` : ''}
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `;
+                } else {
+                    reviewsHtml = `
+                        <div style="margin-top: 16px;">
+                            <strong>⭐ Відгуки:</strong>
+                            <div style="text-align: center; padding: 20px; color: var(--tg-theme-hint-color); background: rgba(128, 128, 128, 0.1); border-radius: 8px; margin-top: 8px;">
+                                📝 Ще немає відгуків
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Помилка завантаження відгуків:', error);
+                reviewsHtml = `
+                    <div style="margin-top: 16px;">
+                        <strong>⭐ Відгуки:</strong>
+                        <div style="text-align: center; padding: 20px; color: var(--tg-theme-hint-color); background: rgba(255, 0, 0, 0.1); border-radius: 8px; margin-top: 8px;">
+                            ❌ Помилка завантаження відгуків
+                        </div>
+                    </div>
+                `;
             }
             
             modalBody.innerHTML = `
@@ -199,6 +263,8 @@ const UI = {
                         : '<div style="margin-top: 12px; color: var(--tg-theme-hint-color); text-align: center; padding: 20px; background: rgba(128, 128, 128, 0.1); border-radius: 8px;">📖 Ще ніхто не читав цю книгу</div>'
                     }
                 </div>
+                
+                ${reviewsHtml}
             `;
             
             console.log('🖼️ Контент модального вікна:', modalBody.innerHTML);
@@ -207,6 +273,43 @@ const UI = {
         } catch (error) {
             console.error('❌ Error showing book details:', error);
         }
+    },
+
+    /**
+     * Згенерувати зірки рейтингу для відображення
+     */
+    generateStarRating(rating) {
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 >= 0.5;
+        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+        
+        let stars = '';
+        
+        // Повні зірки
+        for (let i = 0; i < fullStars; i++) {
+            stars += '⭐';
+        }
+        
+        // Половина зірки
+        if (hasHalfStar) {
+            stars += '⭐'; // Використаємо повну зірку
+        }
+        
+        // Порожні зірки
+        for (let i = 0; i < emptyStars; i++) {
+            stars += '☆';
+        }
+        
+        return stars;
+    },
+
+    /**
+     * Отримати правильну форму множини
+     */
+    getPluralForm(count, one, few, many) {
+        if (count % 10 === 1 && count % 100 !== 11) return one;
+        if ([2, 3, 4].includes(count % 10) && ![12, 13, 14].includes(count % 100)) return few;
+        return many;
     },
 
     /**
@@ -268,6 +371,155 @@ const UI = {
                 }
             }
         });
+    },
+
+    /**
+     * Показати форму відгука
+     */
+    async showBookReview(bookId) {
+        try {
+            UI.currentBookId = bookId;
+            
+            // Переключити на view відгука
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('book-review-view').classList.add('active');
+            
+            // Оновити заголовок
+            document.getElementById('header-title').textContent = '⭐ Відгук на книгу';
+            document.getElementById('back-button').style.display = 'block';
+            
+            // Спробувати завантажити існуючий відгук
+            try {
+                const existingReview = await API.books.getMyReview(bookId);
+                console.log('📝 Існуючий відгук:', existingReview);
+                
+                // Заповнити форму існуючими даними
+                this.fillReviewForm(existingReview);
+                
+                // Показати кнопку видалення
+                document.getElementById('delete-review-btn').style.display = 'block';
+                
+                // Оновити заголовок
+                document.getElementById('header-title').textContent = '⭐ Редагувати відгук';
+                
+            } catch (error) {
+                console.log('📝 Відгук не знайдено, показую нову форму');
+                // Очистити форму для нового відгука
+                this.clearReviewForm();
+                document.getElementById('delete-review-btn').style.display = 'none';
+            }
+            
+        } catch (error) {
+            console.error('Error showing review form:', error);
+        }
+    },
+
+    /**
+     * Заповнити форму відгука існуючими даними
+     */
+    fillReviewForm(review) {
+        // Встановити рейтинг
+        const ratingInput = document.querySelector(`input[name="rating"][value="${review.rating}"]`);
+        if (ratingInput) {
+            ratingInput.checked = true;
+        }
+        
+        // Встановити коментар
+        document.getElementById('review-comment').value = review.comment || '';
+    },
+
+    /**
+     * Очистити форму відгука
+     */
+    clearReviewForm() {
+        // Очистити рейтинг
+        document.querySelectorAll('input[name="rating"]').forEach(input => {
+            input.checked = false;
+        });
+        
+        // Очистити коментар
+        document.getElementById('review-comment').value = '';
+    },
+
+    /**
+     * Зберегти відгук
+     */
+    async saveBookReview() {
+        try {
+            if (!UI.currentBookId) {
+                console.error('No book selected');
+                return;
+            }
+            
+            // Отримати дані з форми
+            const rating = document.querySelector('input[name="rating"]:checked')?.value;
+            const comment = document.getElementById('review-comment').value.trim();
+            
+            if (!rating) {
+                tg.showAlert('Оберіть рейтинг від 1 до 5 зірок');
+                return;
+            }
+            
+            const reviewData = {
+                rating: parseInt(rating),
+                comment: comment || null
+            };
+            
+            tg.HapticFeedback.impactOccurred('medium');
+            
+            await API.books.createOrUpdateReview(UI.currentBookId, reviewData);
+            tg.showAlert('✅ Відгук збережено!');
+            
+            // Повернутися назад
+            this.goBackFromReview();
+            
+        } catch (error) {
+            console.error('Error saving review:', error);
+            tg.showAlert(`Помилка: ${error.message}`);
+        }
+    },
+
+    /**
+     * Видалити відгук
+     */
+    async deleteBookReview() {
+        tg.showConfirm('Видалити відгук?', async (confirmed) => {
+            if (confirmed) {
+                try {
+                    if (!UI.currentBookId) {
+                        console.error('No book selected');
+                        return;
+                    }
+                    
+                    tg.HapticFeedback.impactOccurred('heavy');
+                    
+                    await API.books.deleteReview(UI.currentBookId);
+                    tg.showAlert('✅ Відгук видалено');
+                    
+                    // Повернутися назад
+                    this.goBackFromReview();
+                    
+                } catch (error) {
+                    console.error('Error deleting review:', error);
+                    tg.showAlert(`Помилка: ${error.message}`);
+                }
+            }
+        });
+    },
+
+    /**
+     * Повернутися з форми відгука
+     */
+    goBackFromReview() {
+        UI.currentBookId = null;
+        
+        // Повернутися до деталей клубу
+        document.getElementById('book-review-view').classList.remove('active');
+        document.getElementById('club-detail-view').classList.add('active');
+        
+        // Відновити заголовок
+        const clubName = document.getElementById('header-title').dataset.clubName || 'Клуб';
+        document.getElementById('header-title').textContent = `📚 ${clubName}`;
     },
 
     /**

@@ -3,10 +3,10 @@ from sqlalchemy.orm import Session
 from sqlalchemy import desc
 from typing import List, Optional
 from app.database import get_db
-from app.models.db_models import Book, BookLoan, BookStatus, LoanStatus, Club
+from app.models.db_models import Book, BookLoan, BookStatus, LoanStatus, Club, BookReview
 from app.models.schemas import (
     BookCreate, BookUpdate, BookResponse, 
-    BookDetailResponse
+    BookDetailResponse, BookReviewCreate, BookReviewUpdate, BookReviewResponse
 )
 from app.auth import get_current_user
 
@@ -60,9 +60,15 @@ async def get_book_details(
         BookLoan.book_id == book_id
     ).order_by(desc(BookLoan.borrowed_at)).all()
     
+    # Завантажуємо відгуки
+    reviews = db.query(BookReview).filter(
+        BookReview.book_id == book_id
+    ).order_by(desc(BookReview.created_at)).all()
+    
     return BookDetailResponse(
         **book.__dict__,
-        loans=loans
+        loans=loans,
+        reviews=reviews
     )
 
 @router.post("", response_model=BookResponse, status_code=201)
@@ -228,3 +234,119 @@ async def return_book(
     db.refresh(book)
     
     return book
+
+
+@router.post("/{book_id}/review", response_model=BookReviewResponse)
+async def create_or_update_review(
+    book_id: int,
+    review_data: BookReviewCreate,
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user)
+):
+    """Створити або оновити відгук на книгу"""
+    telegram_user = user['user']
+    user_id = str(telegram_user['id'])
+    
+    # Перевіряємо, що книга існує
+    book = db.query(Book).filter(
+        Book.id == book_id,
+        Book.status != BookStatus.DELETED
+    ).first()
+    
+    if not book:
+        raise HTTPException(status_code=404, detail="Книга не знайдена")
+    
+    # Перевіряємо, чи є вже відгук від цього користувача
+    existing_review = db.query(BookReview).filter(
+        BookReview.book_id == book_id,
+        BookReview.user_id == user_id
+    ).first()
+    
+    # Формуємо повне ім'я
+    first_name = telegram_user.get('first_name', '')
+    last_name = telegram_user.get('last_name', '')
+    user_name = f"{first_name} {last_name}".strip() or "Користувач"
+    
+    if existing_review:
+        # Оновлюємо існуючий відгук
+        existing_review.rating = review_data.rating
+        existing_review.comment = review_data.comment
+        existing_review.user_name = user_name
+        existing_review.username = telegram_user.get('username', '')
+        from datetime import datetime
+        existing_review.updated_at = datetime.now()
+        
+        db.commit()
+        db.refresh(existing_review)
+        return existing_review
+    else:
+        # Створюємо новий відгук
+        new_review = BookReview(
+            book_id=book_id,
+            user_id=user_id,
+            user_name=user_name,
+            username=telegram_user.get('username', ''),
+            rating=review_data.rating,
+            comment=review_data.comment
+        )
+        
+        db.add(new_review)
+        db.commit()
+        db.refresh(new_review)
+        return new_review
+
+
+@router.get("/{book_id}/review", response_model=BookReviewResponse)
+async def get_my_review(
+    book_id: int,
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user)
+):
+    """Отримати мій відгук на книгу"""
+    telegram_user = user['user']
+    user_id = str(telegram_user['id'])
+    
+    review = db.query(BookReview).filter(
+        BookReview.book_id == book_id,
+        BookReview.user_id == user_id
+    ).first()
+    
+    if not review:
+        raise HTTPException(status_code=404, detail="Відгук не знайдено")
+    
+    return review
+
+
+@router.delete("/{book_id}/review", status_code=204)
+async def delete_review(
+    book_id: int,
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user)
+):
+    """Видалити мій відгук"""
+    telegram_user = user['user']
+    user_id = str(telegram_user['id'])
+    
+    review = db.query(BookReview).filter(
+        BookReview.book_id == book_id,
+        BookReview.user_id == user_id
+    ).first()
+    
+    if not review:
+        raise HTTPException(status_code=404, detail="Відгук не знайдено")
+    
+    db.delete(review)
+    db.commit()
+    
+    return None
+
+
+@router.get("/{book_id}/reviews", response_model=List[BookReviewResponse])
+async def get_book_reviews(
+    book_id: int,
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user)
+):
+    """Отримати всі відгуки про книгу"""
+    reviews = db.query(BookReview).filter(BookReview.book_id == book_id).all()
+    return reviews

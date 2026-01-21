@@ -89,6 +89,30 @@ const API = {
             return API.request(`/api/books/${bookId}`, {
                 method: 'DELETE'
             });
+        },
+        
+        // Створити/оновити відгук
+        async createOrUpdateReview(bookId, reviewData) {
+            return API.request(`/api/books/${bookId}/review`, {
+                method: 'POST',
+                body: JSON.stringify(reviewData)
+            });
+        },
+        
+        // Отримати мій відгук
+        async getMyReview(bookId) {
+            return API.request(`/api/books/${bookId}/review`);
+        },
+        
+        // Видалити відгук
+        async deleteReview(bookId) {
+            return API.request(`/api/books/${bookId}/review`, {
+                method: 'DELETE'
+            });
+        },
+
+        async getReviews(bookId) {
+            return API.request(`/api/books/${bookId}/reviews`);
         }
     },
 
