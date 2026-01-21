@@ -15,17 +15,13 @@ ALTER TABLE books
 MODIFY COLUMN club_id INT NOT NULL,
 ADD INDEX idx_club_id (club_id);
 
--- 4. Видаляємо старий Foreign Key на chat_id (якщо існує)
-ALTER TABLE books 
-DROP FOREIGN KEY IF EXISTS books_ibfk_1;
-
--- 5. Додаємо новий Foreign Key на clubs.id
+-- 4. Додаємо новий Foreign Key на clubs.id
 ALTER TABLE books 
 ADD CONSTRAINT fk_books_club_id 
 FOREIGN KEY (club_id) REFERENCES clubs(id) ON DELETE CASCADE;
 
--- 6. Видаляємо старе поле chat_id з books (опціонально, можна залишити для зворотної сумісності)
+-- 5. Видаляємо старе поле chat_id з books (опціонально, залишимо для зворотної сумісності)
 -- ALTER TABLE books DROP COLUMN chat_id;
 
--- 7. Оновлюємо book_loans якщо потрібно (можна видалити chat_id звідти)
+-- 6. Оновлюємо book_loans якщо потрібно (можна видалити chat_id звідти)
 -- ALTER TABLE book_loans DROP COLUMN chat_id;
