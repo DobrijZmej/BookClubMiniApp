@@ -92,7 +92,6 @@ class Book(Base):
     owner_name = Column(String(255))  # Повне ім'я користувача (first_name + last_name)
     owner_username = Column(String(100))  # @username з Telegram
     club_id = Column(Integer, ForeignKey("clubs.id"), nullable=False, index=True)
-    chat_id = Column(String(50))  # Legacy поле, можна видалити пізніше
     status = Column(Enum(BookStatus), default=BookStatus.AVAILABLE)
     cover_url = Column(String(500))  # Для майбутньої можливості додавати обкладинки
     description = Column(Text)  # Опис книги
@@ -110,7 +109,6 @@ class BookLoan(Base):
     book_id = Column(Integer, ForeignKey("books.id"), nullable=False, index=True)
     user_id = Column(String(50), nullable=False)  # Telegram user ID
     username = Column(String(100), nullable=False)
-    chat_id = Column(String(50), nullable=False)
     status = Column(Enum(LoanStatus), default=LoanStatus.READING)
     borrowed_at = Column(DateTime(timezone=True), server_default=func.now())
     returned_at = Column(DateTime(timezone=True), nullable=True)

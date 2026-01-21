@@ -1,92 +1,47 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
-from typing import List
+from typing import List, Optional
 from app.database import get_db
-from app.auth import get_current_user
-from app.models.db_models import Book, BookLoan, BookStatus, LoanStatus, Club, ClubStatus
+from app.models.db_models import Book, BookLoan, BookStatus, LoanStatus, Club
 from app.models.schemas import (
     BookCreate, BookUpdate, BookResponse, 
-    BookDetailResponse, BorrowBookRequest
+    BookDetailResponse
 )
+from app.auth import get_current_user
 
-router = APIRouter(prefix="/api/books", tags=["Books"])
-
-
-def ensure_club_exists(db: Session, chat_id: str, user_id: str, chat_name: str = None) -> Club:
-    """Створити клуб якщо не існує"""
-    club = db.query(Club).filter(Club.chat_id == chat_id).first()
-    
-    if not club:
-        import random
-        import string
-        
-        # Генеруємо ім'я клубу
-        if not chat_name:
-            if chat_id.startswith('user_'):
-                chat_name = "Особиста бібліотека"
-            else:
-                chat_name = f"Клуб #{chat_id}"
-        
-        # Генеруємо invite_code
-        invite_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
-        
-        club = Club(
-            name=chat_name,
-            chat_id=chat_id,
-            owner_id=user_id,
-            invite_code=invite_code,
-            is_public=False,
-            status=ClubStatus.ACTIVE
-        )
-        db.add(club)
-        db.commit()
-        db.refresh(club)
-    
-    return club
-
+router = APIRouter()
 
 @router.get("/club/{club_id}", response_model=List[BookResponse])
 async def get_books(
     club_id: int,
-    status: str = Query("available", regex="^(available|reading|all)$"),
-    search: str = Query(None, max_length=100),
+    search: Optional[str] = None,
     db: Session = Depends(get_db),
     user: dict = Depends(get_current_user)
 ):
-    """Отримати всі книги для клубу з фільтрацією"""
-    # Перевіряємо чи існує клуб
+    """Отримати список книг в клубі"""
+    # Перевіряємо, що клуб існує
     club = db.query(Club).filter(Club.id == club_id).first()
     if not club:
         raise HTTPException(status_code=404, detail="Club not found")
     
-    query = db.query(Book).filter(Book.club_id == club_id)
+    query = db.query(Book).filter(
+        Book.club_id == club_id,
+        Book.status != BookStatus.DELETED
+    )
     
-    # Фільтр по статусу
-    if status == "available":
-        query = query.filter(Book.status == BookStatus.AVAILABLE)
-    elif status == "reading":
-        query = query.filter(Book.status == BookStatus.READING)
-    # "all" - не фільтруємо
-    
-    # Виключаємо видалені книги
-    query = query.filter(Book.status != BookStatus.DELETED)
-    
-    # Пошук по назві або автору
     if search:
         search_pattern = f"%{search}%"
         query = query.filter(
-            (Book.title.like(search_pattern)) | 
+            (Book.title.like(search_pattern)) |
             (Book.author.like(search_pattern))
         )
     
     books = query.order_by(desc(Book.created_at)).all()
     return books
 
-
-@router.get("/{chat_id}/book/{book_id}", response_model=BookDetailResponse)
+@router.get("/book/{book_id}", response_model=BookDetailResponse)
 async def get_book_details(
-    chat_id: str,
     book_id: int,
     db: Session = Depends(get_db),
     user: dict = Depends(get_current_user)
@@ -94,7 +49,6 @@ async def get_book_details(
     """Отримати деталі книги з історією"""
     book = db.query(Book).filter(
         Book.id == book_id,
-        Book.chat_id == chat_id,
         Book.status != BookStatus.DELETED
     ).first()
     
@@ -110,7 +64,6 @@ async def get_book_details(
         **book.__dict__,
         loans=loans
     )
-
 
 @router.post("", response_model=BookResponse, status_code=201)
 async def create_book(
@@ -140,8 +93,7 @@ async def create_book(
         owner_id=str(telegram_user['id']),
         owner_name=owner_name,
         owner_username=telegram_user.get('username', ''),
-        club_id=book_data.club_id,  # Використовуємо club_id
-        chat_id=club.chat_id,  # Legacy поле
+        club_id=book_data.club_id,
         status=BookStatus.AVAILABLE
     )
     
@@ -150,7 +102,6 @@ async def create_book(
     db.refresh(new_book)
     
     return new_book
-
 
 @router.patch("/{book_id}", response_model=BookResponse)
 async def update_book(
@@ -185,7 +136,6 @@ async def update_book(
     
     return book
 
-
 @router.delete("/{book_id}", status_code=204)
 async def delete_book(
     book_id: int,
@@ -209,11 +159,9 @@ async def delete_book(
     
     return None
 
-
 @router.post("/{book_id}/borrow", response_model=BookResponse)
 async def borrow_book(
     book_id: int,
-    request: BorrowBookRequest,
     db: Session = Depends(get_db),
     user: dict = Depends(get_current_user)
 ):
@@ -222,7 +170,6 @@ async def borrow_book(
     
     book = db.query(Book).filter(
         Book.id == book_id,
-        Book.chat_id == request.chat_id,
         Book.status != BookStatus.DELETED
     ).first()
     
@@ -237,7 +184,6 @@ async def borrow_book(
         book_id=book_id,
         user_id=str(telegram_user['id']),
         username=telegram_user.get('username') or telegram_user.get('first_name', 'Unknown'),
-        chat_id=request.chat_id,
         status=LoanStatus.READING
     )
     
@@ -249,7 +195,6 @@ async def borrow_book(
     db.refresh(book)
     
     return book
-
 
 @router.post("/{book_id}/return", response_model=BookResponse)
 async def return_book(
