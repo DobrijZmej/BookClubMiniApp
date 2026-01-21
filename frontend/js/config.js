@@ -21,16 +21,25 @@ const CONFIG = {
 };
 
 // Ініціалізація Telegram Web App з fallback
-const tg = window.Telegram?.WebApp || {
-    initData: '',
-    initDataUnsafe: CONFIG.IS_DEV_MODE ? {
-        user: CONFIG.DEV_USER
-    } : {},
-    version: '1.0',
-    ready: () => {},
-    expand: () => {},
-    close: () => {}
-};
+let tg = window.Telegram?.WebApp;
+
+// Якщо Telegram недоступний або dev режим, створюємо mock
+if (!tg || CONFIG.IS_DEV_MODE) {
+    tg = {
+        initData: '',
+        initDataUnsafe: {
+            user: CONFIG.DEV_USER,
+            chat_instance: 'dev_mode',
+            chat_type: 'private',
+            auth_date: Math.floor(Date.now() / 1000)
+        },
+        version: '1.0',
+        ready: () => {},
+        expand: () => {},
+        close: () => {},
+        themeParams: {}
+    };
+}
 
 // Застосування теми Telegram
 function applyTelegramTheme() {
@@ -54,9 +63,12 @@ function generateMockInitData() {
 }
 
 // Встановлення mock initData для dev режиму
-if (CONFIG.IS_DEV_MODE && !tg.initData) {
+if (CONFIG.IS_DEV_MODE) {
     tg.initData = generateMockInitData();
-    console.log('🔧 Dev режим активний. Mock користувач:', CONFIG.DEV_USER);
+    console.log('🔧 Dev режим активний.');
+    console.log('🔧 Mock користувач:', CONFIG.DEV_USER);
+    console.log('🔧 Mock initData:', tg.initData);
+    console.log('🔧 Mock initDataUnsafe:', tg.initDataUnsafe);
 }
 
 // Експорт

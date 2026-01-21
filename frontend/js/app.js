@@ -23,8 +23,13 @@
     }
     // Fallback для тестування
     else {
-        chatId = 'default_chat';
-        console.warn('⚠️ No Telegram user data! Using fallback chat_id. Make sure to open this app through Telegram bot.');
+        if (CONFIG.IS_DEV_MODE) {
+            chatId = `user_${CONFIG.DEV_USER.id}`;
+            console.log('🔧 Dev режим: використовую mock chat_id');
+        } else {
+            chatId = 'default_chat';
+            console.warn('⚠️ No Telegram user data! Using fallback chat_id. Make sure to open this app through Telegram bot.');
+        }
     }
     
     CONFIG.CHAT_ID = chatId;
