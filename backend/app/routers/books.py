@@ -10,7 +10,7 @@ from app.models.schemas import (
 )
 from app.auth import get_current_user
 
-router = APIRouter()
+router = APIRouter(prefix="/api/books", tags=["Books"])
 
 @router.get("/club/{club_id}", response_model=List[BookResponse])
 async def get_books(
