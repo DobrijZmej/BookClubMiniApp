@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS club_members (
     user_id VARCHAR(50) NOT NULL,
     user_name VARCHAR(255),
     username VARCHAR(100),
-    role ENUM('owner', 'admin', 'member') DEFAULT 'member',
+    role ENUM('OWNER', 'ADMIN', 'MEMBER') DEFAULT 'MEMBER',
     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
     INDEX idx_club_id (club_id),
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS club_join_requests (
     user_name VARCHAR(255),
     username VARCHAR(100),
     message TEXT,
-    status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+    status ENUM('PENDING', 'APPROVED', 'REJECTED') DEFAULT 'PENDING',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     reviewed_at TIMESTAMP NULL,
     reviewed_by VARCHAR(50),

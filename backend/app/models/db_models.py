@@ -6,28 +6,28 @@ import enum
 import secrets
 
 class ClubStatus(str, enum.Enum):
-    ACTIVE = "active"
-    INACTIVE = "inactive"
+    ACTIVE = "ACTIVE"
+    INACTIVE = "INACTIVE"
 
 class BookStatus(str, enum.Enum):
-    AVAILABLE = "available"
-    READING = "reading"
-    DELETED = "deleted"
+    AVAILABLE = "AVAILABLE"
+    READING = "READING"
+    DELETED = "DELETED"
 
 class LoanStatus(str, enum.Enum):
-    READING = "reading"
-    RETURNED = "returned"
-    WAITING = "waiting"
+    READING = "READING"
+    RETURNED = "RETURNED"
+    WAITING = "WAITING"
 
 class MemberRole(str, enum.Enum):
-    OWNER = "owner"
-    ADMIN = "admin"
-    MEMBER = "member"
+    OWNER = "OWNER"
+    ADMIN = "ADMIN"
+    MEMBER = "MEMBER"
 
 class JoinRequestStatus(str, enum.Enum):
-    PENDING = "pending"
-    APPROVED = "approved"
-    REJECTED = "rejected"
+    PENDING = "PENDING"
+    APPROVED = "APPROVED"
+    REJECTED = "REJECTED"
 
 
 class Club(Base):
