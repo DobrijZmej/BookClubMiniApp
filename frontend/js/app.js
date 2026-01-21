@@ -155,8 +155,8 @@
             // Очищуємо форму
             document.getElementById('add-book-form').reset();
             
-            // Перезавантажуємо книги (використовуємо chat_id для API)
-            await UI.loadBooks(ClubsUI.currentChatId);
+            // Перезавантажуємо книги
+            await UI.loadBooks(ClubsUI.currentClubId);
             
         } catch (error) {
             console.error('Error creating book:', error);

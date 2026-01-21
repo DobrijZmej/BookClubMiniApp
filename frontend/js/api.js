@@ -47,18 +47,18 @@ const API = {
      */
     books: {
         // Отримати список книг
-        async getAll(chatId, filters = {}) {
+        async getAll(clubId, filters = {}) {
             const params = new URLSearchParams();
             if (filters.status) params.append('status', filters.status);
             if (filters.search) params.append('search', filters.search);
             
             const query = params.toString() ? `?${params}` : '';
-            return API.request(`/api/books/${chatId}${query}`);
+            return API.request(`/api/books/club/${clubId}${query}`);
         },
         
         // Отримати деталі книги
-        async getDetails(chatId, bookId) {
-            return API.request(`/api/books/${chatId}/book/${bookId}`);
+        async getDetails(clubId, bookId) {
+            return API.request(`/api/books/club/${clubId}/book/${bookId}`);
         },
         
         // Створити книгу
@@ -70,10 +70,10 @@ const API = {
         },
         
         // Позичити книгу
-        async borrow(bookId, chatId) {
+        async borrow(bookId, clubId) {
             return API.request(`/api/books/${bookId}/borrow`, {
                 method: 'POST',
-                body: JSON.stringify({ chat_id: chatId })
+                body: JSON.stringify({ club_id: clubId })
             });
         },
         

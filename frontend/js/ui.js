@@ -215,15 +215,14 @@ const UI = {
 
     /**
      * Завантаження та відображення книг
-     * @param {number} clubId - ID клубу (якщо null, використовується CONFIG.CHAT_ID)
+     * @param {number} clubId - ID клубу
      */
-    async loadBooks(clubId = null) {
+    async loadBooks(clubId) {
         try {
-            const chatId = clubId || CONFIG.CHAT_ID;
             const status = document.getElementById('filter-status').value;
             const search = document.getElementById('search-input').value;
             
-            const books = await API.books.getAll(chatId, { status, search });
+            const books = await API.books.getAll(clubId, { status, search });
             this.renderBooks(books);
         } catch (error) {
             console.error('Error loading books:', error);

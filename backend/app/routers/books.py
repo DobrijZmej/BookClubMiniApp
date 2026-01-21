@@ -46,22 +46,21 @@ def ensure_club_exists(db: Session, chat_id: str, user_id: str, chat_name: str =
     return club
 
 
-@router.get("/{chat_id}", response_model=List[BookResponse])
+@router.get("/club/{club_id}", response_model=List[BookResponse])
 async def get_books(
-    chat_id: str,
+    club_id: int,
     status: str = Query("available", regex="^(available|reading|all)$"),
     search: str = Query(None, max_length=100),
     db: Session = Depends(get_db),
     user: dict = Depends(get_current_user)
 ):
-    """Отримати всі книги для чату з фільтрацією"""
-    telegram_user = user['user']
-    user_id = str(telegram_user['id'])
+    """Отримати всі книги для клубу з фільтрацією"""
+    # Перевіряємо чи існує клуб
+    club = db.query(Club).filter(Club.id == club_id).first()
+    if not club:
+        raise HTTPException(status_code=404, detail="Club not found")
     
-    # Автоматично створюємо клуб якщо не існує
-    ensure_club_exists(db, chat_id, user_id)
-    
-    query = db.query(Book).filter(Book.chat_id == chat_id)
+    query = db.query(Book).filter(Book.club_id == club_id)
     
     # Фільтр по статусу
     if status == "available":
@@ -141,7 +140,8 @@ async def create_book(
         owner_id=str(telegram_user['id']),
         owner_name=owner_name,
         owner_username=telegram_user.get('username', ''),
-        chat_id=club.chat_id,  # Беремо chat_id з клубу
+        club_id=book_data.club_id,  # Використовуємо club_id
+        chat_id=club.chat_id,  # Legacy поле
         status=BookStatus.AVAILABLE
     )
     
