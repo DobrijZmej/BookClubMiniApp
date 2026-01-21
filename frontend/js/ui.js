@@ -109,11 +109,27 @@ const UI = {
      */
     async showBookDetails(bookId) {
         try {
+            console.log('📖 Показую деталі книги:', bookId);
             tg.HapticFeedback.impactOccurred('light');
             
             const book = await API.books.getDetails(bookId);
+            console.log('📚 Отримані дані книги:', book);
+            
             const modal = document.getElementById('book-modal');
             const modalBody = document.getElementById('modal-body');
+            
+            console.log('🎯 Modal element:', modal);
+            console.log('📄 Modal body element:', modalBody);
+            
+            if (!modal) {
+                console.error('❌ Modal element not found!');
+                return;
+            }
+            
+            if (!modalBody) {
+                console.error('❌ Modal body element not found!');
+                return;
+            }
             
             modalBody.innerHTML = `
                 <div class="modal-title">${this.escapeHtml(book.title)}</div>
@@ -185,9 +201,11 @@ const UI = {
                 </div>
             `;
             
+            console.log('🖼️ Контент модального вікна:', modalBody.innerHTML);
             modal.classList.add('active');
+            console.log('✅ Modal відображено');
         } catch (error) {
-            console.error('Error showing book details:', error);
+            console.error('❌ Error showing book details:', error);
         }
     },
 
