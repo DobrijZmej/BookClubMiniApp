@@ -46,11 +46,12 @@ async def root():
 async def health_check():
     """Детальна перевірка здоров'я сервісу"""
     from app.database import engine
+    from sqlalchemy import text
     
     try:
         # Перевірка підключення до БД
         with engine.connect() as conn:
-            conn.execute("SELECT 1")
+            conn.execute(text("SELECT 1"))
         db_status = "ok"
     except Exception as e:
         db_status = f"error: {str(e)}"
