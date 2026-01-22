@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="css/components.css?v=20260122-v10">
     <link rel="stylesheet" href="css/clubs.css?v=20260122-v4">
     <link rel="stylesheet" href="css/club-detail.css?v=20260122-v4">
+    <link rel="stylesheet" href="css/club-form.css?v=20260122-v1">
     <link rel="stylesheet" href="css/books.css?v=20260122-v6">
 </head>
 <body>
@@ -204,31 +205,80 @@
                 </div>
             </div>
 
-            <!-- Create Club View -->
-            <div id="create-club-view" class="view">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">🏛️ Створити новий клуб</div>
+            <!-- Club Form Modal (Create/Edit) -->
+            <div id="club-form-modal" class="modal">
+                <div class="modal-content club-form-modal-content">
+                    <!-- Modal Header -->
+                    <div class="club-form-header">
+                        <div class="club-form-header-left">
+                            <div class="app-icon">📚</div>
+                            <span class="app-title">Книжковий Обмін</span>
+                        </div>
+                        <button class="modal-close" id="close-club-form-modal">&times;</button>
                     </div>
-                    <div class="card-body">
-                        <form id="create-club-form">
-                            <div class="form-group">
-                                <label class="form-label" for="club-name">Назва клубу *</label>
-                                <input type="text" id="club-name" class="form-input" required maxlength="255" placeholder="Наприклад: Любителі фантастики">
+
+                    <!-- Modal Title -->
+                    <h2 class="club-form-title" id="club-form-title">Створення нового клубу</h2>
+
+                    <!-- Form Container -->
+                    <div class="club-form-container">
+                        <!-- Avatar Block -->
+                        <div class="club-form-avatar-block">
+                            <div class="club-form-avatar" id="club-form-avatar">
+                                <img src="images/club_default_avatar.png" alt="Аватар клубу" id="club-avatar-preview">
                             </div>
-                            
+                            <button type="button" class="club-avatar-change-btn" id="change-avatar-btn">
+                                Змінити
+                            </button>
+                            <input type="file" id="club-avatar-input" accept="image/*" style="display: none;">
+                        </div>
+
+                        <!-- Form Fields -->
+                        <form id="club-form" class="club-form">
+                            <div class="form-group">
+                                <label class="form-label" for="club-name">Назва клубу</label>
+                                <input type="text" id="club-name" class="form-input" required maxlength="100" 
+                                    placeholder="Введіть назву клубу">
+                            </div>
+
                             <div class="form-group">
                                 <label class="form-label" for="club-description">Опис клубу</label>
-                                <textarea id="club-description" class="form-textarea" rows="3" maxlength="500" placeholder="Коротко опишіть ваш клуб..."></textarea>
+                                <textarea id="club-description" class="form-textarea" rows="4" maxlength="500" 
+                                    placeholder="Опишіть ваш клуб"></textarea>
                             </div>
-                            
+
                             <div class="form-group">
-                                <label class="form-label">
-                                    <input type="checkbox" id="club-is-public"> Публічний клуб (видимий у пошуку)
+                                <label class="form-label" for="club-type">Тип клубу</label>
+                                <select id="club-type" class="form-select">
+                                    <option value="public">Публічний</option>
+                                    <option value="private">Закритий</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-checkbox">
+                                    <input type="checkbox" id="club-requires-approval" checked>
+                                    <span>Потрібне схвалення заявки</span>
                                 </label>
                             </div>
-                            
-                            <button type="submit" class="btn btn-primary btn-full">Створити клуб</button>
+
+                            <!-- Privacy Info Block -->
+                            <div class="club-privacy-info">
+                                <h4 class="privacy-info-title">Параметри приватності</h4>
+                                <p class="privacy-info-text">
+                                    В публічні клуби можна вступити через пошук, у закриті клуби 
+                                    тільки за Invite-кодом. В обидва типи сценаріо заявки схвалюють 
+                                    адміністратори.
+                                </p>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn btn-primary btn-full btn-submit-club" id="submit-club-btn">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 5v14M5 12h14"/>
+                                </svg>
+                                <span id="submit-club-text">Зберегти Клуб</span>
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -330,7 +380,7 @@
 
     <!-- Scripts -->
     <script src="js/config.js?v=20260122-v4"></script>
-    <script src="js/api.js?v=20260122-v7"></script>
+    <script src="js/api.js?v=20260122-v8"></script>
     
     <!-- UI Modules -->
     <script src="js/ui-utils.js?v=20260122-v4"></script>
@@ -342,9 +392,10 @@
     <script src="js/clubs-list.js?v=20260122-v4"></script>
     <script src="js/clubs-detail.js?v=20260122-v5"></script>
     <script src="js/clubs-requests.js?v=20260122-v4"></script>
+    <script src="js/clubs-form.js?v=20260122-v1"></script>
     <script src="js/clubs-ui.js?v=20260122-v4"></script>
     
     <!-- App -->
-    <script src="js/app.js?v=20260122-v7"></script>
+    <script src="js/app.js?v=20260122-v8"></script>
 </body>
 </html>

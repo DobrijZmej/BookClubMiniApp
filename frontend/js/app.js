@@ -128,10 +128,14 @@
     
     document.getElementById('add-club-btn')?.addEventListener('click', () => {
         tg.HapticFeedback.impactOccurred('medium');
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById('create-club-view').classList.add('active');
-        document.getElementById('header-title').textContent = 'Створити клуб';
-        document.getElementById('back-button').style.display = 'flex';
+        ClubForm.openCreateMode();
+    });
+    
+    document.getElementById('edit-club-btn')?.addEventListener('click', () => {
+        tg.HapticFeedback.impactOccurred('medium');
+        if (ClubsUI.currentClubId) {
+            ClubForm.openEditMode(ClubsUI.currentClubId);
+        }
     });
     
     document.getElementById('join-code-btn')?.addEventListener('click', () => {

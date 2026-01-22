@@ -160,6 +160,11 @@ const API = {
         async getDetails(clubId) {
             return API.request(`/api/clubs/${clubId}`);
         },
+
+        // Alias for getDetails
+        async get(clubId) {
+            return this.getDetails(clubId);
+        },
         
         // Оновити клуб
         async update(clubId, clubData) {
