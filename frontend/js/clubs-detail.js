@@ -12,8 +12,6 @@ const ClubsDetail = {
         
         // Показуємо кнопки клубу, ховаємо кнопки головної
         document.getElementById('add-book-btn').style.display = 'flex';
-        document.getElementById('edit-club-btn').style.display = 'flex';
-        document.getElementById('delete-club-btn').style.display = 'flex';
         document.getElementById('search-clubs-btn').style.display = 'none';
         document.getElementById('add-club-btn').style.display = 'none';
         document.getElementById('join-code-btn').style.display = 'none';
@@ -70,12 +68,19 @@ const ClubsDetail = {
             const userTelegramId = tg.initDataUnsafe?.user?.id?.toString();
             const isOwnerOrAdmin = this.currentClubData && this.currentClubData.owner_id === userTelegramId;
             
+            // Show/hide edit and delete buttons based on permissions
+            const editBtn = document.getElementById('edit-club-btn');
+            const deleteBtn = document.getElementById('delete-club-btn');
+            const requestsBtn = document.getElementById('view-club-requests-btn');
+            
             if (isOwnerOrAdmin) {
-                const requestsBtn = document.getElementById('view-club-requests-btn');
+                if (editBtn) editBtn.style.display = 'flex';
+                if (deleteBtn) deleteBtn.style.display = 'flex';
                 if (requestsBtn) requestsBtn.style.display = 'flex';
                 await this.loadRequestsCount(clubId);
             } else {
-                const requestsBtn = document.getElementById('view-club-requests-btn');
+                if (editBtn) editBtn.style.display = 'none';
+                if (deleteBtn) deleteBtn.style.display = 'none';
                 if (requestsBtn) requestsBtn.style.display = 'none';
             }
         } catch (error) {
