@@ -73,7 +73,7 @@ const ClubsList = {
                 const cardClass = roleClass === 'pending' ? 'club-card pending' : 'club-card';
                 
                 return `
-                    <div class="${cardClass}" data-club-id="${club.id}">`;
+                    <div class="${cardClass}" data-club-id="${club.id}">
                         <div class="${avatarClass}" ${avatarStyle}></div>
                         <div class="club-info">
                             <div class="club-title-row">
