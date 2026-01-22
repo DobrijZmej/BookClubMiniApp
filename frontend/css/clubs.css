@@ -102,6 +102,13 @@
     line-height: 1.4;
 }
 
+.club-type {
+    font-size: 0.875rem;
+    color: var(--color-primary);
+    font-weight: 500;
+    margin-bottom: var(--space-xs);
+}
+
 .club-description {
     font-size: 0.875rem;
     color: var(--color-text-secondary);
@@ -118,7 +125,7 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: var(--space-md);
+    gap: var(--space-lg);
     margin-top: var(--space-md);
     padding-top: var(--space-md);
     border-top: 1px solid var(--color-border-light);
@@ -127,14 +134,16 @@
 .club-stat {
     display: flex;
     align-items: center;
-    gap: var(--space-xs);
+    gap: 6px;
     font-size: 0.875rem;
     color: var(--color-text-secondary);
 }
 
 .club-stat svg {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    stroke: var(--color-text-secondary);
 }
 
 .club-stat-icon {

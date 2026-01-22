@@ -129,33 +129,52 @@
 }
 
 .action-btn-primary {
-    background-color: var(--color-primary);
+    background-color: #4caf50;
     color: white;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-md);
+    padding: var(--space-lg) var(--space-xl);
+    font-size: 1.05rem;
 }
 
 .action-btn-primary:hover {
-    background-color: var(--color-primary-hover);
-    box-shadow: var(--shadow-md);
+    background-color: #45a049;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
 }
 
 .action-btn-primary:active {
-    transform: scale(0.98);
+    transform: scale(0.98) translateY(0);
 }
 
 .action-btn-outline {
-    background-color: transparent;
+    background-color: var(--color-bg-secondary);
     color: var(--color-text-primary);
     border: 2px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-lg) var(--space-xl);
+    font-size: 1.05rem;
 }
 
 .action-btn-outline:hover {
     background-color: var(--color-bg-tertiary);
-    border-color: var(--color-text-tertiary);
+    border-color: var(--color-text-secondary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .action-btn-outline:active {
-    transform: scale(0.98);
+    transform: scale(0.98) translateY(0);
+}
+
+.action-btn-outline:first-child {
+    background-color: #2196f3;
+    color: white;
+    border-color: #2196f3;
+}
+
+.action-btn-outline:first-child:hover {
+    background-color: #1976d2;
+    border-color: #1976d2;
 }
 
 /* Status Badges */
@@ -163,16 +182,23 @@
     display: inline-flex;
     align-items: center;
     gap: var(--space-xs);
-    padding: 0.25rem 0.75rem;
+    padding: 0.35rem 0.85rem;
     border-radius: var(--radius-full);
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     font-weight: 600;
     white-space: nowrap;
+    background-color: #d4edda;
+    color: #28a745;
 }
 
 .club-status.owner {
-    background-color: var(--color-primary-light);
-    color: var(--color-primary);
+    background-color: #d4edda;
+    color: #28a745;
+}
+
+.club-status.member {
+    background-color: #d4edda;
+    color: #28a745;
 }
 
 .club-status.admin {

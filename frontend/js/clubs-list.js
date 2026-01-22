@@ -19,7 +19,7 @@ const ClubsList = {
             container.innerHTML = clubs.map((club) => {
                 const userTelegramId = tg.initDataUnsafe?.user?.id?.toString();
                 const isOwner = club.owner_id === userTelegramId;
-                const roleText = isOwner ? 'Власник' : 'Учасник';
+                const roleText = '✓ Ви учасник';
                 const roleClass = isOwner ? 'owner' : 'member';
                 
                 const coverImageUrl = club.cover_image_url || '';
@@ -30,10 +30,14 @@ const ClubsList = {
                 const coverImageClass = hasImage ? '' : `no-image ${gradientClass}`;
                 const booksCount = club.books_count || 0;
                 
+                // Статус клубу
+                const clubType = club.is_public ? 'Публічний' : 'Закритий клуб';
+                
                 return `
                     <div class="club-card" data-club-id="${club.id}">
                         <div class="club-cover ${coverImageClass}" ${coverStyle}></div>
                         <div class="club-content">
+                            <div class="club-type">${clubType}</div>
                             <div class="club-header">
                                 <div class="club-name">${club.name}</div>
                                 <span class="club-status ${roleClass}">${roleText}</span>
@@ -41,11 +45,19 @@ const ClubsList = {
                             ${club.description ? `<div class="club-description">${club.description}</div>` : ''}
                             <div class="club-stats">
                                 <div class="club-stat">
-                                    <span class="club-stat-icon">👥</span>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="9" cy="7" r="4"/>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                    </svg>
                                     <span>${club.members_count || 1} учасників</span>
                                 </div>
                                 <div class="club-stat">
-                                    <span class="club-stat-icon">📚</span>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                                    </svg>
                                     <span>${booksCount} книг у обігу</span>
                                 </div>
                                 <div class="club-stat">
