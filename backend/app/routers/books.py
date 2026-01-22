@@ -40,7 +40,24 @@ async def get_books(
         )
     
     books = query.order_by(desc(Book.created_at)).all()
-    return books
+    
+    # Додаємо current_reader_id для кожної книги
+    result = []
+    for book in books:
+        book_dict = BookResponse.model_validate(book).model_dump()
+        
+        # Знаходимо активний loan
+        active_loan = db.query(BookLoan).filter(
+            BookLoan.book_id == book.id,
+            BookLoan.status == 'READING'
+        ).first()
+        
+        if active_loan:
+            book_dict['current_reader_id'] = active_loan.user_id
+        
+        result.append(book_dict)
+    
+    return result
 
 @router.get("/book/{book_id}", response_model=BookDetailResponse)
 async def get_book_details(
@@ -67,8 +84,17 @@ async def get_book_details(
         BookReview.book_id == book_id
     ).order_by(desc(BookReview.created_at)).all()
     
+    # Знаходимо активний loan
+    active_loan = db.query(BookLoan).filter(
+        BookLoan.book_id == book_id,
+        BookLoan.status == 'READING'
+    ).first()
+    
+    result_dict = book.__dict__.copy()
+    result_dict['current_reader_id'] = active_loan.user_id if active_loan else None
+    
     return BookDetailResponse(
-        **book.__dict__,
+        **result_dict,
         loans=loans,
         reviews=reviews
     )

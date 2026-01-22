@@ -145,6 +145,12 @@ const UIBooks = {
                 console.error('❌ Modal elements not found!');
                 return;
             }
+            
+            // Визначаємо права користувача
+            const currentUserId = tg.initDataUnsafe?.user?.id?.toString();
+            const isOwner = book.owner_id === currentUserId;
+            const isReader = book.current_reader_id === currentUserId;
+            const isAvailable = (book.status === 'available' || book.status === 'AVAILABLE');
 
             // Завантажити відгуки
             let reviewsHtml = '';
@@ -266,6 +272,30 @@ const UIBooks = {
                            </div>`
                         : '<div style="margin-top: 12px; color: var(--tg-theme-hint-color); text-align: center; padding: 20px; background: rgba(128, 128, 128, 0.1); border-radius: 8px;">📖 Ще ніхто не читав цю книгу</div>'
                     }
+                </div>
+                
+                <div class="book-modal-actions" style="margin-top: 20px; display: flex; gap: 8px; flex-wrap: wrap;">
+                    ${isAvailable && !isOwner ? `
+                        <button class="btn btn-primary" onclick="UIBooks.borrowBook(${bookId}); UI.closeModal();" style="flex: 1;">
+                            📖 Взяти книгу
+                        </button>
+                    ` : ''}
+                    ${isReader ? `
+                        <button class="btn btn-success" onclick="UIBooks.returnBook(${bookId}); UI.closeModal();" style="flex: 1;">
+                            🏠 Повернути книгу
+                        </button>
+                    ` : ''}
+                    <button class="btn btn-primary" onclick="UIReviews.showBookReview(${bookId}); UI.closeModal();" style="flex: 1;">
+                        ⭐ Оцінити книгу
+                    </button>
+                    ${isOwner ? `
+                        <button class="btn btn-secondary" onclick="UIBooks.editBook(${bookId}); UI.closeModal();" style="flex: 1;">
+                            ✏️ Редагувати
+                        </button>
+                        <button class="btn btn-danger" onclick="UIBooks.deleteBook(${bookId}); UI.closeModal();" style="flex: 1;">
+                            🗑️ Видалити
+                        </button>
+                    ` : ''}
                 </div>
                 
                 ${reviewsHtml}

@@ -72,6 +72,7 @@ class BookResponse(BaseModel):
     owner_name: Optional[str]
     owner_username: Optional[str]
     status: str
+    current_reader_id: Optional[str] = None
     cover_url: Optional[str]
     description: Optional[str]
     created_at: datetime
