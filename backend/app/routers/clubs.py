@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, File, UploadFile
 from sqlalchemy.orm import Session
 from sqlalchemy import desc, func
 from typing import List
@@ -18,6 +18,7 @@ from app.models.schemas import (
     ClubMemberResponse, JoinRequestCreate, JoinRequestResponse,
     JoinRequestAction
 )
+from app.utils import file_storage
 
 router = APIRouter(prefix="/api/clubs", tags=["Clubs"])
 
@@ -70,6 +71,7 @@ async def create_club(
         owner_id=user_id,
         invite_code=invite_code,
         is_public=club_data.is_public,
+        requires_approval=club_data.requires_approval,
         status=ClubStatus.ACTIVE
     )
     
@@ -254,6 +256,8 @@ async def update_club(
         club.description = club_data.description
     if club_data.is_public is not None:
         club.is_public = club_data.is_public
+    if club_data.requires_approval is not None:
+        club.requires_approval = club_data.requires_approval
     
     db.commit()
     db.refresh(club)
@@ -316,7 +320,40 @@ async def request_to_join_club(
     last_name = telegram_user.get('last_name', '')
     user_name = f"{first_name} {last_name}".strip() or "Користувач"
     
-    # Створюємо запит
+    # AUTO-APPROVAL: Якщо клуб не вимагає схвалення, одразу додаємо в члени
+    if not club.requires_approval:
+        logger.info(f"Auto-approving user {user_id} to club {club.id} (requires_approval=False)")
+        
+        # Додаємо в члени клубу
+        new_member = ClubMember(
+            club_id=club.id,
+            user_id=user_id,
+            user_name=user_name,
+            username=telegram_user.get('username', ''),
+            role=MemberRole.MEMBER
+        )
+        db.add(new_member)
+        
+        # Створюємо запис про auto-approved запит
+        join_request = ClubJoinRequest(
+            club_id=club.id,
+            user_id=user_id,
+            user_name=user_name,
+            username=telegram_user.get('username', ''),
+            message=request_data.message,
+            status=JoinRequestStatus.APPROVED,
+            reviewed_at=datetime.now(),
+            reviewed_by="system_auto_approved"
+        )
+        db.add(join_request)
+        db.commit()
+        db.refresh(join_request)
+        
+        logger.success(f"✅ User {user_id} auto-approved to club {club.id}")
+        
+        return join_request
+    
+    # STANDARD FLOW: Створюємо запит на розгляд
     join_request = ClubJoinRequest(
         club_id=club.id,
         user_id=user_id,
@@ -464,3 +501,53 @@ async def remove_member(
     db.commit()
     
     return None
+
+
+@router.post("/{club_id}/avatar", status_code=200)
+async def upload_club_avatar(
+    club_id: int,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user)
+):
+    """Завантажити аватар клубу (тільки owner/admin)"""
+    user_id = str(user['user']['id'])
+    
+    logger.info(f"Uploading avatar for club {club_id} by user {user_id}")
+    
+    # Перевірка існування клубу
+    club = db.query(Club).filter(Club.id == club_id).first()
+    if not club:
+        raise HTTPException(status_code=404, detail="Клуб не знайдено")
+    
+    # Перевірка прав (owner або admin)
+    role = get_user_club_role(db, club_id, user_id)
+    if role not in [MemberRole.OWNER, MemberRole.ADMIN]:
+        raise HTTPException(status_code=403, detail="Недостатньо прав")
+    
+    # Save avatar (validates, resizes to 300x300, optimizes)
+    try:
+        avatar_url = file_storage.save_club_avatar(club_id, file)
+        
+        # Delete old avatar if exists
+        if club.cover_url:
+            file_storage.delete_file(club.cover_url)
+        
+        # Update club
+        club.cover_url = avatar_url
+        db.commit()
+        
+        logger.success(f"✅ Club {club_id} avatar updated: {avatar_url}")
+        
+        return {
+            "message": "Аватар клубу успішно оновлено",
+            "cover_url": avatar_url
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to upload avatar: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail="Помилка завантаження аватару"
+        )

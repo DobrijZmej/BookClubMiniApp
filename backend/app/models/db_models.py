@@ -40,6 +40,8 @@ class Club(Base):
     owner_id = Column(String(50), nullable=False, index=True)  # Telegram user ID засновника
     invite_code = Column(String(20), unique=True, nullable=False, index=True)  # Унікальний код для приєднання
     is_public = Column(Boolean, default=False)  # Публічний клуб (видимий у пошуку)
+    cover_url = Column(String(500))  # URL аватару клубу (300x300px max)
+    requires_approval = Column(Boolean, default=True)  # Чи потрібне схвалення заявок (False = auto-approve)
     status = Column(Enum(ClubStatus), default=ClubStatus.ACTIVE)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     

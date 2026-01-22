@@ -173,6 +173,38 @@ const API = {
                 body: JSON.stringify(clubData)
             });
         },
+
+        // Завантажити аватар клубу
+        async uploadAvatar(clubId, file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const url = `${CONFIG.API_BASE_URL}/api/clubs/${clubId}/avatar`;
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-Telegram-Init-Data': tg.initData
+                        // NO Content-Type header! Browser sets it automatically with boundary
+                    },
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json().catch(() => ({ detail: 'Unknown error' }));
+                    const errorMessage = typeof error.detail === 'string' 
+                        ? error.detail 
+                        : JSON.stringify(error.detail) || `HTTP ${response.status}`;
+                    throw new Error(errorMessage);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('Avatar upload error:', error);
+                throw error;
+            }
+        },
         
         // Запит на приєднання
         async requestJoin(inviteCode, message) {

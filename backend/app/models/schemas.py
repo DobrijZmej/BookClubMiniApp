@@ -100,12 +100,14 @@ class ClubCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=255)
     description: Optional[str] = None
     is_public: bool = False
+    requires_approval: bool = True
 
 
 class ClubUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=255)
     description: Optional[str] = None
     is_public: Optional[bool] = None
+    requires_approval: Optional[bool] = None
 
 
 class ClubMemberResponse(BaseModel):
@@ -128,6 +130,8 @@ class ClubResponse(BaseModel):
     owner_id: str
     invite_code: str
     is_public: bool
+    cover_url: Optional[str] = None
+    requires_approval: bool
     status: str
     created_at: datetime
     members_count: Optional[int] = None

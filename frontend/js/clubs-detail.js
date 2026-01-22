@@ -49,8 +49,8 @@ const ClubsDetail = {
             
             // Оновлюємо аватар
             const avatar = document.getElementById('club-detail-avatar');
-            if (club.cover_image_url) {
-                avatar.style.backgroundImage = `url('${club.cover_image_url}')`;
+            if (club.cover_url) {
+                avatar.style.backgroundImage = `url('${club.cover_url}')`;
                 avatar.style.backgroundSize = 'cover';
             } else {
                 avatar.style.backgroundImage = "url('images/club_default_avatar.png')";

@@ -49,7 +49,7 @@ const ClubsList = {
                 }
                 
                 // Avatar/Cover image
-                const coverImageUrl = club.cover_image_url || '';
+                const coverImageUrl = club.cover_url || '';
                 const hasImage = coverImageUrl && coverImageUrl.trim() !== '';
                 
                 let avatarStyle = '';

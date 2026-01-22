@@ -97,11 +97,11 @@ const ClubForm = {
             document.getElementById('club-name').value = club.name || '';
             document.getElementById('club-description').value = club.description || '';
             document.getElementById('club-type').value = club.is_public ? 'public' : 'private';
-            document.getElementById('club-requires-approval').checked = club.requires_approval || false;
+            document.getElementById('club-requires-approval').checked = club.requires_approval !== false;
 
             // Set avatar preview
-            if (club.avatar_url) {
-                document.getElementById('club-avatar-preview').src = club.avatar_url;
+            if (club.cover_url) {
+                document.getElementById('club-avatar-preview').src = club.cover_url;
             } else {
                 document.getElementById('club-avatar-preview').src = 'images/club_default_avatar.png';
             }
@@ -202,8 +202,13 @@ const ClubForm = {
 
                 // Upload avatar if changed
                 if (this.avatarFile) {
-                    // TODO: Implement avatar upload
-                    console.log('Avatar upload not implemented yet');
+                    try {
+                        const avatarResult = await API.clubs.uploadAvatar(this.currentClubId, this.avatarFile);
+                        console.log('Avatar uploaded:', avatarResult);
+                    } catch (avatarError) {
+                        console.error('Avatar upload failed:', avatarError);
+                        UI.showError('Клуб оновлено, але аватар не вдалося завантажити');
+                    }
                 }
 
                 UI.showSuccess('Клуб успішно оновлено!');
@@ -221,8 +226,13 @@ const ClubForm = {
 
                 // Upload avatar if provided
                 if (this.avatarFile) {
-                    // TODO: Implement avatar upload
-                    console.log('Avatar upload not implemented yet');
+                    try {
+                        const avatarResult = await API.clubs.uploadAvatar(newClub.id, this.avatarFile);
+                        console.log('Avatar uploaded:', avatarResult);
+                    } catch (avatarError) {
+                        console.error('Avatar upload failed:', avatarError);
+                        UI.showError('Клуб створено, але аватар не вдалося завантажити');
+                    }
                 }
 
                 UI.showSuccess('Клуб успішно створено!');
