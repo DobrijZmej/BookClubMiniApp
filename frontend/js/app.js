@@ -328,50 +328,6 @@
         }
     });
     
-    // Форма створення клубу
-    document.getElementById('create-club-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const name = document.getElementById('club-name').value.trim();
-        const description = document.getElementById('club-description').value.trim();
-        const isPublic = document.getElementById('club-is-public').checked;
-        
-        if (!name) {
-            alert('Введіть назву клубу');
-            return;
-        }
-        
-        try {
-            tg.HapticFeedback.impactOccurred('medium');
-            UI.setLoading(true);
-            
-            const club = await API.clubs.create({
-                name,
-                description,
-                is_public: isPublic
-            });
-            
-            // Очищуємо форму
-            document.getElementById('create-club-form').reset();
-            
-            // Повертаємося до списку і перезавантажуємо
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById('clubs-list-view').classList.add('active');
-            document.getElementById('header-title').textContent = '📚 Мої клуби';
-            document.getElementById('back-button').style.display = 'none';
-            
-            await ClubsUI.loadMyClubs();
-            
-            // Показуємо код запрошення
-            alert(`✅ Клуб "${club.name}" створено!\nКод запрошення: ${club.invite_code}`);
-            
-        } catch (error) {
-            console.error('Error creating club:', error);
-        } finally {
-            UI.setLoading(false);
-        }
-    });
-    
     // Форма приєднання до клубу
     document.getElementById('join-club-form').addEventListener('submit', async (e) => {
         e.preventDefault();
