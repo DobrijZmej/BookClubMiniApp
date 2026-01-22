@@ -4,11 +4,14 @@
 const ClubsUI = {
     // List functions
     loadMyClubs: (...args) => ClubsList.loadMyClubs(...args),
+    loadClubsList: (...args) => ClubsList.loadMyClubs(...args),
     copyInviteCode: (...args) => ClubsList.copyInviteCode(...args),
     backToClubsList: (...args) => ClubsList.backToClubsList(...args),
     
     // Detail functions
     openClub: (...args) => ClubsDetail.openClub(...args),
+    showClubDetail: (...args) => ClubsDetail.openClub(...args),
+    loadClubDetails: (...args) => ClubsDetail.loadClubDetails(...args),
     checkClubPermissions: (...args) => ClubsDetail.checkClubPermissions(...args),
     loadRequestsCount: (...args) => ClubsDetail.loadRequestsCount(...args),
     
