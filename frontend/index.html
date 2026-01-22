@@ -12,12 +12,13 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <!-- Styles - All CSS modules -->
-    <link rel="stylesheet" href="css/variables.css?v=20260122-v3">
-    <link rel="stylesheet" href="css/base.css?v=20260122-v3">
-    <link rel="stylesheet" href="css/layout.css?v=20260122-v3">
-    <link rel="stylesheet" href="css/components.css?v=20260122-v3">
-    <link rel="stylesheet" href="css/clubs.css?v=20260122-v3">
-    <link rel="stylesheet" href="css/books.css?v=20260122-v3">
+    <link rel="stylesheet" href="css/variables.css?v=20260122-v4">
+    <link rel="stylesheet" href="css/base.css?v=20260122-v4">
+    <link rel="stylesheet" href="css/layout.css?v=20260122-v4">
+    <link rel="stylesheet" href="css/components.css?v=20260122-v4">
+    <link rel="stylesheet" href="css/clubs.css?v=20260122-v4">
+    <link rel="stylesheet" href="css/club-detail.css?v=20260122-v4">
+    <link rel="stylesheet" href="css/books.css?v=20260122-v4">
 </head>
 <body>
     <!-- Loader -->
@@ -43,6 +44,26 @@
                 </div>
                 <div class="header-actions">
                     <span id="username" class="user-badge"></span>
+                    <!-- Club Actions (visible only in club detail view) -->
+                    <button id="add-book-btn" class="icon-btn" style="display: none;" title="Додати книгу">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            <path d="M12 8v8M8 12h8"/>
+                        </svg>
+                    </button>
+                    <button id="edit-club-btn" class="icon-btn" style="display: none;" title="Редагувати клуб">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                    </button>
+                    <button id="delete-club-btn" class="icon-btn" style="display: none;" title="Видалити клуб">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                    </button>
+                    <!-- Main Actions (visible on clubs list) -->
                     <button id="search-clubs-btn" class="icon-btn" title="Пошук клубів">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="11" cy="11" r="8"/>
@@ -86,20 +107,64 @@
             
             <!-- Club Detail View (Books inside club) -->
             <div id="club-detail-view" class="view">
-                <!-- Search Bar -->
-                <div class="search-box">
-                    <input type="text" id="search-input" class="search-input" placeholder="🔍 Пошук книг...">
+                <!-- Club Info Section -->
+                <div class="club-detail-header">
+                    <div class="club-detail-avatar" id="club-detail-avatar"></div>
+                    <div class="club-detail-info">
+                        <h2 class="club-detail-name" id="club-detail-name">Назва клубу</h2>
+                        <button id="view-club-requests-btn" class="club-requests-btn" style="display: none;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="8.5" cy="7" r="4"/>
+                                <path d="M20 8v6M23 11h-6"/>
+                            </svg>
+                            <span>Заявки на вступ</span>
+                            <span id="requests-count" class="requests-badge">0</span>
+                        </button>
+                        <div class="club-detail-stats">
+                            <div class="club-detail-stat">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                </svg>
+                                <span id="club-members-count">0 учасників</span>
+                            </div>
+                            <div class="club-detail-stat">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                                </svg>
+                                <span id="club-books-count">0 книг у обігу</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="mb-4">
-                    <select id="filter-status" class="form-input">
-                        <option value="all">Всі книги</option>
-                        <option value="available">Доступні</option>
-                        <option value="reading">Позичені</option>
+                <!-- Club Description -->
+                <div class="club-detail-description" id="club-detail-description">
+                    Опис клубу завантажується...
+                </div>
+                
+                <!-- Search and Filter Section -->
+                <div class="books-controls">
+                    <div class="search-box">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <input type="text" id="search-input" class="search-input" placeholder="Пошук книги">
+                    </div>
+                    <select id="filter-status" class="filter-select">
+                        <option value="">Автору</option>
+                        <option value="available">Популярності</option>
+                        <option value="reading">Кількості читачів</option>
                     </select>
                 </div>
                 
-                <div id="books-container" class="books-grid">
+                <!-- Books List -->
+                <div id="books-container" class="books-list">
                     <!-- Books will be loaded here -->
                 </div>
                 
@@ -107,15 +172,6 @@
                     <div class="empty-icon">📚</div>
                     <div class="empty-title">Бібліотека порожня</div>
                     <div class="empty-description">Додайте першу книгу!</div>
-                    <button id="add-first-book-btn" class="btn btn-primary">➕ Додати книгу</button>
-                </div>
-                
-                <!-- Club Actions -->
-                <div class="flex gap-4 mt-4">
-                    <button id="add-book-to-club-btn" class="btn btn-primary btn-full">➕ Додати книгу</button>
-                    <button id="view-club-requests-btn" class="btn btn-secondary" style="display: none;">
-                        📝 Заявки <span id="requests-count" class="requests-badge">0</span>
-                    </button>
                 </div>
             </div>
 
@@ -273,22 +329,22 @@
     </div>
 
     <!-- Scripts -->
-    <script src="js/config.js?v=20260122-v3"></script>
-    <script src="js/api.js?v=20260122-v3"></script>
+    <script src="js/config.js?v=20260122-v4"></script>
+    <script src="js/api.js?v=20260122-v4"></script>
     
     <!-- UI Modules -->
-    <script src="js/ui-utils.js?v=20260122-v3"></script>
-    <script src="js/ui-books.js?v=20260122-v3"></script>
-    <script src="js/ui-reviews.js?v=20260122-v3"></script>
-    <script src="js/ui.js?v=20260122-v3"></script>
+    <script src="js/ui-utils.js?v=20260122-v4"></script>
+    <script src="js/ui-books.js?v=20260122-v4"></script>
+    <script src="js/ui-reviews.js?v=20260122-v4"></script>
+    <script src="js/ui.js?v=20260122-v4"></script>
     
     <!-- Clubs Modules -->
-    <script src="js/clubs-list.js?v=20260122-v3"></script>
-    <script src="js/clubs-detail.js?v=20260122-v3"></script>
-    <script src="js/clubs-requests.js?v=20260122-v3"></script>
-    <script src="js/clubs-ui.js?v=20260122-v3"></script>
+    <script src="js/clubs-list.js?v=20260122-v4"></script>
+    <script src="js/clubs-detail.js?v=20260122-v4"></script>
+    <script src="js/clubs-requests.js?v=20260122-v4"></script>
+    <script src="js/clubs-ui.js?v=20260122-v4"></script>
     
     <!-- App -->
-    <script src="js/app.js?v=20260122-v3"></script>
+    <script src="js/app.js?v=20260122-v4"></script>
 </body>
 </html>

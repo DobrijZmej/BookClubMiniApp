@@ -2,26 +2,165 @@
    📖 Books - Book Cards & Related Styles
    ============================================ */
 
-/* TODO: Book-specific styles will be added here
-   Currently book styles are in ui.js and need to be extracted */
-
-/* Placeholder for future book card styles */
+/* Book Card - Horizontal Layout (like clubs) */
 .book-card {
-    /* Book card styles will go here */
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    background-color: var(--color-bg-secondary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-base);
+    cursor: pointer;
+    border: 1px solid var(--color-border);
+}
+
+.book-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Book Avatar/Cover */
+.book-avatar {
+    position: relative;
+    width: 80px;
+    height: 100px;
+    min-width: 80px;
+    border-radius: var(--radius-sm);
+    background-size: cover;
+    background-position: center;
+    background-color: var(--color-bg-tertiary);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+/* Book Info - Right Side */
+.book-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
 }
 
 .book-title {
-    /* Book title styles */
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 
 .book-author {
-    /* Book author styles */
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.3;
 }
 
-.book-status {
-    /* Book status indicator styles */
+.book-readers {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8125rem;
+    color: var(--color-text-tertiary);
+    margin-top: 4px;
 }
 
-.book-actions {
-    /* Book action buttons container */
+.book-readers svg {
+    width: 14px;
+    height: 14px;
+    stroke: var(--color-text-tertiary);
+}
+
+/* Book Status - Right Side */
+.book-status-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-xs);
+    min-width: 80px;
+}
+
+.book-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-warning);
+}
+
+.book-rating svg {
+    width: 14px;
+    height: 14px;
+    fill: var(--color-warning);
+}
+
+.book-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.book-status-badge.available {
+    background-color: #d4edda;
+    color: #28a745;
+}
+
+.book-status-badge.reading {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+/* Responsive - Books */
+@media (max-width: 768px) {
+    .book-avatar {
+        width: 60px;
+        height: 80px;
+        min-width: 60px;
+        font-size: 1.5rem;
+    }
+    
+    .book-title {
+        font-size: 0.9375rem;
+    }
+    
+    .book-author {
+        font-size: 0.8125rem;
+    }
+    
+    .book-status-col {
+        min-width: 70px;
+    }
+}
+
+@media (max-width: 480px) {
+    .book-card {
+        padding: var(--space-sm);
+        gap: var(--space-sm);
+    }
+    
+    .book-avatar {
+        width: 50px;
+        height: 70px;
+        min-width: 50px;
+        font-size: 1.25rem;
+    }
+    
+    .book-status-col {
+        min-width: 60px;
+    }
 }

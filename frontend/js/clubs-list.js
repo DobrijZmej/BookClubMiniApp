@@ -118,6 +118,15 @@ const ClubsList = {
         if (typeof ClubsDetail !== 'undefined') ClubsDetail.currentClubId = null;
         document.getElementById('header-title').textContent = 'Книжковий Обмін';
         document.getElementById('back-button').style.display = 'none';
+        
+        // Ховаємо кнопки клубу, показуємо кнопки головної
+        document.getElementById('add-book-btn').style.display = 'none';
+        document.getElementById('edit-club-btn').style.display = 'none';
+        document.getElementById('delete-club-btn').style.display = 'none';
+        document.getElementById('search-clubs-btn').style.display = 'flex';
+        document.getElementById('add-club-btn').style.display = 'flex';
+        document.getElementById('join-code-btn').style.display = 'flex';
+        
         document.getElementById('club-detail-view').classList.remove('active');
         document.getElementById('club-requests-view').classList.remove('active');
         document.getElementById('clubs-list-view').classList.add('active');

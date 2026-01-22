@@ -45,59 +45,40 @@ const UIBooks = {
         emptyState.style.display = 'none';
         
         container.innerHTML = books.map(book => {
-            const statusIcon = (book.status === 'available' || book.status === 'AVAILABLE') ? '🟢' : '🔴';
-            const isOwner = book.owner_id === String(tg.initDataUnsafe.user?.id);
+            const isAvailable = (book.status === 'available' || book.status === 'AVAILABLE');
+            const statusText = isAvailable ? 'Доступна' : 'Читається';
+            const statusClass = isAvailable ? 'available' : 'reading';
             
-            console.log(`Book ${book.title}: status="${book.status}", isOwner=${isOwner}`);
+            // Рейтинг (якщо є відгуки)
+            const rating = book.average_rating || 0;
+            const readersCount = book.readers_count || 0;
             
             return `
-                <div class="book-card" data-book-id="${book.id}">
-                    <span class="book-status">${statusIcon}</span>
-                    
-                    <div class="book-header">
-                        <div>
-                            <div class="book-title">${UIUtils.escapeHtml(book.title)}</div>
-                            <div class="book-author">${UIUtils.escapeHtml(book.author)}</div>
+                <div class="book-card" data-book-id="${book.id}" onclick="UIBooks.showBookDetails(${book.id})">
+                    <div class="book-avatar">📖</div>
+                    <div class="book-info">
+                        <div class="book-title">${UIUtils.escapeHtml(book.title)}</div>
+                        <div class="book-author">${UIUtils.escapeHtml(book.author || 'Невідомий автор')}</div>
+                        <div class="book-readers">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                            <span>${readersCount} ${UIUtils.getPluralForm(readersCount, 'читач', 'читачі', 'читачів')}</span>
                         </div>
                     </div>
-                    
-                    <div class="book-owner">
-                        @${UIUtils.escapeHtml(book.owner_username || 'невідомо')}
-                    </div>
-                    
-                    <div class="book-actions">
-                        <button class="btn-small btn-details" onclick="UIBooks.showBookDetails(${book.id})">
-                            Деталі
-                        </button>
-                        
-                        <button class="btn-small btn-review" onclick="UIReviews.showBookReview(${book.id})">
-                            ⭐ Відгук
-                        </button>
-                        
-                        ${(book.status === 'available' || book.status === 'AVAILABLE') 
-                            ? `<button class="btn-small btn-borrow" onclick="UIBooks.borrowBook(${book.id})">
-                                Взяти
-                               </button>`
-                            : (book.status === 'reading' || book.status === 'READING') && !isOwner
-                                ? `<button class="btn-small btn-details" disabled>
-                                    Зайнято
-                                   </button>`
-                                : ''
-                        }
-                        
-                        ${(book.status === 'reading' || book.status === 'READING') && isOwner
-                            ? `<button class="btn-small btn-return" onclick="UIBooks.returnBook(${book.id})">
-                                Повернути
-                               </button>`
-                            : ''
-                        }
-                        
-                        ${isOwner
-                            ? `<button class="btn-small btn-delete" onclick="UIBooks.deleteBook(${book.id})">
-                                ❌
-                               </button>`
-                            : ''
-                        }
+                    <div class="book-status-col">
+                        ${rating > 0 ? `
+                            <div class="book-rating">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                </svg>
+                                <span>${rating.toFixed(1)}</span>
+                            </div>
+                        ` : ''}
+                        <span class="book-status-badge ${statusClass}">${statusText}</span>
                     </div>
                 </div>
             `;
