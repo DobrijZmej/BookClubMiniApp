@@ -1,0 +1,149 @@
+/* ============================================
+   📚 Clubs - Club Cards & Related Styles
+   ============================================ */
+
+/* Club Card - Modern Design */
+.club-card {
+    position: relative;
+    background-color: var(--color-bg-secondary);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-base);
+    cursor: pointer;
+    border: 1px solid var(--color-border);
+}
+
+.club-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+}
+
+.club-card:active {
+    transform: translateY(-2px);
+}
+
+/* Club Cover Image */
+.club-cover {
+    position: relative;
+    width: 100%;
+    height: 160px;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--color-bg-tertiary);
+    overflow: hidden;
+}
+
+.club-cover::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: linear-gradient(to bottom, 
+        transparent 0%, 
+        rgba(0, 0, 0, 0.3) 60%,
+        rgba(0, 0, 0, 0.7) 100%
+    );
+}
+
+.dark-theme .club-cover::after {
+    background: linear-gradient(to bottom, 
+        transparent 0%, 
+        rgba(0, 0, 0, 0.5) 60%,
+        rgba(0, 0, 0, 0.9) 100%
+    );
+}
+
+/* Default gradient fallbacks if no image */
+.club-cover.no-image {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.club-cover.gradient-1 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.club-cover.gradient-2 {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.club-cover.gradient-3 {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.club-cover.gradient-4 {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.club-cover.gradient-5 {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+/* Club Content */
+.club-content {
+    padding: var(--space-lg);
+}
+
+.club-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-md);
+    margin-bottom: var(--space-sm);
+}
+
+.club-name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    flex: 1;
+    line-height: 1.4;
+}
+
+.club-description {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin-bottom: var(--space-md);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Club Stats */
+.club-stats {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--color-border-light);
+}
+
+.club-stat {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+}
+
+.club-stat svg {
+    width: 16px;
+    height: 16px;
+}
+
+.club-stat-icon {
+    font-size: 1rem;
+}
+
+/* Responsive - Clubs */
+@media (max-width: 768px) {
+    .club-cover {
+        height: 140px;
+    }
+}

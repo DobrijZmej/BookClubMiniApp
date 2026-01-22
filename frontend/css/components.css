@@ -1,0 +1,176 @@
+/* ============================================
+   🧩 Components - Buttons & Generic Elements
+   ============================================ */
+
+/* Back Button */
+.back-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    color: var(--color-text-primary);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.back-btn:hover {
+    background-color: var(--color-bg-tertiary);
+}
+
+.back-btn:active {
+    transform: scale(0.95);
+}
+
+/* Icon Buttons */
+.icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    color: var(--color-text-secondary);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.icon-btn:hover {
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+}
+
+.icon-btn:active {
+    transform: scale(0.95);
+}
+
+@media (max-width: 480px) {
+    .icon-btn {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+/* Copy Button */
+.copy-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: transparent;
+    color: var(--color-text-secondary);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: 0.875rem;
+}
+
+.copy-btn:hover {
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+}
+
+.copy-btn:active {
+    transform: scale(0.9);
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-lg);
+    border-radius: var(--radius-lg);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border: none;
+    width: 100%;
+}
+
+.action-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.action-btn-primary {
+    background-color: var(--color-primary);
+    color: white;
+    box-shadow: var(--shadow-sm);
+}
+
+.action-btn-primary:hover {
+    background-color: var(--color-primary-hover);
+    box-shadow: var(--shadow-md);
+}
+
+.action-btn-primary:active {
+    transform: scale(0.98);
+}
+
+.action-btn-outline {
+    background-color: transparent;
+    color: var(--color-text-primary);
+    border: 2px solid var(--color-border);
+}
+
+.action-btn-outline:hover {
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-text-tertiary);
+}
+
+.action-btn-outline:active {
+    transform: scale(0.98);
+}
+
+/* Status Badges */
+.club-status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.club-status.owner {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+.club-status.admin {
+    background-color: var(--color-info-light);
+    color: var(--color-info);
+}
+
+.club-status.member {
+    background-color: var(--color-success-light);
+    color: var(--color-success);
+}
+
+.club-status.public {
+    background-color: var(--color-info-light);
+    color: var(--color-info);
+}
+
+.club-status.private {
+    background-color: var(--color-warning-light);
+    color: var(--color-warning);
+}

@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
 from typing import List, Optional
+from loguru import logger
+
 from app.database import get_db
 from app.models.db_models import Book, BookLoan, BookStatus, LoanStatus, Club, BookReview
 from app.models.schemas import (
@@ -81,9 +83,12 @@ async def create_book(
     telegram_user = user['user']
     user_id = str(telegram_user['id'])
     
+    logger.info(f"Creating book '{book_data.title}' by user {user_id} (@{telegram_user.get('username', 'unknown')}) in club {book_data.club_id}")
+    
     # Отримуємо клуб за ID
     club = db.query(Club).filter(Club.id == book_data.club_id).first()
     if not club:
+        logger.warning(f"Club {book_data.club_id} not found")
         raise HTTPException(status_code=404, detail="Club not found")
     
     # Формуємо повне ім'я
@@ -106,6 +111,8 @@ async def create_book(
     db.add(new_book)
     db.commit()
     db.refresh(new_book)
+    
+    logger.success(f"✅ Book created: ID={new_book.id}, Title='{new_book.title}', Club={book_data.club_id}")
     
     return new_book
 

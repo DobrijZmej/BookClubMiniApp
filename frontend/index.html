@@ -6,13 +6,13 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Книжковий Клуб</title>
+    <title>Книжковий Обмін</title>
     
     <!-- Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <!-- Styles -->
-    <link rel="stylesheet" href="css/styles.css?v=20260121-2300">
+    <link rel="stylesheet" href="css/styles.css?v=20260122-new">
 </head>
 <body>
     <!-- Loader -->
@@ -21,35 +21,91 @@
     </div>
 
     <!-- Main App -->
-    <div id="app" class="container" style="display: none;">
-        <!-- Navigation Header -->
-        <div class="nav-header">
-            <button id="back-button" class="nav-back" style="display: none;">← Назад</button>
-            <h1 id="header-title" class="nav-title">📚 Мої клуби</h1>
-            <div class="user-info text-sm text-muted">
-                <span id="username">Завантаження...</span>
+    <div id="app" class="app-container" style="display: none;">
+        <!-- Modern App Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <button id="back-button" class="back-btn" style="display: none;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    <div class="app-branding">
+                        <div class="app-icon">📚</div>
+                        <h1 class="app-title" id="header-title">Книжковий Обмін</h1>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button id="search-clubs-btn" class="icon-btn" title="Пошук клубів">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                    </button>
+                    <button id="add-club-btn" class="icon-btn" title="Створити клуб">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                    </button>
+                    <button id="join-code-btn" class="icon-btn" title="Вступити за кодом">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"/>
+                            <path d="M8 12h8"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
-        </div>
+        </header>
 
         <!-- Content Views -->
-        <main>
+        <main class="app-main">
             <!-- Clubs List View (Primary) -->
             <div id="clubs-list-view" class="view active">
-                <div id="my-clubs-list" class="clubs-grid">
-                    <!-- User's clubs will be loaded here -->
-                </div>
-                
-                <div id="clubs-empty-state" class="empty-state" style="display: none;">
-                    <div class="empty-icon">🏛️</div>
-                    <div class="empty-title">У вас поки немає клубів</div>
-                    <div class="empty-description">Створіть свій або приєднайтеся до існуючого!</div>
-                </div>
-                
-                <!-- Action Buttons -->
-                <div class="flex gap-4 mt-4">
-                    <button id="create-new-club-btn" class="btn btn-primary btn-full">Створити клуб</button>
-                    <button id="join-existing-club-btn" class="btn btn-outline btn-full">Приєднатись до клубу</button>
-                </div>
+                <!-- My Clubs Section -->
+                <section class="clubs-section">
+                    <h2 class="section-title">Мої Клуби</h2>
+                    
+                    <div id="my-clubs-list" class="clubs-grid">
+                        <!-- User's clubs will be loaded here -->
+                    </div>
+                    
+                    <div id="clubs-empty-state" class="empty-state" style="display: none;">
+                        <div class="empty-icon">🏛️</div>
+                        <h3 class="empty-title">У вас поки немає клубів</h3>
+                        <p class="empty-description">Створіть свій або приєднайтеся до існуючого!</p>
+                    </div>
+                </section>
+
+                <!-- Find Club Section -->
+                <section class="find-club-section">
+                    <h2 class="section-title">Знайти Книжковий Клуб</h2>
+                    
+                    <div class="action-buttons">
+                        <button id="search-clubs-main-btn" class="action-btn action-btn-outline">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="m21 21-4.35-4.35"/>
+                            </svg>
+                            <span>Знайти Клуб</span>
+                        </button>
+                        
+                        <button id="join-code-main-btn" class="action-btn action-btn-outline">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"/>
+                                <path d="M8 12h8"/>
+                            </svg>
+                            <span>Ввести Invite-код</span>
+                        </button>
+                        
+                        <button id="create-club-main-btn" class="action-btn action-btn-primary">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 5v14M5 12h14"/>
+                            </svg>
+                            <span>Створити Новий Клуб</span>
+                        </button>
+                    </div>
+                </section>
             </div>
             
             <!-- Club Detail View (Books inside club) -->
@@ -241,10 +297,22 @@
     </div>
 
     <!-- Scripts -->
-    <script src="js/config.js?v=20260121-2300"></script>
-    <script src="js/api.js?v=20260121-2300"></script>
-    <script src="js/ui.js?v=20260121-2300"></script>
-    <script src="js/clubs-ui.js?v=20260121-2300"></script>
-    <script src="js/app.js?v=20260121-2300"></script>
+    <script src="js/config.js?v=20260122-modules"></script>
+    <script src="js/api.js?v=20260122-modules"></script>
+    
+    <!-- UI Modules -->
+    <script src="js/ui-utils.js?v=20260122-modules"></script>
+    <script src="js/ui-books.js?v=20260122-modules"></script>
+    <script src="js/ui-reviews.js?v=20260122-modules"></script>
+    <script src="js/ui.js?v=20260122-modules"></script>
+    
+    <!-- Clubs Modules -->
+    <script src="js/clubs-list.js?v=20260122-modules"></script>
+    <script src="js/clubs-detail.js?v=20260122-modules"></script>
+    <script src="js/clubs-requests.js?v=20260122-modules"></script>
+    <script src="js/clubs-ui.js?v=20260122-modules"></script>
+    
+    <!-- App -->
+    <script src="js/app.js?v=20260122-modules"></script>
 </body>
 </html>

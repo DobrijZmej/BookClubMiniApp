@@ -5,6 +5,7 @@ from typing import List
 from datetime import datetime
 import secrets
 import string
+from loguru import logger
 
 from app.database import get_db
 from app.auth import get_current_user
@@ -46,6 +47,8 @@ async def create_club(
     telegram_user = user['user']
     user_id = str(telegram_user['id'])
     
+    logger.info(f"Creating new club '{club_data.name}' by user {user_id} (@{telegram_user.get('username', 'unknown')})")
+    
     # Формуємо повне ім'я
     first_name = telegram_user.get('first_name', '')
     last_name = telegram_user.get('last_name', '')
@@ -85,6 +88,8 @@ async def create_club(
     db.add(owner_member)
     db.commit()
     db.refresh(new_club)
+    
+    logger.success(f"✅ Club created: ID={new_club.id}, Name='{new_club.name}', Invite={invite_code}")
     
     # Завантажуємо members для відповіді
     members = db.query(ClubMember).filter(ClubMember.club_id == new_club.id).all()

@@ -1,0 +1,27 @@
+/* ============================================
+   📖 Books - Book Cards & Related Styles
+   ============================================ */
+
+/* TODO: Book-specific styles will be added here
+   Currently book styles are in ui.js and need to be extracted */
+
+/* Placeholder for future book card styles */
+.book-card {
+    /* Book card styles will go here */
+}
+
+.book-title {
+    /* Book title styles */
+}
+
+.book-author {
+    /* Book author styles */
+}
+
+.book-status {
+    /* Book status indicator styles */
+}
+
+.book-actions {
+    /* Book action buttons container */
+}

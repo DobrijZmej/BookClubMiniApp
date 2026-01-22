@@ -5,6 +5,7 @@ from urllib.parse import parse_qs
 from typing import Optional
 from fastapi import HTTPException, Header
 import os
+from loguru import logger
 
 def validate_telegram_init_data(init_data: str, bot_token: str) -> dict:
     """
@@ -81,20 +82,29 @@ async def get_current_user(x_telegram_init_data: Optional[str] = Header(None)):
     if not x_telegram_init_data:
         raise HTTPException(status_code=401, detail="Missing Telegram auth data")
     
-    # Dev режим для localhost - bypass валідації
-    print(f"DEBUG: x_telegram_init_data: {x_telegram_init_data[:100]}...")  # Логування для debug
+    logger.debug(f"Init data received: {x_telegram_init_data[:100]}...")
     
-    if 'dev_mock_hash' in x_telegram_init_data:
-        print("DEBUG: Dev mode detected - bypassing validation")
-        import json
-        from urllib.parse import parse_qs, unquote
+    # Dev режим - дозволено ТІЛЬКИ не в production
+    env = os.getenv('ENV', 'development')
+    is_dev_mode = 'dev_mock_hash' in x_telegram_init_data
+    
+    if is_dev_mode:
+        if env.lower() == 'production':
+            logger.warning("⚠️ Dev mode attempt blocked in production environment")
+            raise HTTPException(
+                status_code=401,
+                detail="Dev mode is disabled in production"
+            )
+        
+        logger.warning("🔧 Dev mode detected - bypassing Telegram validation")
+        from urllib.parse import unquote
         
         try:
             parsed = parse_qs(x_telegram_init_data)
             user_json = unquote(parsed.get('user', ['{}'])[0])
             user = json.loads(user_json)
             
-            print(f"DEBUG: Dev mode user: {user}")
+            logger.info(f"Dev mode user authenticated: {user.get('id')} (@{user.get('username', 'unknown')})")
             
             return {
                 'user': user,
@@ -103,7 +113,7 @@ async def get_current_user(x_telegram_init_data: Optional[str] = Header(None)):
                 'auth_date': int(parsed.get('auth_date', ['0'])[0])
             }
         except Exception as e:
-            print(f"DEBUG: Dev mode parsing failed: {e}")
+            logger.error(f"Dev mode parsing failed: {e}")
             pass  # Fallback to normal validation
     
     bot_token = os.getenv('BOT_TOKEN')

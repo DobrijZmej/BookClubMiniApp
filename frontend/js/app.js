@@ -8,7 +8,28 @@
     // Ініціалізація Telegram Web App
     tg.ready();
     tg.expand();
+    
+    // Застосування теми з Telegram
+    const applyTelegramTheme = () => {
+        const colorScheme = tg.colorScheme || 'light'; // 'light' or 'dark'
+        
+        if (colorScheme === 'dark') {
+            document.documentElement.classList.add('dark-theme');
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+            document.documentElement.classList.remove('dark-theme');
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+        
+        console.log('🎨 Theme applied:', colorScheme);
+    };
+    
     applyTelegramTheme();
+    
+    // Відстеження зміни теми
+    if (tg.onEvent) {
+        tg.onEvent('themeChanged', applyTelegramTheme);
+    }
     
     // Отримуємо chat_id автоматично з Telegram
     let chatId = null;
@@ -88,7 +109,7 @@
             // Повернутися до списку клубів
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById('clubs-list-view').classList.add('active');
-            document.getElementById('header-title').textContent = '📚 Мої клуби';
+            document.getElementById('header-title').textContent = 'Книжковий Обмін';
             document.getElementById('back-button').style.display = 'none';
         } else if (document.getElementById('club-requests-view').classList.contains('active')) {
             // Повернутися до деталей клубу
@@ -96,21 +117,54 @@
         }
     });
     
-    // Кнопки на головній сторінці клубів
-    document.getElementById('create-new-club-btn').addEventListener('click', () => {
+    // Header кнопки
+    document.getElementById('search-clubs-btn')?.addEventListener('click', () => {
+        tg.HapticFeedback.impactOccurred('medium');
+        // TODO: відкрити пошук клубів
+        if (tg.showAlert) {
+            tg.showAlert('Пошук клубів - в розробці');
+        }
+    });
+    
+    document.getElementById('add-club-btn')?.addEventListener('click', () => {
         tg.HapticFeedback.impactOccurred('medium');
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.getElementById('create-club-view').classList.add('active');
         document.getElementById('header-title').textContent = 'Створити клуб';
-        document.getElementById('back-button').style.display = 'block';
+        document.getElementById('back-button').style.display = 'flex';
     });
     
-    document.getElementById('join-existing-club-btn').addEventListener('click', () => {
+    document.getElementById('join-code-btn')?.addEventListener('click', () => {
         tg.HapticFeedback.impactOccurred('medium');
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.getElementById('join-club-view').classList.add('active');
-        document.getElementById('header-title').textContent = 'Приєднатися до клубу';
-        document.getElementById('back-button').style.display = 'block';
+        document.getElementById('header-title').textContent = 'Вступити за кодом';
+        document.getElementById('back-button').style.display = 'flex';
+    });
+    
+    // Кнопки в секції "Знайти Книжковий Клуб"
+    document.getElementById('search-clubs-main-btn')?.addEventListener('click', () => {
+        tg.HapticFeedback.impactOccurred('medium');
+        // TODO: відкрити пошук клубів
+        if (tg.showAlert) {
+            tg.showAlert('Пошук клубів - в розробці');
+        }
+    });
+    
+    document.getElementById('join-code-main-btn')?.addEventListener('click', () => {
+        tg.HapticFeedback.impactOccurred('medium');
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById('join-club-view').classList.add('active');
+        document.getElementById('header-title').textContent = 'Вступити за кодом';
+        document.getElementById('back-button').style.display = 'flex';
+    });
+    
+    document.getElementById('create-club-main-btn')?.addEventListener('click', () => {
+        tg.HapticFeedback.impactOccurred('medium');
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById('create-club-view').classList.add('active');
+        document.getElementById('header-title').textContent = 'Створити клуб';
+        document.getElementById('back-button').style.display = 'flex';
     });
     
     // Кнопка "Додати книгу" в деталях клубу
