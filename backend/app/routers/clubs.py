@@ -11,7 +11,7 @@ from app.database import get_db
 from app.auth import get_current_user
 from app.models.db_models import (
     Club, ClubMember, ClubJoinRequest, ClubStatus, 
-    MemberRole, JoinRequestStatus
+    MemberRole, JoinRequestStatus, Book, BookStatus
 )
 from app.models.schemas import (
     ClubCreate, ClubUpdate, ClubResponse, ClubDetailResponse,
@@ -106,18 +106,66 @@ async def get_my_clubs(
     db: Session = Depends(get_db),
     user: dict = Depends(get_current_user)
 ):
-    """Отримати список клубів користувача"""
+    """Отримати список клубів користувача (включно з pending заявками)"""
     user_id = str(user['user']['id'])
     
-    # Знаходимо всі клуби де користувач є членом
-    clubs = db.query(Club).join(ClubMember).filter(
+    result = []
+    
+    # 1. Знаходимо клуби з pending заявками (мають бути зверху)
+    pending_requests = db.query(ClubJoinRequest).filter(
+        ClubJoinRequest.user_id == user_id,
+        ClubJoinRequest.status == JoinRequestStatus.PENDING
+    ).order_by(desc(ClubJoinRequest.created_at)).all()
+    
+    for request in pending_requests:
+        club = db.query(Club).filter(
+            Club.id == request.club_id,
+            Club.status == ClubStatus.ACTIVE
+        ).first()
+        
+        if club:
+            members_count = db.query(ClubMember).filter(ClubMember.club_id == club.id).count()
+            books_count = db.query(Book).filter(
+                Book.club_id == club.id,
+                Book.status != BookStatus.DELETED
+            ).count()
+            
+            club_dict = {
+                "id": club.id,
+                "name": club.name,
+                "description": club.description,
+                "chat_id": club.chat_id,
+                "owner_id": club.owner_id,
+                "invite_code": club.invite_code,
+                "is_public": club.is_public,
+                "status": club.status.value if hasattr(club.status, 'value') else club.status,
+                "created_at": club.created_at,
+                "members_count": members_count,
+                "books_count": books_count,
+                "user_role": "PENDING"  # Спеціальне значення для pending заявок
+            }
+            result.append(club_dict)
+    
+    # 2. Знаходимо клуби де користувач є членом
+    member_clubs = db.query(Club).join(ClubMember).filter(
         ClubMember.user_id == user_id,
         Club.status == ClubStatus.ACTIVE
     ).order_by(desc(ClubMember.joined_at)).all()
     
-    # Додаємо кількість членів для кожного клубу
-    result = []
-    for club in clubs:
+    for club in member_clubs:
+        members_count = db.query(ClubMember).filter(ClubMember.club_id == club.id).count()
+        books_count = db.query(Book).filter(
+            Book.club_id == club.id,
+            Book.status != BookStatus.DELETED
+        ).count()
+        
+        # Визначаємо роль користувача в клубі
+        member = db.query(ClubMember).filter(
+            ClubMember.club_id == club.id,
+            ClubMember.user_id == user_id
+        ).first()
+        user_role = member.role.value if member and hasattr(member.role, 'value') else member.role if member else None
+        
         club_dict = {
             "id": club.id,
             "name": club.name,
@@ -128,7 +176,9 @@ async def get_my_clubs(
             "is_public": club.is_public,
             "status": club.status.value if hasattr(club.status, 'value') else club.status,
             "created_at": club.created_at,
-            "members_count": db.query(ClubMember).filter(ClubMember.club_id == club.id).count()
+            "members_count": members_count,
+            "books_count": books_count,
+            "user_role": user_role
         }
         result.append(club_dict)
     
@@ -160,10 +210,21 @@ async def get_club_details(
     # Завантажуємо членів
     members = db.query(ClubMember).filter(ClubMember.club_id == club_id).all()
     
+    # Рахуємо кількість книг (без видалених)
+    books_count = db.query(Book).filter(
+        Book.club_id == club_id,
+        Book.status != BookStatus.DELETED
+    ).count()
+    
+    # Отримуємо роль користувача
+    user_role = role  # роль вже визначена вище через get_user_club_role
+    
     return ClubDetailResponse(
         **club.__dict__,
         members=members,
-        member_count=len(members)
+        member_count=len(members),
+        books_count=books_count,
+        user_role=user_role
     )
 
 
@@ -197,7 +258,19 @@ async def update_club(
     db.commit()
     db.refresh(club)
     
-    return club
+    # Додаємо статистику та роль
+    members_count = db.query(ClubMember).filter(ClubMember.club_id == club.id).count()
+    books_count = db.query(Book).filter(
+        Book.club_id == club.id,
+        Book.status != BookStatus.DELETED
+    ).count()
+    
+    return ClubResponse(
+        **club.__dict__,
+        members_count=members_count,
+        books_count=books_count,
+        user_role=role  # роль вже визначена вище
+    )
 
 
 @router.post("/join", response_model=JoinRequestResponse, status_code=201)

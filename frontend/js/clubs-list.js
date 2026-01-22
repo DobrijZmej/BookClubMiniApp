@@ -19,8 +19,34 @@ const ClubsList = {
             container.innerHTML = clubs.map((club) => {
                 const userTelegramId = tg.initDataUnsafe?.user?.id?.toString();
                 const isOwner = club.owner_id === userTelegramId;
-                const roleText = '✓ Ви учасник';
-                const roleClass = isOwner ? 'owner' : 'member';
+                
+                // Визначаємо текст та клас ролі
+                let roleText = '✓ Ви учасник';
+                let roleClass = 'member';
+                
+                if (club.user_role) {
+                    switch (club.user_role.toUpperCase()) {
+                        case 'PENDING':
+                            roleText = '⏳ Заявка на розгляді';
+                            roleClass = 'pending';
+                            break;
+                        case 'OWNER':
+                            roleText = '👑 Ви власник';
+                            roleClass = 'owner';
+                            break;
+                        case 'ADMIN':
+                            roleText = '⚙️ Ви адміністратор';
+                            roleClass = 'admin';
+                            break;
+                        case 'MEMBER':
+                            roleText = '✓ Ви учасник';
+                            roleClass = 'member';
+                            break;
+                        default:
+                            roleText = '✓ Ви учасник';
+                            roleClass = 'member';
+                    }
+                }
                 
                 // Avatar/Cover image
                 const coverImageUrl = club.cover_image_url || '';
@@ -43,8 +69,11 @@ const ClubsList = {
                 // Статус клубу
                 const clubType = club.is_public ? 'Публічний' : 'Закритий клуб';
                 
+                // Додаємо клас pending для картки якщо це pending заявка
+                const cardClass = roleClass === 'pending' ? 'club-card pending' : 'club-card';
+                
                 return `
-                    <div class="club-card" data-club-id="${club.id}">
+                    <div class="${cardClass}" data-club-id="${club.id}">`;
                         <div class="${avatarClass}" ${avatarStyle}></div>
                         <div class="club-info">
                             <div class="club-title-row">
@@ -78,8 +107,22 @@ const ClubsList = {
             document.querySelectorAll('.club-card').forEach(card => {
                 card.addEventListener('click', (e) => {
                     if (e.target.closest('.copy-btn')) return;
+                    
                     const clubId = parseInt(card.dataset.clubId);
                     const clubName = card.querySelector('.club-name').textContent;
+                    const roleStatus = card.querySelector('.club-status');
+                    
+                    // Перевірка чи це pending клуб
+                    if (roleStatus && roleStatus.classList.contains('pending')) {
+                        if (tg.showAlert) {
+                            tg.showAlert('⏳ Ваша заявка на розгляді. Очікуйте підтвердження від адміністратора клубу.');
+                        }
+                        if (tg.HapticFeedback) {
+                            tg.HapticFeedback.notificationOccurred('warning');
+                        }
+                        return;
+                    }
+                    
                     ClubsDetail.openClub(clubId, clubName);
                 });
             });

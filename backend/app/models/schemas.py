@@ -129,6 +129,8 @@ class ClubResponse(BaseModel):
     status: str
     created_at: datetime
     members_count: Optional[int] = None
+    books_count: Optional[int] = None
+    user_role: Optional[str] = None  # Роль поточного користувача в клубі
     
     class Config:
         from_attributes = True
@@ -137,6 +139,7 @@ class ClubResponse(BaseModel):
 class ClubDetailResponse(ClubResponse):
     members: List[ClubMemberResponse] = []
     member_count: Optional[int] = None
+    books_count: Optional[int] = None
     
     class Config:
         from_attributes = True

@@ -25,6 +25,17 @@
     transform: translateY(0);
 }
 
+/* Pending Club Card - менш активна */
+.club-card.pending {
+    opacity: 0.85;
+    cursor: default;
+}
+
+.club-card.pending:hover {
+    transform: none;
+    box-shadow: var(--shadow-sm);
+}
+
 /* Club Avatar */
 .club-avatar {
     position: relative;

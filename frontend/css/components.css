@@ -187,18 +187,18 @@
     font-size: 0.8rem;
     font-weight: 600;
     white-space: nowrap;
-    background-color: #d4edda;
-    color: #28a745;
+    background-color: var(--color-success-light);
+    color: var(--color-success);
+}
+
+.club-status.pending {
+    background-color: var(--color-warning-light);
+    color: var(--color-warning);
 }
 
 .club-status.owner {
-    background-color: #d4edda;
-    color: #28a745;
-}
-
-.club-status.member {
-    background-color: #d4edda;
-    color: #28a745;
+    background-color: #fef3c7;
+    color: #d97706;
 }
 
 .club-status.admin {
