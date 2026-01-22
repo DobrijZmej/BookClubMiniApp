@@ -349,11 +349,22 @@
             // Очищуємо форму
             document.getElementById('join-club-form').reset();
             
-            // Повертаємось до списку
+            // Повертаємось до списку та перезавантажуємо клуби
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById('clubs-list-view').classList.add('active');
             document.getElementById('header-title').textContent = '📚 Мої клуби';
             document.getElementById('back-button').style.display = 'none';
+            
+            // Показуємо header кнопки головної сторінки
+            document.getElementById('search-clubs-btn').style.display = 'flex';
+            document.getElementById('add-club-btn').style.display = 'flex';
+            document.getElementById('join-code-btn').style.display = 'flex';
+            document.getElementById('add-book-btn').style.display = 'none';
+            document.getElementById('edit-club-btn').style.display = 'none';
+            document.getElementById('delete-club-btn').style.display = 'none';
+            
+            // Перезавантажуємо список клубів (з новою pending заявкою)
+            await ClubsUI.loadClubsList();
             
             alert('✅ Запит надіслано! Очікуйте схвалення від адміністратора');
             

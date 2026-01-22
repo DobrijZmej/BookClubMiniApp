@@ -5,7 +5,7 @@ from typing import List, Optional
 from loguru import logger
 
 from app.database import get_db
-from app.models.db_models import Book, BookLoan, BookStatus, LoanStatus, Club, BookReview
+from app.models.db_models import Book, BookLoan, BookStatus, LoanStatus, Club, BookReview, ClubMember
 from app.models.schemas import (
     BookCreate, BookUpdate, BookResponse, 
     BookDetailResponse, BookReviewCreate, BookReviewUpdate, BookReviewResponse
@@ -13,6 +13,34 @@ from app.models.schemas import (
 from app.auth import get_current_user
 
 router = APIRouter(prefix="/api/books", tags=["Books"])
+
+def enrich_book_with_stats(book_dict: dict, book_id: int, db: Session) -> dict:
+    """Додає average_rating та readers_count до словника книги"""
+    # Рахуємо середній рейтинг з відгуків
+    reviews = db.query(BookReview).filter(BookReview.book_id == book_id).all()
+    if reviews:
+        avg_rating = sum(r.rating for r in reviews) / len(reviews)
+        book_dict['average_rating'] = round(avg_rating, 2)
+    else:
+        book_dict['average_rating'] = None
+    
+    # Рахуємо унікальних читачів (всі хто коли-небудь брав книгу)
+    readers_count = db.query(BookLoan.user_id).filter(
+        BookLoan.book_id == book_id
+    ).distinct().count()
+    book_dict['readers_count'] = readers_count
+    
+    return book_dict
+
+def verify_club_membership(db: Session, club_id: int, user_id: str):
+    """Перевіряє, чи користувач є членом клубу. Кидає HTTPException якщо ні."""
+    member = db.query(ClubMember).filter(
+        ClubMember.club_id == club_id,
+        ClubMember.user_id == user_id
+    ).first()
+    
+    if not member:
+        raise HTTPException(status_code=403, detail="Ви не є членом цього клубу")
 
 @router.get("/club/{club_id}", response_model=List[BookResponse])
 async def get_books(
@@ -22,10 +50,15 @@ async def get_books(
     user: dict = Depends(get_current_user)
 ):
     """Отримати список книг в клубі"""
+    user_id = str(user['user']['id'])
+    
     # Перевіряємо, що клуб існує
     club = db.query(Club).filter(Club.id == club_id).first()
     if not club:
         raise HTTPException(status_code=404, detail="Club not found")
+    
+    # Перевіряємо членство в клубі
+    verify_club_membership(db, club_id, user_id)
     
     query = db.query(Book).filter(
         Book.club_id == club_id,
@@ -41,7 +74,7 @@ async def get_books(
     
     books = query.order_by(desc(Book.created_at)).all()
     
-    # Додаємо current_reader_id для кожної книги
+    # Додаємо current_reader_id, average_rating та readers_count для кожної книги
     result = []
     for book in books:
         book_dict = BookResponse.model_validate(book).model_dump()
@@ -55,6 +88,9 @@ async def get_books(
         if active_loan:
             book_dict['current_reader_id'] = active_loan.user_id
         
+        # Додаємо статистику
+        book_dict = enrich_book_with_stats(book_dict, book.id, db)
+        
         result.append(book_dict)
     
     return result
@@ -66,6 +102,8 @@ async def get_book_details(
     user: dict = Depends(get_current_user)
 ):
     """Отримати деталі книги з історією"""
+    user_id = str(user['user']['id'])
+    
     book = db.query(Book).filter(
         Book.id == book_id,
         Book.status != BookStatus.DELETED
@@ -73,6 +111,9 @@ async def get_book_details(
     
     if not book:
         raise HTTPException(status_code=404, detail="Книга не знайдена")
+    
+    # Перевіряємо членство в клубі
+    verify_club_membership(db, book.club_id, user_id)
     
     # Завантажуємо історію loans
     loans = db.query(BookLoan).filter(
@@ -92,6 +133,9 @@ async def get_book_details(
     
     result_dict = book.__dict__.copy()
     result_dict['current_reader_id'] = active_loan.user_id if active_loan else None
+    
+    # Додаємо статистику
+    result_dict = enrich_book_with_stats(result_dict, book_id, db)
     
     return BookDetailResponse(
         **result_dict,
@@ -117,6 +161,9 @@ async def create_book(
         logger.warning(f"Club {book_data.club_id} not found")
         raise HTTPException(status_code=404, detail="Club not found")
     
+    # Перевіряємо членство в клубі
+    verify_club_membership(db, book_data.club_id, user_id)
+    
     # Формуємо повне ім'я
     first_name = telegram_user.get('first_name', '')
     last_name = telegram_user.get('last_name', '')
@@ -140,7 +187,11 @@ async def create_book(
     
     logger.success(f"✅ Book created: ID={new_book.id}, Title='{new_book.title}', Club={book_data.club_id}")
     
-    return new_book
+    # Додаємо статистику (для нової книги буде 0)
+    book_dict = BookResponse.model_validate(new_book).model_dump()
+    book_dict = enrich_book_with_stats(book_dict, new_book.id, db)
+    
+    return book_dict
 
 @router.patch("/{book_id}", response_model=BookResponse)
 async def update_book(
@@ -151,13 +202,17 @@ async def update_book(
 ):
     """Оновити книгу (тільки власник)"""
     telegram_user = user['user']
+    user_id = str(telegram_user['id'])
     
     book = db.query(Book).filter(Book.id == book_id).first()
     if not book:
         raise HTTPException(status_code=404, detail="Книга не знайдена")
     
+    # Перевіряємо членство в клубі
+    verify_club_membership(db, book.club_id, user_id)
+    
     # Перевірка прав
-    if book.owner_id != str(telegram_user['id']):
+    if book.owner_id != user_id:
         raise HTTPException(status_code=403, detail="Ви не є власником цієї книги")
     
     # Оновлюємо поля
@@ -173,7 +228,11 @@ async def update_book(
     db.commit()
     db.refresh(book)
     
-    return book
+    # Додаємо статистику
+    book_dict = BookResponse.model_validate(book).model_dump()
+    book_dict = enrich_book_with_stats(book_dict, book.id, db)
+    
+    return book_dict
 
 @router.delete("/{book_id}", status_code=204)
 async def delete_book(
@@ -183,13 +242,17 @@ async def delete_book(
 ):
     """Видалити книгу (тільки власник)"""
     telegram_user = user['user']
+    user_id = str(telegram_user['id'])
     
     book = db.query(Book).filter(Book.id == book_id).first()
     if not book:
         raise HTTPException(status_code=404, detail="Книга не знайдена")
     
+    # Перевіряємо членство в клубі
+    verify_club_membership(db, book.club_id, user_id)
+    
     # Перевірка прав
-    if book.owner_id != str(telegram_user['id']):
+    if book.owner_id != user_id:
         raise HTTPException(status_code=403, detail="Ви не є власником цієї книги")
     
     # Soft delete
@@ -206,6 +269,7 @@ async def borrow_book(
 ):
     """Позичити книгу"""
     telegram_user = user['user']
+    user_id = str(telegram_user['id'])
     
     book = db.query(Book).filter(
         Book.id == book_id,
@@ -214,6 +278,9 @@ async def borrow_book(
     
     if not book:
         raise HTTPException(status_code=404, detail="Книга не знайдена")
+    
+    # Перевіряємо членство в клубі
+    verify_club_membership(db, book.club_id, user_id)
     
     if book.status != BookStatus.AVAILABLE:
         raise HTTPException(status_code=400, detail="Книга вже позичена")
@@ -233,7 +300,12 @@ async def borrow_book(
     db.commit()
     db.refresh(book)
     
-    return book
+    # Додаємо статистику
+    book_dict = BookResponse.model_validate(book).model_dump()
+    book_dict['current_reader_id'] = str(telegram_user['id'])
+    book_dict = enrich_book_with_stats(book_dict, book.id, db)
+    
+    return book_dict
 
 @router.post("/{book_id}/return", response_model=BookResponse)
 async def return_book(
@@ -243,11 +315,20 @@ async def return_book(
 ):
     """Повернути книгу"""
     telegram_user = user['user']
+    user_id = str(telegram_user['id'])
+    
+    # Спочатку отримуємо книгу для перевірки club_id
+    book = db.query(Book).filter(Book.id == book_id).first()
+    if not book:
+        raise HTTPException(status_code=404, detail="Книга не знайдена")
+    
+    # Перевіряємо членство в клубі
+    verify_club_membership(db, book.club_id, user_id)
     
     # Знаходимо активний loan
     loan = db.query(BookLoan).filter(
         BookLoan.book_id == book_id,
-        BookLoan.user_id == str(telegram_user['id']),
+        BookLoan.user_id == user_id,
         BookLoan.status == LoanStatus.READING
     ).first()
     
@@ -260,13 +341,17 @@ async def return_book(
     loan.returned_at = datetime.now()
     
     # Оновлюємо статус книги
-    book = db.query(Book).filter(Book.id == book_id).first()
     book.status = BookStatus.AVAILABLE
     
     db.commit()
     db.refresh(book)
     
-    return book
+    # Додаємо статистику
+    book_dict = BookResponse.model_validate(book).model_dump()
+    book_dict['current_reader_id'] = None
+    book_dict = enrich_book_with_stats(book_dict, book.id, db)
+    
+    return book_dict
 
 
 @router.post("/{book_id}/review", response_model=BookReviewResponse)
@@ -339,6 +424,14 @@ async def get_my_review(
     telegram_user = user['user']
     user_id = str(telegram_user['id'])
     
+    # Перевіряємо що книга існує та отримуємо club_id
+    book = db.query(Book).filter(Book.id == book_id).first()
+    if not book:
+        raise HTTPException(status_code=404, detail="Книга не знайдена")
+    
+    # Перевіряємо членство в клубі
+    verify_club_membership(db, book.club_id, user_id)
+    
     review = db.query(BookReview).filter(
         BookReview.book_id == book_id,
         BookReview.user_id == user_id
@@ -359,6 +452,14 @@ async def delete_review(
     """Видалити мій відгук"""
     telegram_user = user['user']
     user_id = str(telegram_user['id'])
+    
+    # Перевіряємо що книга існує та отримуємо club_id
+    book = db.query(Book).filter(Book.id == book_id).first()
+    if not book:
+        raise HTTPException(status_code=404, detail="Книга не знайдена")
+    
+    # Перевіряємо членство в клубі
+    verify_club_membership(db, book.club_id, user_id)
     
     review = db.query(BookReview).filter(
         BookReview.book_id == book_id,
@@ -381,5 +482,15 @@ async def get_book_reviews(
     user: dict = Depends(get_current_user)
 ):
     """Отримати всі відгуки про книгу"""
+    user_id = str(user['user']['id'])
+    
+    # Перевіряємо що книга існує та отримуємо club_id
+    book = db.query(Book).filter(Book.id == book_id).first()
+    if not book:
+        raise HTTPException(status_code=404, detail="Книга не знайдена")
+    
+    # Перевіряємо членство в клубі
+    verify_club_membership(db, book.club_id, user_id)
+    
     reviews = db.query(BookReview).filter(BookReview.book_id == book_id).all()
     return reviews

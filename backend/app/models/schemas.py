@@ -76,6 +76,8 @@ class BookResponse(BaseModel):
     cover_url: Optional[str]
     description: Optional[str]
     created_at: datetime
+    average_rating: Optional[float] = None
+    readers_count: Optional[int] = None
     
     class Config:
         from_attributes = True
@@ -138,8 +140,7 @@ class ClubResponse(BaseModel):
 
 class ClubDetailResponse(ClubResponse):
     members: List[ClubMemberResponse] = []
-    member_count: Optional[int] = None
-    books_count: Optional[int] = None
+    # member_count наслідується від ClubResponse як members_count
     
     class Config:
         from_attributes = True

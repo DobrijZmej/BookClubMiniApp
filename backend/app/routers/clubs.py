@@ -222,7 +222,7 @@ async def get_club_details(
     return ClubDetailResponse(
         **club.__dict__,
         members=members,
-        member_count=len(members),
+        members_count=len(members),
         books_count=books_count,
         user_role=user_role
     )
