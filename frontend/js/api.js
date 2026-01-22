@@ -49,7 +49,7 @@ const API = {
         // Отримати список книг
         async getAll(clubId, filters = {}) {
             const params = new URLSearchParams();
-            if (filters.status) params.append('status', filters.status);
+            if (filters.sort_by) params.append('sort_by', filters.sort_by);
             if (filters.search) params.append('search', filters.search);
             
             const query = params.toString() ? `?${params}` : '';
