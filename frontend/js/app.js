@@ -233,9 +233,9 @@
         });
     }
     
-    const filterStatus = document.getElementById('filter-status');
-    if (filterStatus) {
-        filterStatus.addEventListener('change', () => {
+    const sortBySelect = document.getElementById('sort-by');
+    if (sortBySelect) {
+        sortBySelect.addEventListener('change', () => {
             if (ClubsUI.currentClubId) {
                 UI.loadBooks(ClubsUI.currentClubId);
             }

@@ -157,10 +157,12 @@
                         </svg>
                         <input type="text" id="search-input" class="search-input" placeholder="Пошук книги">
                     </div>
-                    <select id="filter-status" class="filter-select">
-                        <option value="">Автору</option>
-                        <option value="available">Популярності</option>
-                        <option value="reading">Кількості читачів</option>
+                    <select id="sort-by" class="filter-select">
+                        <option value="">За датою додавання</option>
+                        <option value="author">За автором</option>
+                        <option value="title">За назвою</option>
+                        <option value="rating">За популярністю</option>
+                        <option value="readers">За кількістю читачів</option>
                     </select>
                 </div>
                 
@@ -384,7 +386,7 @@
     
     <!-- UI Modules -->
     <script src="js/ui-utils.js?v=20260122-v4"></script>
-    <script src="js/ui-books.js?v=20260122-v8"></script>
+    <script src="js/ui-books.js?v=20260122-v9"></script>
     <script src="js/ui-reviews.js?v=20260122-v4"></script>
     <script src="js/ui.js?v=20260122-v4"></script>
     
@@ -396,6 +398,6 @@
     <script src="js/clubs-ui.js?v=20260122-v4"></script>
     
     <!-- App -->
-    <script src="js/app.js?v=20260122-v9"></script>
+    <script src="js/app.js?v=20260122-v10"></script>
 </body>
 </html>

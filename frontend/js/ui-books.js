@@ -6,15 +6,15 @@ const UIBooks = {
      */
     async loadBooks(clubId) {
         try {
-            const statusFilter = document.getElementById('filter-status');
+            const sortBySelect = document.getElementById('sort-by');
             const searchInput = document.getElementById('search-input');
             
-            const status = statusFilter ? statusFilter.value : '';
+            const sort_by = sortBySelect ? sortBySelect.value : '';
             const search = searchInput ? searchInput.value : '';
             
-            console.log(`Loading books for club ${clubId}, status: ${status}`);
+            console.log(`Loading books for club ${clubId}, sort_by: ${sort_by}, search: ${search}`);
             
-            const books = await API.books.getAll(clubId, { status, search });
+            const books = await API.books.getAll(clubId, { sort_by, search });
             
             console.log(`Received ${books.length} books:`, books);
             

@@ -46,6 +46,7 @@ def verify_club_membership(db: Session, club_id: int, user_id: str):
 async def get_books(
     club_id: int,
     search: Optional[str] = None,
+    sort_by: Optional[str] = None,
     db: Session = Depends(get_db),
     user: dict = Depends(get_current_user)
 ):
@@ -72,7 +73,16 @@ async def get_books(
             (Book.author.like(search_pattern))
         )
     
-    books = query.order_by(desc(Book.created_at)).all()
+    # Застосовуємо сортування (за замовчуванням - за датою створення)
+    if sort_by == 'author':
+        query = query.order_by(Book.author.asc(), Book.title.asc())
+    elif sort_by == 'title':
+        query = query.order_by(Book.title.asc())
+    else:
+        # За замовчуванням - за датою створення (найновіші першими)
+        query = query.order_by(desc(Book.created_at))
+    
+    books = query.all()
     
     # Додаємо current_reader_id, average_rating та readers_count для кожної книги
     result = []
@@ -92,6 +102,12 @@ async def get_books(
         book_dict = enrich_book_with_stats(book_dict, book.id, db)
         
         result.append(book_dict)
+    
+    # Сортуємо за рейтингом або кількістю читачів (після enrichment)
+    if sort_by == 'rating':
+        result.sort(key=lambda x: (x.get('average_rating') or 0), reverse=True)
+    elif sort_by == 'readers':
+        result.sort(key=lambda x: (x.get('readers_count') or 0), reverse=True)
     
     return result
 
