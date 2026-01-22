@@ -147,6 +147,10 @@
     padding: 0;
 }
 
+.book-action-btn.danger {
+    background-color: var(--color-error);
+}
+
 .book-action-btn:hover {
     opacity: 0.8;
     transform: translateY(-1px);
@@ -154,10 +158,6 @@
 
 .book-action-btn:active {
     transform: translateY(0);
-}
-
-.book-action-btn.danger {
-    background-color: var(--color-error);
 }
 
 .book-action-btn svg {
