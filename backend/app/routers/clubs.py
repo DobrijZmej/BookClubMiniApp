@@ -176,6 +176,8 @@ async def get_my_clubs(
             "owner_id": club.owner_id,
             "invite_code": club.invite_code,
             "is_public": club.is_public,
+            "cover_url": club.cover_url,
+            "requires_approval": club.requires_approval,
             "status": club.status.value if hasattr(club.status, 'value') else club.status,
             "created_at": club.created_at,
             "members_count": members_count,
