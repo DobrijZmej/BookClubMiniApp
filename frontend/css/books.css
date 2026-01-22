@@ -12,8 +12,8 @@
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     transition: all var(--transition-base);
-    cursor: pointer;
     border: 1px solid var(--color-border);
+    position: relative;
 }
 
 .book-card:hover {
@@ -123,6 +123,51 @@
 .book-status-badge.reading {
     background-color: #fff3cd;
     color: #856404;
+}
+
+/* Book Actions - кнопки дій */
+.book-actions {
+    display: flex;
+    gap: var(--space-xs);
+    margin-top: var(--space-xs);
+}
+
+.book-action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    padding: 0;
+}
+
+.book-action-btn:hover {
+    opacity: 0.8;
+    transform: translateY(-1px);
+}
+
+.book-action-btn:active {
+    transform: translateY(0);
+}
+
+.book-action-btn.danger {
+    background-color: var(--color-error);
+}
+
+.book-action-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.book-avatar,
+.book-info {
+    cursor: pointer;
 }
 
 /* Responsive - Books */

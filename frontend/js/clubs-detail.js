@@ -35,7 +35,15 @@ const ClubsDetail = {
             
             // Оновлюємо інформацію про клуб
             document.getElementById('club-detail-name').textContent = club.name;
-            document.getElementById('club-detail-description').textContent = club.description || 'Опис клубу відсутній';
+            
+            // Опис клубу - ховаємо якщо відсутній
+            const descBlock = document.getElementById('club-detail-description');
+            if (club.description && club.description.trim()) {
+                descBlock.textContent = club.description;
+                descBlock.style.display = 'block';
+            } else {
+                descBlock.style.display = 'none';
+            }
             
             // Оновлюємо статистику
             document.getElementById('club-members-count').textContent = `${club.members_count || 0} учасників`;
