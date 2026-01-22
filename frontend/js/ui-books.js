@@ -317,6 +317,44 @@ const UIBooks = {
     },
 
     /**
+     * Редагувати книгу
+     */
+    async editBook(bookId) {
+        try {
+            tg.HapticFeedback.impactOccurred('medium');
+            
+            // Завантажуємо дані книги
+            const book = await API.books.getDetails(bookId);
+            
+            // Заповнюємо форму
+            document.getElementById('book-title').value = book.title;
+            document.getElementById('book-author').value = book.author || '';
+            document.getElementById('book-description').value = book.description || '';
+            
+            // Зберігаємо ID для редагування
+            const form = document.getElementById('add-book-form');
+            form.dataset.editingBookId = bookId;
+            
+            // Міняємо заголовок
+            const currentClubName = document.getElementById('header-title').textContent;
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('add-book-view').classList.add('active');
+            document.getElementById('header-title').textContent = 'Редагувати книгу';
+            document.getElementById('header-title').dataset.previousTitle = currentClubName;
+            document.getElementById('back-button').style.display = 'flex';
+            
+            // Змінюємо текст кнопки
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.textContent = 'Зберегти зміни';
+            }
+        } catch (error) {
+            console.error('Error loading book for edit:', error);
+            tg.showAlert('❌ Помилка завантаження даних книги');
+        }
+    },
+
+    /**
      * Видалити книгу
      */
     async deleteBook(bookId) {

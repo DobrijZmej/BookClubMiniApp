@@ -69,6 +69,14 @@ const API = {
             });
         },
         
+        // Оновити книгу
+        async update(bookId, bookData) {
+            return API.request(`/api/books/${bookId}`, {
+                method: 'PUT',
+                body: JSON.stringify(bookData)
+            });
+        },
+        
         // Позичити книгу
         async borrow(bookId, clubId) {
             return API.request(`/api/books/${bookId}/borrow`, {

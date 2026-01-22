@@ -182,6 +182,25 @@
         });
     }
     
+    // Кнопка "Додати книгу" в header (club context)
+    const addBookBtn = document.getElementById('add-book-btn');
+    if (addBookBtn) {
+        addBookBtn.addEventListener('click', () => {
+            tg.HapticFeedback.impactOccurred('medium');
+            if (ClubsUI.currentClubId) {
+                // Зберігаємо поточну назву клубу
+                const currentClubName = document.getElementById('header-title').textContent;
+                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+                document.getElementById('add-book-view').classList.add('active');
+                document.getElementById('header-title').textContent = 'Додати книгу';
+                document.getElementById('header-title').dataset.previousTitle = currentClubName;
+                document.getElementById('back-button').style.display = 'flex';
+            } else {
+                tg.showAlert('Оберіть клуб спочатку');
+            }
+        });
+    }
+    
     // Кнопка "Заявки" в деталях клубу
     const viewRequestsBtn = document.getElementById('view-club-requests-btn');
     if (viewRequestsBtn) {
@@ -228,6 +247,9 @@
             return;
         }
         
+        const form = e.target;
+        const editingBookId = form.dataset.editingBookId;
+        
         const title = document.getElementById('book-title').value.trim();
         const author = document.getElementById('book-author').value.trim() || 'Невідомий автор';
         const description = document.getElementById('book-description').value.trim();
@@ -241,25 +263,51 @@
             tg.HapticFeedback.impactOccurred('medium');
             UI.setLoading(true);
             
-            await API.books.create({
-                title,
-                author,
-                description,
-                club_id: ClubsUI.currentClubId
-            });
+            if (editingBookId) {
+                // Редагування існуючої книги
+                await API.books.update(editingBookId, {
+                    title,
+                    author,
+                    description
+                });
+                tg.showAlert('✅ Книгу оновлено');
+                delete form.dataset.editingBookId;
+            } else {
+                // Створення нової книги
+                await API.books.create({
+                    title,
+                    author,
+                    description,
+                    club_id: ClubsUI.currentClubId
+                });
+                tg.showAlert('✅ Книгу додано');
+            }
             
             // Очищуємо форму
-            document.getElementById('add-book-form').reset();
+            form.reset();
+            
+            // Повертаємо текст кнопки
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.textContent = 'Додати книгу';
+            }
             
             // Повертаємось до списку книг клубу
             document.getElementById('add-book-view').classList.remove('active');
             document.getElementById('club-detail-view').classList.add('active');
             
+            // Відновлюємо заголовок
+            const previousTitle = document.getElementById('header-title').dataset.previousTitle;
+            if (previousTitle) {
+                document.getElementById('header-title').textContent = previousTitle;
+            }
+            
             // Перезавантажуємо книги
             await UI.loadBooks(ClubsUI.currentClubId);
             
         } catch (error) {
-            console.error('Error creating book:', error);
+            console.error('Error saving book:', error);
+            tg.showAlert('❌ Помилка збереження книги');
         } finally {
             UI.setLoading(false);
         }
