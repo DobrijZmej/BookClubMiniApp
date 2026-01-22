@@ -4,6 +4,10 @@
 const UI = {
     // Utils
     setLoading: (...args) => UIUtils.setLoading(...args),
+    showLoader: (...args) => UIUtils.showLoader(...args),
+    hideLoader: (...args) => UIUtils.hideLoader(...args),
+    showSuccess: (...args) => UIUtils.showSuccess(...args),
+    showError: (...args) => UIUtils.showError(...args),
     escapeHtml: (...args) => UIUtils.escapeHtml(...args),
     generateStarRating: (...args) => UIUtils.generateStarRating(...args),
     getPluralForm: (...args) => UIUtils.getPluralForm(...args),

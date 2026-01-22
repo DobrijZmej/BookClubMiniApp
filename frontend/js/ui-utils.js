@@ -9,6 +9,42 @@ const UIUtils = {
     },
 
     /**
+     * Показати loader
+     */
+    showLoader() {
+        this.setLoading(true);
+    },
+
+    /**
+     * Сховати loader
+     */
+    hideLoader() {
+        this.setLoading(false);
+    },
+
+    /**
+     * Показати повідомлення про успіх
+     */
+    showSuccess(message) {
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.showAlert(message);
+        } else {
+            alert(message);
+        }
+    },
+
+    /**
+     * Показати повідомлення про помилку
+     */
+    showError(message) {
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.showAlert('❌ ' + message);
+        } else {
+            alert('❌ ' + message);
+        }
+    },
+
+    /**
      * Escape HTML для безпеки
      */
     escapeHtml(text) {
