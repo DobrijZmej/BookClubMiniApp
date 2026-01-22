@@ -22,12 +22,22 @@ const ClubsList = {
                 const roleText = '✓ Ви учасник';
                 const roleClass = isOwner ? 'owner' : 'member';
                 
+                // Avatar/Cover image
                 const coverImageUrl = club.cover_image_url || '';
                 const hasImage = coverImageUrl && coverImageUrl.trim() !== '';
-                const gradientIndex = (club.id % 5) + 1;
-                const gradientClass = hasImage ? '' : `gradient-${gradientIndex}`;
-                const coverStyle = hasImage ? `style="background-image: url('${coverImageUrl}')"` : '';
-                const coverImageClass = hasImage ? '' : `no-image ${gradientClass}`;
+                
+                let avatarStyle = '';
+                let avatarClass = 'club-avatar';
+                
+                if (hasImage) {
+                    avatarStyle = `style="background-image: url('${coverImageUrl}')"`;
+                } else {
+                    // Використовуємо дефолтну аватарку
+                    const defaultAvatar = 'images/club_default_avatar.png';
+                    avatarStyle = `style="background-image: url('${defaultAvatar}')"`;
+                    avatarClass += ' default-avatar';
+                }
+                
                 const booksCount = club.books_count || 0;
                 
                 // Статус клубу
@@ -35,7 +45,7 @@ const ClubsList = {
                 
                 return `
                     <div class="club-card" data-club-id="${club.id}">
-                        <div class="club-avatar ${coverImageClass}" ${coverStyle}></div>
+                        <div class="${avatarClass}" ${avatarStyle}></div>
                         <div class="club-info">
                             <div class="club-title-row">
                                 <div class="club-name">${club.name}</div>

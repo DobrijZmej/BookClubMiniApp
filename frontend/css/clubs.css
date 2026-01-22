@@ -39,6 +39,11 @@
     box-shadow: var(--shadow-sm);
 }
 
+.club-avatar.default-avatar {
+    background-size: 60%;
+    background-repeat: no-repeat;
+}
+
 .club-avatar::after {
     content: '';
     position: absolute;
