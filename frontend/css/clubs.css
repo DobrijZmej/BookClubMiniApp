@@ -2,57 +2,50 @@
    📚 Clubs - Club Cards & Related Styles
    ============================================ */
 
-/* Club Card - Modern Design */
+/* Club Card - Horizontal Layout */
 .club-card {
-    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+    padding: var(--space-md);
     background-color: var(--color-bg-secondary);
-    border-radius: var(--radius-xl);
-    overflow: hidden;
-    box-shadow: var(--shadow-md);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
     transition: all var(--transition-base);
     cursor: pointer;
     border: 1px solid var(--color-border);
 }
 
 .club-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-xl);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .club-card:active {
-    transform: translateY(-2px);
+    transform: translateY(0);
 }
 
-/* Club Cover Image */
-.club-cover {
+/* Club Avatar */
+.club-avatar {
     position: relative;
-    width: 100%;
-    height: 160px;
+    width: 100px;
+    height: 100px;
+    min-width: 100px;
+    border-radius: var(--radius-md);
     background-size: cover;
     background-position: center;
     background-color: var(--color-bg-tertiary);
     overflow: hidden;
+    box-shadow: var(--shadow-sm);
 }
 
-.club-cover::after {
+.club-avatar::after {
     content: '';
     position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 100%;
-    background: linear-gradient(to bottom, 
-        transparent 0%, 
-        rgba(0, 0, 0, 0.3) 60%,
-        rgba(0, 0, 0, 0.7) 100%
-    );
-}
-
-.dark-theme .club-cover::after {
-    background: linear-gradient(to bottom, 
-        transparent 0%, 
-        rgba(0, 0, 0, 0.5) 60%,
-        rgba(0, 0, 0, 0.9) 100%
+    inset: 0;
+    background: linear-gradient(135deg, 
+        rgba(0, 0, 0, 0.1) 0%, 
+        rgba(0, 0, 0, 0.05) 100%
     );
 }
 
@@ -81,17 +74,20 @@
     background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
 }
 
-/* Club Content */
-.club-content {
-    padding: var(--space-lg);
+/* Club Info - Right Side */
+.club-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    min-width: 0;
 }
 
-.club-header {
+.club-title-row {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
-    gap: var(--space-md);
-    margin-bottom: var(--space-sm);
+    gap: var(--space-sm);
 }
 
 .club-name {
@@ -99,25 +95,17 @@
     font-weight: 600;
     color: var(--color-text-primary);
     flex: 1;
-    line-height: 1.4;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .club-type {
     font-size: 0.875rem;
-    color: var(--color-primary);
-    font-weight: 500;
-    margin-bottom: var(--space-xs);
-}
-
-.club-description {
-    font-size: 0.875rem;
     color: var(--color-text-secondary);
-    line-height: 1.5;
-    margin-bottom: var(--space-md);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    font-weight: 500;
+    margin-bottom: 2px;
 }
 
 /* Club Stats */
@@ -125,10 +113,8 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: var(--space-lg);
-    margin-top: var(--space-md);
-    padding-top: var(--space-md);
-    border-top: 1px solid var(--color-border-light);
+    gap: var(--space-md);
+    margin-top: var(--space-xs);
 }
 
 .club-stat {
@@ -140,19 +126,39 @@
 }
 
 .club-stat svg {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     flex-shrink: 0;
     stroke: var(--color-text-secondary);
 }
 
-.club-stat-icon {
-    font-size: 1rem;
-}
-
 /* Responsive - Clubs */
 @media (max-width: 768px) {
-    .club-cover {
-        height: 140px;
+    .club-avatar {
+        width: 80px;
+        height: 80px;
+        min-width: 80px;
+    }
+    
+    .club-name {
+        font-size: 1rem;
+    }
+    
+    .club-type,
+    .club-stat {
+        font-size: 0.8125rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .club-card {
+        padding: var(--space-sm);
+        gap: var(--space-sm);
+    }
+    
+    .club-avatar {
+        width: 70px;
+        height: 70px;
+        min-width: 70px;
     }
 }

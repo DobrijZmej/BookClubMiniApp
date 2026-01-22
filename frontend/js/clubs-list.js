@@ -35,14 +35,13 @@ const ClubsList = {
                 
                 return `
                     <div class="club-card" data-club-id="${club.id}">
-                        <div class="club-cover ${coverImageClass}" ${coverStyle}></div>
-                        <div class="club-content">
-                            <div class="club-type">${clubType}</div>
-                            <div class="club-header">
+                        <div class="club-avatar ${coverImageClass}" ${coverStyle}></div>
+                        <div class="club-info">
+                            <div class="club-title-row">
                                 <div class="club-name">${club.name}</div>
                                 <span class="club-status ${roleClass}">${roleText}</span>
                             </div>
-                            ${club.description ? `<div class="club-description">${club.description}</div>` : ''}
+                            <div class="club-type">${clubType}</div>
                             <div class="club-stats">
                                 <div class="club-stat">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -59,10 +58,6 @@ const ClubsList = {
                                         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
                                     </svg>
                                     <span>${booksCount} книг у обігу</span>
-                                </div>
-                                <div class="club-stat">
-                                    <button class="copy-btn" onclick="ClubsList.copyInviteCode(event, '${club.invite_code}')" title="Копіювати код">📋</button>
-                                    <span>${club.invite_code}</span>
                                 </div>
                             </div>
                         </div>
