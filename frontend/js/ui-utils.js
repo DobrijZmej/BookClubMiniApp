@@ -26,22 +26,16 @@ const UIUtils = {
      * Показати повідомлення про успіх
      */
     showSuccess(message) {
-        if (window.Telegram?.WebApp) {
-            window.Telegram.WebApp.showAlert(message);
-        } else {
-            alert(message);
-        }
+        console.log('✅ ' + message);
+        alert(message);
     },
 
     /**
      * Показати повідомлення про помилку
      */
     showError(message) {
-        if (window.Telegram?.WebApp) {
-            window.Telegram.WebApp.showAlert('❌ ' + message);
-        } else {
-            alert('❌ ' + message);
-        }
+        console.error('❌ ' + message);
+        alert('❌ ' + message);
     },
 
     /**
