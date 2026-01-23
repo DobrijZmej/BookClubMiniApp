@@ -343,7 +343,7 @@ async def borrow_book(
                 'book_title': book.title,
                 'borrower_name': telegram_user.get('first_name', '') + ' ' + telegram_user.get('last_name', ''),
                 'club_name': club.name if club else '',
-                'date': datetime.datetime.now().strftime('%d.%m.%Y %H:%M')
+                'date': datetime.now().strftime('%d.%m.%Y %H:%M')
             }
             logger.info(f"[NOTIFY] Borrow event context: {context}")
             notify('book_borrowed', recipients, context)
@@ -416,7 +416,7 @@ async def return_book(
                 'book_title': book.title,
                 'borrower_name': telegram_user.get('first_name', '') + ' ' + telegram_user.get('last_name', ''),
                 'club_name': club.name if club else '',
-                'date': datetime.datetime.now().strftime('%d.%m.%Y %H:%M')
+                'date': datetime.now().strftime('%d.%m.%Y %H:%M')
             }
             logger.info(f"[NOTIFY] Return event context: {context}")
             notify('book_returned', recipients, context)
