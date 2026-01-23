@@ -1,0 +1,271 @@
+/* ============================================
+   📘 Book Form (Add/Edit) - Telegram-style View
+   Targets: #add-book-view and .tg-* classes
+   ============================================ */
+
+#add-book-view {
+  /* вписуємося в загальний фон і відступи */
+  padding: 0;
+}
+
+/* Обмежуємо контент форми, щоб не розтягувалось на desktop */
+#add-book-view .tg-book-card {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+/* ---------- Top bar ---------- */
+.tg-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  position: sticky;
+  top: 0;               /* у межах scroll */
+  z-index: 50;
+}
+
+/* якщо у тебе є темна тема через .dark-theme або [data-theme="dark"] */
+.dark-theme .tg-top-bar,
+[data-theme="dark"] .tg-top-bar {
+  background: var(--color-bg-secondary);
+}
+
+.tg-back-btn,
+.tg-close-btn {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  user-select: none;
+}
+
+.tg-back-btn:hover,
+.tg-close-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.tg-back-btn:active,
+.tg-close-btn:active {
+  transform: translateY(0);
+}
+
+.tg-title {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  font-size: 0.95rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tg-title #tg-username {
+  color: var(--color-text-tertiary);
+  font-weight: 600;
+  margin-left: 6px;
+}
+
+/* ---------- Page title ---------- */
+.tg-page-title {
+  max-width: 640px;
+  margin: var(--space-lg) auto var(--space-sm);
+  padding: 0 var(--space-md);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--color-text-primary);
+}
+
+/* ---------- Card ---------- */
+.tg-book-card.rounded-card {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-md);
+}
+
+/* ---------- Form layout ---------- */
+.tg-book-form-row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: var(--space-md);
+  align-items: start;
+}
+
+/* Cover column */
+.tg-book-cover-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.tg-book-cover-img {
+  width: 140px;
+  height: 190px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Change cover button (secondary) */
+.tg-change-cover-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--color-border-light);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-weight: 600;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  text-align: center;
+  user-select: none;
+}
+
+.tg-change-cover-btn:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.tg-change-cover-btn:active {
+  transform: translateY(0);
+}
+
+.tg-camera-icon {
+  font-size: 1rem;
+}
+
+/* Fields column */
+.tg-book-fields-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Якщо твої form-* класи не мають нормального вигляду — додамо легкий дефолт */
+#add-book-view .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+#add-book-view .form-label {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  font-weight: 700;
+}
+
+#add-book-view .form-input,
+#add-book-view .form-textarea,
+#add-book-view select.form-input,
+#add-book-view select.form-select {
+  width: 100%;
+  padding: 12px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+#add-book-view .form-textarea {
+  resize: vertical;
+  min-height: 96px;
+}
+
+#add-book-view .form-input:focus,
+#add-book-view .form-textarea:focus,
+#add-book-view select:focus {
+  border-color: rgba(99, 102, 241, 0.65); /* близько до primary у dark/light */
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
+}
+
+/* ---------- Actions row ---------- */
+.tg-book-actions-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+/* Якщо твої .btn класи вже є — ці правила не завадять; якщо нема — дають мінімум */
+#add-book-view .tg-action-btn {
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+#add-book-view .tg-action-btn:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+#add-book-view .tg-action-btn:active {
+  transform: translateY(0);
+}
+
+/* Мапимо на змінні теми */
+#add-book-view .btn-danger.tg-action-btn {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+#add-book-view .btn-success.tg-action-btn {
+  background: var(--color-success);
+  color: #06281b;
+}
+
+/* ---------- Mobile refinements ---------- */
+@media (max-width: 520px) {
+  .tg-page-title {
+    margin-top: var(--space-md);
+    font-size: 1.125rem;
+  }
+
+  .tg-book-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .tg-book-cover-img {
+    width: 100%;
+    height: 220px;
+  }
+
+  .tg-book-actions-row {
+    grid-template-columns: 1fr;
+  }
+
+  .tg-back-btn,
+  .tg-close-btn {
+    width: 38px;
+    height: 38px;
+  }
+}

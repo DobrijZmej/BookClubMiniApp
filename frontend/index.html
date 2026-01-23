@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="css/club-detail.css?v=20260122-v4">
     <link rel="stylesheet" href="css/club-form.css?v=20260122-v2">
     <link rel="stylesheet" href="css/books.css?v=20260122-v6">
+    <link rel="stylesheet" href="css/book-form.css?v=20260122-v1">
 </head>
 <body>
     <!-- Loader -->
@@ -178,32 +179,59 @@
                 </div>
             </div>
 
-            <!-- Add Book View -->
+            <!-- Add/Edit Book View (Telegram-style, mobile) -->
             <div id="add-book-view" class="view">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">📚 Додати нову книгу</div>
-                    </div>
-                    <div class="card-body">
-                        <form id="add-book-form">
-                            <div class="form-group">
-                                <label class="form-label" for="book-title">Назва книги *</label>
-                                <input type="text" id="book-title" class="form-input" required maxlength="500" placeholder="Введіть назву книги">
+                <div class="tg-top-bar">
+                    <button id="book-back-button" class="tg-back-btn">←</button>
+                    <div class="tg-title">Бібліотекар клубу <span id="tg-username"></span></div>
+                    <button id="close-button" class="tg-close-btn">×</button>
+                </div>
+                <div class="tg-page-title">Редагування книги</div>
+                <div class="tg-book-card rounded-card">
+                    <form id="add-book-form">
+                        <div class="tg-book-form-row">
+                            <div class="tg-book-cover-col">
+                                <img id="book-cover-preview" src="images/book_default_cover.png" alt="Обкладинка книги" class="tg-book-cover-img">
+                                <label for="book-cover-input" class="tg-change-cover-btn">
+                                    <span class="tg-camera-icon">📷</span> Змінити обкладинку
+                                </label>
+                                <input type="file" id="book-cover-input" accept="image/*" style="display:none;">
                             </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label" for="book-author">Автор</label>
-                                <input type="text" id="book-author" class="form-input" placeholder="Невідомий автор" maxlength="255">
+                            <div class="tg-book-fields-col">
+                                <div class="form-group">
+                                    <label class="form-label" for="book-title">Назва книги</label>
+                                    <input type="text" id="book-title" class="form-input" required maxlength="500" placeholder="Назва книги">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="book-author">Автор</label>
+                                    <input type="text" id="book-author" class="form-input" maxlength="255" placeholder="Автор">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="book-category">Категорія</label>
+                                    <select id="book-category" class="form-input">
+                                        <option value="">Оберіть категорію</option>
+                                        <option value="sci-fi">📗 Наукова фантастика</option>
+                                        <option value="novel">📘 Роман</option>
+                                        <option value="detective">📙 Детектив</option>
+                                        <option value="non-fiction">📕 Нон-фікшн</option>
+                                        <option value="other">📒 Інше</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="book-description">Опис книги</label>
+                                    <textarea id="book-description" class="form-textarea" rows="3" maxlength="1000" placeholder="Опис книги"></textarea>
+                                </div>
                             </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label" for="book-description">Опис</label>
-                                <textarea id="book-description" class="form-textarea" rows="4" maxlength="1000" placeholder="Короткий опис книги..."></textarea>
-                            </div>
-                            
-                            <button type="submit" class="btn btn-primary btn-full">Додати книгу</button>
-                        </form>
-                    </div>
+                        </div>
+                        <div class="tg-book-actions-row">
+                            <button type="button" id="delete-book-btn" class="btn btn-danger tg-action-btn">
+                                🗑️ Видалити
+                            </button>
+                            <button type="submit" id="save-book-btn" class="btn btn-success tg-action-btn">
+                                ✔️ Зберегти
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
 
