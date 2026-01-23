@@ -338,6 +338,7 @@ async def borrow_book(
             recipients.remove(user_id)
         logger.info(f"[NOTIFY] Borrow event: club_owner_id={club_owner_id}, book_owner_id={book_owner_id}, user_id={user_id}, recipients={recipients}")
         # If recipients is empty, skip notification
+        from datetime import datetime
         if recipients:
             context = {
                 'book_title': book.title,
