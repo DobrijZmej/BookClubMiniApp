@@ -336,14 +336,16 @@ async def borrow_book(
         # Remove borrower from recipients if they are borrowing their own book
         if user_id in recipients:
             recipients.remove(user_id)
+        logger.info(f"[NOTIFY] Borrow event: club_owner_id={club_owner_id}, book_owner_id={book_owner_id}, user_id={user_id}, recipients={recipients}")
         # If recipients is empty, skip notification
         if recipients:
             context = {
                 'book_title': book.title,
                 'borrower_name': telegram_user.get('first_name', '') + ' ' + telegram_user.get('last_name', ''),
                 'club_name': club.name if club else '',
-                'date': datetime.now().strftime('%d.%m.%Y %H:%M')
+                'date': datetime.datetime.now().strftime('%d.%m.%Y %H:%M')
             }
+            logger.info(f"[NOTIFY] Borrow event context: {context}")
             notify('book_borrowed', recipients, context)
     except Exception as e:
         logger.warning(f"[NOTIFY] Не вдалося надіслати сповіщення про взяття книги: {e}")
@@ -407,14 +409,16 @@ async def return_book(
         # Remove borrower from recipients if they are returning their own book
         if user_id in recipients:
             recipients.remove(user_id)
+        logger.info(f"[NOTIFY] Return event: book.club_id={book.club_id} club_owner_id={club_owner_id}, book_owner_id={book_owner_id}, user_id={user_id}, recipients={recipients}")
         # If recipients is empty, skip notification
         if recipients:
             context = {
                 'book_title': book.title,
                 'borrower_name': telegram_user.get('first_name', '') + ' ' + telegram_user.get('last_name', ''),
                 'club_name': club.name if club else '',
-                'date': datetime.now().strftime('%d.%m.%Y %H:%M')
+                'date': datetime.datetime.now().strftime('%d.%m.%Y %H:%M')
             }
+            logger.info(f"[NOTIFY] Return event context: {context}")
             notify('book_returned', recipients, context)
     except Exception as e:
         logger.warning(f"[NOTIFY] Не вдалося надіслати сповіщення про повернення книги: {e}")
