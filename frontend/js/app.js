@@ -452,11 +452,16 @@
 
 document.addEventListener("DOMContentLoaded", () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const tgAuth = urlParams.get("tg_auth");
     const devParam = urlParams.get("dev");
     const devMode = devParam === "1" || devParam === "true";
 
-    if (!tgAuth && !devMode) {
+    // Перевірка на Telegram WebApp
+    const isTelegram = typeof window.Telegram !== "undefined" &&
+                       window.Telegram.WebApp &&
+                       window.Telegram.WebApp.initData &&
+                       window.Telegram.WebApp.initData.length > 0;
+
+    if (!isTelegram && !devMode) {
         document.body.innerHTML = `
             <div style="text-align: center; padding: 20px;">
                 <h1>📚 Book Club Mini App</h1>
