@@ -321,6 +321,31 @@ async def borrow_book(
     book_dict['current_reader_id'] = str(telegram_user['id'])
     book_dict = enrich_book_with_stats(book_dict, book.id, db)
     
+    # Notification logic
+    try:
+        from app.notifications.service import notify
+        club = db.query(Club).filter(Club.id == book.club_id).first()
+        club_owner_id = club.owner_id if club else None
+        book_owner_id = book.owner_id
+        recipients = set()
+        if club_owner_id:
+            recipients.add(club_owner_id)
+        if book_owner_id:
+            recipients.add(book_owner_id)
+        # Remove borrower from recipients if they are borrowing their own book
+        if user_id in recipients:
+            recipients.remove(user_id)
+        # If recipients is empty, skip notification
+        if recipients:
+            context = {
+                'book_title': book.title,
+                'borrower_name': telegram_user.get('first_name', '') + ' ' + telegram_user.get('last_name', ''),
+                'club_name': club.name if club else '',
+                'date': datetime.now().strftime('%d.%m.%Y %H:%M')
+            }
+            notify('book_borrowed', recipients, context)
+    except Exception as e:
+        logger.warning(f"[NOTIFY] Не вдалося надіслати сповіщення про взяття книги: {e}")
     return book_dict
 
 @router.post("/{book_id}/return", response_model=BookResponse)
@@ -367,6 +392,31 @@ async def return_book(
     book_dict['current_reader_id'] = None
     book_dict = enrich_book_with_stats(book_dict, book.id, db)
     
+    # Notification logic
+    try:
+        from app.notifications.service import notify
+        club = db.query(Club).filter(Club.id == book.club_id).first()
+        club_owner_id = club.owner_id if club else None
+        book_owner_id = book.owner_id
+        recipients = set()
+        if club_owner_id:
+            recipients.add(club_owner_id)
+        if book_owner_id:
+            recipients.add(book_owner_id)
+        # Remove borrower from recipients if they are returning their own book
+        if user_id in recipients:
+            recipients.remove(user_id)
+        # If recipients is empty, skip notification
+        if recipients:
+            context = {
+                'book_title': book.title,
+                'borrower_name': telegram_user.get('first_name', '') + ' ' + telegram_user.get('last_name', ''),
+                'club_name': club.name if club else '',
+                'date': datetime.now().strftime('%d.%m.%Y %H:%M')
+            }
+            notify('book_returned', recipients, context)
+    except Exception as e:
+        logger.warning(f"[NOTIFY] Не вдалося надіслати сповіщення про повернення книги: {e}")
     return book_dict
 
 
