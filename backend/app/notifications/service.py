@@ -6,7 +6,7 @@ from loguru import logger
 TEMPLATES_DIR = os.path.join(os.path.dirname(__file__), 'templates')
 env = Environment(loader=FileSystemLoader(TEMPLATES_DIR), autoescape=False)
 
-TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+TELEGRAM_BOT_TOKEN = os.getenv('BOT_TOKEN')
 
 
 def render_template(template_name, context):
