@@ -453,7 +453,8 @@
 document.addEventListener("DOMContentLoaded", () => {
     const urlParams = new URLSearchParams(window.location.search);
     const tgAuth = urlParams.get("tg_auth");
-    const devMode = urlParams.get("dev") === "1";
+    const devParam = urlParams.get("dev");
+    const devMode = devParam === "1" || devParam === "true";
 
     if (!tgAuth && !devMode) {
         document.body.innerHTML = `
