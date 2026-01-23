@@ -449,3 +449,30 @@
         console.log(`👋 Hello, ${tg.initDataUnsafe.user.first_name}!`);
     }
 })();
+
+document.addEventListener("DOMContentLoaded", () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tgAuth = urlParams.get("tg_auth");
+    const devMode = urlParams.get("dev") === "1";
+
+    if (!tgAuth && !devMode) {
+        document.body.innerHTML = `
+            <div style="text-align: center; padding: 20px;">
+                <h1>📚 Book Club Mini App</h1>
+                <p>Цей додаток працює всередині Telegram.</p>
+                <p>Щоб скористатися всіма можливостями, відкрийте його через Telegram:</p>
+                <a href="https://t.me/my_book_club_bot" target="_blank">👉 Відкрити бота у Telegram</a>
+                <p>Долучайтеся до книжкових клубів та керуйте читанням разом з друзями!</p>
+            </div>
+        `;
+        return;
+    }
+
+    // Далі ініціалізується основний додаток
+    initApp();
+});
+
+function initApp() {
+    // Ваш основний код для завантаження даних і відображення інтерфейсу
+    // ...existing code...
+}
