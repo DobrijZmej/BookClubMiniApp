@@ -364,11 +364,28 @@ async def request_to_join_club(
         message=request_data.message,
         status=JoinRequestStatus.PENDING
     )
-    
     db.add(join_request)
     db.commit()
     db.refresh(join_request)
-    
+
+    # === Сповіщення owner/admin ===
+    try:
+        from app.notifications.service import notify
+        # Отримати owner та admin'ів клубу
+        owner_and_admins = db.query(ClubMember).filter(
+            ClubMember.club_id == club.id,
+            ClubMember.role.in_([MemberRole.OWNER, MemberRole.ADMIN])
+        ).all()
+        recipients = [m.user_id for m in owner_and_admins]
+        # Формуємо контекст для шаблону
+        context = {
+            'user_name': user_name,
+            'club_name': club.name
+        }
+        notify('join_request', recipients, context)
+    except Exception as e:
+        logger.warning(f"[NOTIFY] Не вдалося надіслати сповіщення про заявку: {e}")
+
     return join_request
 
 
