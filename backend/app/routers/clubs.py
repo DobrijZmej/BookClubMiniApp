@@ -445,9 +445,9 @@ async def review_join_request(
         raise HTTPException(status_code=400, detail="Запит вже розглянуто")
     
     # Оновлюємо статус запиту
+    notify_event = None
     if action.action == "approve":
         join_request.status = JoinRequestStatus.APPROVED
-        
         # Додаємо користувача до клубу
         new_member = ClubMember(
             club_id=club_id,
@@ -457,15 +457,40 @@ async def review_join_request(
             role=MemberRole.MEMBER
         )
         db.add(new_member)
+        notify_event = "join_request_approved"
     else:
         join_request.status = JoinRequestStatus.REJECTED
-    
+        notify_event = "join_request_rejected"
+
     join_request.reviewed_at = datetime.now()
     join_request.reviewed_by = user_id
-    
+
     db.commit()
     db.refresh(join_request)
-    
+
+    # Notification logic
+    try:
+        from app.notifications.service import notify
+        club = db.query(Club).filter(Club.id == club_id).first()
+        club_owner_id = club.owner_id if club else None
+        applicant_id = join_request.user_id
+        recipients = set()
+        if club_owner_id:
+            recipients.add(club_owner_id)
+        if applicant_id:
+            recipients.add(applicant_id)
+        # If reviewer is also owner/applicant, only send once
+        if user_id in recipients:
+            recipients.remove(user_id)
+        if recipients:
+            context = {
+                'club_name': club.name if club else '',
+                'user_name': join_request.user_name
+            }
+            notify(notify_event, recipients, context)
+    except Exception as e:
+        logger.warning(f"[NOTIFY] Не вдалося надіслати сповіщення про рішення по заявці: {e}")
+
     return join_request
 
 
