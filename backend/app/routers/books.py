@@ -398,6 +398,7 @@ async def return_book(
     # Notification logic
     try:
         from app.notifications.service import notify
+        from datetime import datetime
         club = db.query(Club).filter(Club.id == book.club_id).first()
         club_owner_id = club.owner_id if club else None
         book_owner_id = book.owner_id
