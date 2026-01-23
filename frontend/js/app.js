@@ -463,14 +463,126 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!isTelegram && !devMode) {
         document.body.innerHTML = `
-            <div style="text-align: center; padding: 20px;">
-                <h1>📚 Book Club Mini App</h1>
-                <p>Цей додаток працює всередині Telegram.</p>
-                <p>Щоб скористатися всіма можливостями, відкрийте його через Telegram:</p>
-                <a href="https://t.me/my_book_club_bot" target="_blank">👉 Відкрити бота у Telegram</a>
-                <p>Долучайтеся до книжкових клубів та керуйте читанням разом з друзями!</p>
+            <style>
+                body {
+                    margin: 0;
+                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                                 Roboto, Helvetica, Arial, sans-serif;
+                    background: #0f172a;
+                    color: #e5e7eb;
+                }
+                .wrapper {
+                    max-width: 520px;
+                    margin: 0 auto;
+                    padding: 32px 20px 40px;
+                    text-align: center;
+                }
+                h1 {
+                    font-size: 26px;
+                    margin-bottom: 8px;
+                }
+                .subtitle {
+                    color: #9ca3af;
+                    font-size: 15px;
+                    margin-bottom: 24px;
+                }
+                .cta {
+                    display: inline-block;
+                    margin: 16px 0 28px;
+                    padding: 14px 22px;
+                    background: #22c55e;
+                    color: #052e16;
+                    font-weight: 600;
+                    border-radius: 10px;
+                    text-decoration: none;
+                }
+                .section {
+                    text-align: left;
+                    margin-top: 28px;
+                }
+                .section h2 {
+                    font-size: 18px;
+                    margin-bottom: 12px;
+                }
+                ul {
+                    padding-left: 18px;
+                    margin: 0;
+                }
+                li {
+                    margin-bottom: 8px;
+                    line-height: 1.5;
+                }
+                .steps {
+                    background: #020617;
+                    border-radius: 12px;
+                    padding: 16px;
+                    margin-top: 12px;
+                }
+                .step {
+                    margin-bottom: 8px;
+                }
+                .step:last-child {
+                    margin-bottom: 0;
+                }
+                .footer {
+                    margin-top: 32px;
+                    font-size: 13px;
+                    color: #9ca3af;
+                }
+            </style>
+
+            <div class="wrapper">
+                <h1>📚 Бібліотекар клубу</h1>
+                <div class="subtitle">
+                    Сервіс обміну книжками для друзів і спільнот.<br>
+                    Працює всередині Telegram.
+                </div>
+
+                <div>
+                    Ви відкрили сторінку напряму в браузері.<br>
+                    Щоб користуватись усіма можливостями — відкрийте бота.
+                </div>
+
+                <a class="cta" href="https://t.me/my_book_club_bot" target="_blank">
+                    👉 Відкрити у Telegram
+                </a>
+
+                <div class="section">
+                    <h2>Що тут можна робити</h2>
+                    <ul>
+                        <li>Створювати книжкові клуби (публічні або закриті)</li>
+                        <li>Додавати власні книги в бібліотеку клубу</li>
+                        <li>Брати книги, ставати в чергу та повертати після читання</li>
+                        <li>Залишати оцінки (1–5) та відгуки</li>
+                        <li>Переглядати історію читання й активність по книзі</li>
+                    </ul>
+                </div>
+
+                <div class="section">
+                    <h2>Як почати</h2>
+                    <div class="steps">
+                        <div class="step">1️⃣ Відкрийте бота в Telegram</div>
+                        <div class="step">2️⃣ Створіть клуб або вступіть до існуючого</div>
+                        <div class="step">3️⃣ Додавайте книги й домовляйтесь про обмін</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Для кого це</h2>
+                    <div>
+                        Для друзів, колег, мешканців будинку,<br>
+                        навчальних груп і локальних спільнот.
+                    </div>
+                </div>
+
+                <div class="footer">
+                    Потрібен Telegram для роботи додатку.<br><br>
+                    <a href="https://t.me/my_book_club_bot" target="_blank" style="color:#22c55e;">
+                        Відкрити @my_book_club_bot
+                    </a>
+                </div>
             </div>
-        `;
+            `;
         return;
     }
 
