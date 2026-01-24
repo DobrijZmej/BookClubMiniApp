@@ -6,7 +6,6 @@ const ClubsRequests = {
             const requests = await API.clubs.getJoinRequests(clubId, 'pending');
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById('club-requests-view').classList.add('active');
-            document.getElementById('header-title').textContent = '📝 Заявки на вступ';
             this.renderRequests(requests);
         } catch (error) {
             console.error('❌ Error loading requests:', error);
@@ -86,6 +85,7 @@ const ClubsRequests = {
         document.getElementById('club-detail-view').classList.add('active');
         const clubName = document.getElementById('header-title').dataset.clubName || 'Клуб';
         document.getElementById('header-title').textContent = `📚 ${clubName}`;
+        if (tg?.BackButton) tg.BackButton.hide();
     }
 };
 

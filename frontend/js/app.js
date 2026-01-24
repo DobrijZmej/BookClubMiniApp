@@ -113,7 +113,7 @@
             document.getElementById('back-button').style.display = 'none';
         } else if (document.getElementById('club-requests-view').classList.contains('active')) {
             // Повернутися до деталей клубу
-            ClubsUI.backToClubDetails();
+            ClubsRequests.backToClubDetails();
         }
     });
     
@@ -171,6 +171,11 @@
         document.getElementById('back-button').style.display = 'flex';
     });
     
+    document.getElementById('requests-back-button')?.addEventListener('click', () => {
+        tg.HapticFeedback.impactOccurred('soft');
+        ClubsRequests.backToClubDetails();
+    });
+
     // Кнопка "Додати книгу" в деталях клубу
     const addBookToClubBtn = document.getElementById('add-book-to-club-btn');
     if (addBookToClubBtn) {
