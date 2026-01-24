@@ -81,13 +81,33 @@ const API = {
             const formData = new FormData();
             formData.append('file', file);
 
-            return apiRequest(`/api/books/${bookId}/cover`, {
+            const url = `${CONFIG.API_BASE_URL}/api/books/${bookId}/cover`;
+
+            try {
+                const response = await fetch(url, {
                 method: 'POST',
-                body: formData,
-                headers: {} // важливо: НЕ ставити Content-Type вручну
-            });
-            },
-        
+                headers: {
+                    'X-Telegram-Init-Data': tg.initData
+                    // NO Content-Type header! Browser sets it automatically with boundary
+                },
+                body: formData
+                });
+
+                if (!response.ok) {
+                const error = await response.json().catch(() => ({ detail: 'Unknown error' }));
+                const errorMessage = typeof error.detail === 'string'
+                    ? error.detail
+                    : JSON.stringify(error.detail) || `HTTP ${response.status}`;
+                throw new Error(errorMessage);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('Cover upload error:', error);
+                throw error;
+            }
+            },        
+
         // Позичити книгу
         async borrow(bookId, clubId) {
             return API.request(`/api/books/${bookId}/borrow`, {
