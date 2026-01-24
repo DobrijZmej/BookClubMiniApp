@@ -484,7 +484,30 @@ document.addEventListener("DOMContentLoaded", () => {
                     color: #9ca3af;
                     font-size: 13px;
                 }
-
+                .community {
+                    margin-top: 28px;
+                    padding-top: 16px;
+                    border-top: 1px solid rgba(148,163,184,0.15);
+                    font-size: 14px;
+                }
+                .community-title {
+                    margin-bottom: 10px;
+                    font-size: 15px;
+                    font-weight: 600;
+                }
+                .community-links {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 12px;
+                }
+                .community-links a {
+                    color: #22c55e;
+                    text-decoration: none;
+                    font-weight: 500;
+                }
+                .community-links a:hover {
+                    text-decoration: underline;
+                }
 
                 /* Carousel mini-styles (fallback) */
                 .fb-carousel { max-width: 420px; margin: 12px 0; border-radius: 12px; overflow: hidden; background: #020617; position: relative; }
@@ -572,6 +595,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div>
                         Для друзів, колег, мешканців будинку,<br>
                         навчальних груп і локальних спільнот.
+                    </div>
+                </div>
+
+                <div class="community">
+                    <div class="community-title">Спільнота і підтримка</div>
+                    <div class="community-links">
+                        <a href="https://t.me/my_book_club_app" target="_blank">📰 Новини</a>
+                        <a href="https://t.me/+7t2mLMB7ovY5MWNi" target="_blank">💬 Обговорення</a>
                     </div>
                 </div>
 
