@@ -1,11 +1,19 @@
 // UI Books Module - Робота з книгами
 const UIBooks = {
+
+    _requestSeq: 0,
+
     /**
      * Завантаження та відображення книг
      * @param {number} clubId - ID клубу
      */
     async loadBooks(clubId) {
         try {
+
+            const seq = ++this._requestSeq;
+            this.clearBooksList();
+            this.setBooksLoading(true);
+                        
             const sortBySelect = document.getElementById('sort-by');
             const searchInput = document.getElementById('search-input');
             
@@ -15,6 +23,9 @@ const UIBooks = {
             console.log(`Loading books for club ${clubId}, sort_by: ${sort_by}, search: ${search}`);
             
             const books = await API.books.getAll(clubId, { sort_by, search });
+
+            // якщо за час запиту користувач відкрив інший клуб — ігноруємо цей результат
+            if (seq !== this._requestSeq) return;            
             
             console.log(`Received ${books.length} books:`, books);
             
@@ -145,6 +156,27 @@ const UIBooks = {
         return url ? url : fallback;
     },
 
+    clearBooksList() {
+        const container = document.getElementById('books-container');
+        const emptyState = document.getElementById('empty-state');
+        if (container) container.innerHTML = '';
+        if (emptyState) emptyState.style.display = 'none';
+    },
+
+    setBooksLoading(isLoading) {
+        const container = document.getElementById('books-container');
+        const emptyState = document.getElementById('empty-state');
+        if (!container) return;
+
+        if (isLoading) {
+            if (emptyState) emptyState.style.display = 'none';
+            container.innerHTML = `
+            <div class="books-loading" style="padding: 16px; color: var(--color-text-secondary);">
+                Завантажую книги…
+            </div>
+            `;
+        }
+    },
     /**
      * Показати деталі книги в модальному вікні
      */
