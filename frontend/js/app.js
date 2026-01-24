@@ -244,80 +244,7 @@
         });
     }
     
-    // Форма додавання книги
-    document.getElementById('add-book-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        if (!ClubsUI.currentClubId) {
-            console.error('No active club selected');
-            return;
-        }
-        
-        const form = e.target;
-        const editingBookId = form.dataset.editingBookId;
-        
-        const title = document.getElementById('book-title').value.trim();
-        const author = document.getElementById('book-author').value.trim() || 'Невідомий автор';
-        const description = document.getElementById('book-description').value.trim();
-        
-        if (!title) {
-            alert('Введіть назву книги');
-            return;
-        }
-        
-        try {
-            tg.HapticFeedback.impactOccurred('medium');
-            UI.setLoading(true);
-            
-            if (editingBookId) {
-                // Редагування існуючої книги
-                await API.books.update(editingBookId, {
-                    title,
-                    author,
-                    description
-                });
-                tg.showAlert('✅ Книгу оновлено');
-                delete form.dataset.editingBookId;
-            } else {
-                // Створення нової книги
-                await API.books.create({
-                    title,
-                    author,
-                    description,
-                    club_id: ClubsUI.currentClubId
-                });
-                tg.showAlert('✅ Книгу додано');
-            }
-            
-            // Очищуємо форму
-            form.reset();
-            
-            // Повертаємо текст кнопки
-            const submitBtn = form.querySelector('button[type="submit"]');
-            if (submitBtn) {
-                submitBtn.textContent = 'Додати книгу';
-            }
-            
-            // Повертаємось до списку книг клубу
-            document.getElementById('add-book-view').classList.remove('active');
-            document.getElementById('club-detail-view').classList.add('active');
-            
-            // Відновлюємо заголовок
-            const previousTitle = document.getElementById('header-title').dataset.previousTitle;
-            if (previousTitle) {
-                document.getElementById('header-title').textContent = previousTitle;
-            }
-            
-            // Перезавантажуємо книги
-            await UI.loadBooks(ClubsUI.currentClubId);
-            
-        } catch (error) {
-            console.error('Error saving book:', error);
-            tg.showAlert('❌ Помилка збереження книги');
-        } finally {
-            UI.setLoading(false);
-        }
-    });
+    // Форма додавання книги обробляється в модулі `UIBookForm`.
     
     // Закриття модального вікна
     document.getElementById('close-modal').addEventListener('click', () => {
@@ -531,6 +458,33 @@ document.addEventListener("DOMContentLoaded", () => {
                     font-size: 13px;
                     color: #9ca3af;
                 }
+                .notice {
+                    margin: 18px 0 22px;
+                    padding: 14px 14px;
+                    background: rgba(245, 158, 11, 0.10); /* amber-ish */
+                    border: 1px solid rgba(245, 158, 11, 0.35);
+                    border-radius: 12px;
+                    text-align: left;
+                }
+                .notice strong {
+                    display: block;
+                    margin-bottom: 6px;
+                    font-size: 14px;
+                    color: #fbbf24;
+                }
+                .notice p {
+                    margin: 0;
+                    color: #e5e7eb;
+                    line-height: 1.5;
+                    font-size: 14px;
+                }
+                .notice .muted {
+                    display: block;
+                    margin-top: 6px;
+                    color: #9ca3af;
+                    font-size: 13px;
+                }
+
 
                 /* Carousel mini-styles (fallback) */
                 .fb-carousel { max-width: 420px; margin: 12px 0; border-radius: 12px; overflow: hidden; background: #020617; position: relative; }
@@ -568,6 +522,19 @@ document.addEventListener("DOMContentLoaded", () => {
                     👉 Відкрити у Telegram
                 </a>
 
+                <div class="notice">
+                    <strong>⚠️ Важливо про обмін</strong>
+                    <p>
+                        Коли ви <b>берете книгу</b> в додатку — потрібно <b>самостійно звʼязатися</b>
+                        з власником книги або адміністратором клубу в Telegram та домовитись,
+                        як передати книгу.
+                        <br><b>Додаток не займається доставкою.</b>
+                    </p>
+                    <span class="muted">
+                        Порада: напишіть власнику одразу після бронювання — так швидше узгодите час і місце.
+                    </span>
+                </div>                
+
                 <div class="section">
                     <h2>Що тут можна робити</h2>
                     <ul>
@@ -596,6 +563,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="step">1️⃣ Відкрийте бота в Telegram</div>
                         <div class="step">2️⃣ Створіть клуб або вступіть до існуючого</div>
                         <div class="step">3️⃣ Додавайте книги й домовляйтесь про обмін</div>
+                        <div class="step">4️⃣ Домовляйтесь про передачу книги в приватних повідомленнях (доставка поза додатком)</div>
                     </div>
                 </div>
 
