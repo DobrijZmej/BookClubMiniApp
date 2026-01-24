@@ -213,4 +213,14 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  overflow: hidden; /* важливо, щоб обрізати, якщо щось піде не так */
+}
+
+.book-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;     /* прибирає зайві inline-особливості */
+  flex: 0 0 auto;     /* щоб flex не “переміряв” картинку як треба */
+  min-width: 0;       /* додатковий запобіжник для flex */
 }
