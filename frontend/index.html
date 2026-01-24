@@ -184,7 +184,7 @@
                 <div class="tg-top-bar">
                     <button id="book-back-button" class="tg-back-btn">←</button>
                     <div class="tg-title">Бібліотекар клубу <span id="tg-username"></span></div>
-                    <button id="close-button" class="tg-close-btn">×</button>
+                    <button id="book-close-button" class="tg-close-btn">×</button>
                 </div>
                 <div class="tg-page-title">Редагування книги</div>
                 <div class="tg-book-card rounded-card">
@@ -205,17 +205,6 @@
                                 <div class="form-group">
                                     <label class="form-label" for="book-author">Автор</label>
                                     <input type="text" id="book-author" class="form-input" maxlength="255" placeholder="Автор">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="book-category">Категорія</label>
-                                    <select id="book-category" class="form-input">
-                                        <option value="">Оберіть категорію</option>
-                                        <option value="sci-fi">📗 Наукова фантастика</option>
-                                        <option value="novel">📘 Роман</option>
-                                        <option value="detective">📙 Детектив</option>
-                                        <option value="non-fiction">📕 Нон-фікшн</option>
-                                        <option value="other">📒 Інше</option>
-                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label" for="book-description">Опис книги</label>
@@ -415,6 +404,7 @@
     <!-- UI Modules -->
     <script src="js/ui-utils.js?v=20260122-v5"></script>
     <script src="js/ui-books.js?v=20260122-v9"></script>
+    <script src="js/ui-book-form.js?v=20260123-v1"></script>
     <script src="js/ui-reviews.js?v=20260122-v4"></script>
     <script src="js/ui.js?v=20260122-v5"></script>
     

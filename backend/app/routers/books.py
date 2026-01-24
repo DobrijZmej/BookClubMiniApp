@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, File, UploadFile
 import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
@@ -12,6 +12,7 @@ from app.models.schemas import (
     BookDetailResponse, BookReviewCreate, BookReviewUpdate, BookReviewResponse
 )
 from app.auth import get_current_user
+from app.utils import file_storage
 
 router = APIRouter(prefix="/api/books", tags=["Books"])
 
@@ -240,7 +241,15 @@ async def update_book(
     if book_data.description is not None:
         book.description = book_data.description
     if book_data.cover_url is not None:
+        # якщо старий cover був локальним файлом — видалимо його (опційно)
+        old_cover_url = book.cover_url
         book.cover_url = book_data.cover_url
+
+        if old_cover_url and old_cover_url != book.cover_url and str(old_cover_url).startswith("/uploads/books/"):
+            try:
+                file_storage.delete_file(old_cover_url)
+            except Exception as e:
+                logger.warning(f"Failed to delete old cover (PATCH) for book {book_id}: {e}")
     
     db.commit()
     db.refresh(book)
@@ -567,3 +576,70 @@ async def get_book_reviews(
     
     reviews = db.query(BookReview).filter(BookReview.book_id == book_id).all()
     return reviews
+
+@router.post("/{book_id}/cover")
+def upload_book_cover(
+    book_id: int,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+    """
+    Завантаження/оновлення обкладинки книги (тільки власник книги).
+    Аналогічно механізму /api/clubs/{club_id}/avatar у clubs.py
+
+    Повертає:
+    {
+      "message": "Book cover updated",
+      "cover_url": "https://..."
+    }
+    """
+    try:
+        user_id = str(current_user["id"])
+
+        # 1) Перевірка існування книги (і що не DELETED)
+        book = (
+            db.query(Book)
+            .filter(Book.id == book_id, Book.status != BookStatus.DELETED)
+            .first()
+        )
+        if not book:
+            raise HTTPException(status_code=404, detail="Book not found")
+
+        # 2) Перевірка прав (тільки власник)
+        if book.owner_id != user_id:
+            raise HTTPException(status_code=403, detail="Only book owner can update cover")
+
+        # 3) Видалити попередній файл, якщо є
+        if getattr(book, "cover_url", None):
+            try:
+                file_storage.delete_file(book.cover_url)
+            except Exception as del_err:
+                logger.warning(f"Failed to delete old book cover: {del_err}")
+
+        # 4) Зберегти нову обкладинку
+        # Очікується реалізація у app/utils/file_storage.py:
+        #   save_book_cover(book_id: int, file: UploadFile) -> str (URL)
+        cover_url = file_storage.save_book_cover(book_id, file)
+
+        # 5) Оновити модель
+        book.cover_url = cover_url
+        # якщо у моделі є updated_at — оновимо
+        if hasattr(book, "updated_at"):
+            book.updated_at = datetime.datetime.utcnow()
+
+        db.commit()
+        db.refresh(book)
+
+        logger.info(f"Book {book_id} cover updated: {cover_url}")
+
+        return {
+            "message": "Book cover updated",
+            "cover_url": cover_url
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error uploading book cover for book_id={book_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to upload book cover")

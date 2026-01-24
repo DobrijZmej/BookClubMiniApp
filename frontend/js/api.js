@@ -72,10 +72,21 @@ const API = {
         // Оновити книгу
         async update(bookId, bookData) {
             return API.request(`/api/books/${bookId}`, {
-                method: 'PUT',
+                method: 'PATCH',
                 body: JSON.stringify(bookData)
             });
         },
+
+        uploadCover: async (bookId, file) => {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            return apiRequest(`/api/books/${bookId}/cover`, {
+                method: 'POST',
+                body: formData,
+                headers: {} // важливо: НЕ ставити Content-Type вручну
+            });
+            },
         
         // Позичити книгу
         async borrow(bookId, clubId) {
