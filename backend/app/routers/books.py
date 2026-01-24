@@ -595,8 +595,9 @@ def upload_book_cover(
     }
     """
     try:
-        user_id = str(current_user["id"])
-
+        telegram_user = current_user["user"]
+        user_id = str(telegram_user["id"])
+        
         # 1) Перевірка існування книги (і що не DELETED)
         book = (
             db.query(Book)
