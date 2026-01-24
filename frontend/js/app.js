@@ -531,6 +531,25 @@ document.addEventListener("DOMContentLoaded", () => {
                     font-size: 13px;
                     color: #9ca3af;
                 }
+
+                /* Carousel mini-styles (fallback) */
+                .fb-carousel { max-width: 420px; margin: 12px 0; border-radius: 12px; overflow: hidden; background: #020617; position: relative; }
+                .fb-slides { position: relative; width: 100%; height: 0; padding-bottom: 72%; }
+                .fb-slides img { position: absolute; top:0; left:0; width:100%; height:100%; object-fit: contain; display:none; }
+                .fb-slides img.active { display:block; }
+                .fb-btn { position:absolute; top:50%; transform:translateY(-50%); width:40px; height:40px; border-radius:20px; border:none; background: rgba(2,6,23,0.6); color:#fff; font-size:20px; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+                .fb-btn.left { left:8px; }
+                .fb-btn.right { right:8px; }
+                .fb-counter { text-align:center; color:#9ca3af; font-size:13px; margin-top:8px; }
+
+                /* Lightbox / fullscreen preview */
+                .fb-lightbox { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.92); z-index: 9999; opacity: 0; visibility: hidden; transition: opacity 160ms ease; }
+                .fb-lightbox.open { opacity: 1; visibility: visible; }
+                .fb-lightbox img { max-width: 95%; max-height: 95%; object-fit: contain; border-radius: 8px; box-shadow: 0 6px 24px rgba(0,0,0,0.6); }
+                .fb-lb-close { position: absolute; top: 18px; right: 18px; width: 40px; height: 40px; border-radius: 20px; border: none; background: rgba(255,255,255,0.06); color: #fff; font-size: 18px; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+                .fb-lb-btn { position: absolute; top: 50%; transform: translateY(-50%); width:48px; height:48px; border-radius:24px; border:none; background: rgba(255,255,255,0.04); color:#fff; font-size:26px; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+                .fb-lb-btn.left { left: 18px; }
+                .fb-lb-btn.right { right: 18px; }
             </style>
 
             <div class="wrapper">
@@ -560,6 +579,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     </ul>
                 </div>
 
+                <!-- Carousel inserted here (fallback for non-Telegram view) -->
+                <div class="section">
+                    <h2>Інструкції</h2>
+                    <div class="fb-carousel" id="fb-carousel">
+                        <div class="fb-slides" id="fb-slides"></div>
+                        <button class="fb-btn left" id="fb-prev" aria-label="Previous">‹</button>
+                        <button class="fb-btn right" id="fb-next" aria-label="Next">›</button>
+                    </div>
+                    <div class="fb-counter" id="fb-counter">1 / 7</div>
+                </div>
+
                 <div class="section">
                     <h2>Як почати</h2>
                     <div class="steps">
@@ -585,6 +615,163 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             </div>
             `;
+
+        // Initialize lightweight carousel after injecting markup
+        (function initFallbackCarouselSimple(){
+            try {
+                const imgs = [
+                    'images/instructions/main_page_dark_001.png',
+                    'images/instructions/main_page_dark_002.png',
+                    'images/instructions/main_page_dark_003.png',
+                    'images/instructions/main_page_dark_004.png',
+                    'images/instructions/main_page_dark_005.png',
+                    'images/instructions/main_page_dark_006.png',
+                    'images/instructions/main_page_dark_007.png'
+                ];
+
+                const slidesEl = document.getElementById('fb-slides');
+                const counterEl = document.getElementById('fb-counter');
+                const prevBtn = document.getElementById('fb-prev');
+                const nextBtn = document.getElementById('fb-next');
+                if (!slidesEl) return;
+
+                let current = 0;
+                let startX = 0;
+
+                // Create lightbox element
+                const lb = document.createElement('div');
+                lb.id = 'fb-lightbox';
+                lb.className = 'fb-lightbox';
+                lb.innerHTML = `
+                    <button class="fb-lb-close" id="fb-lb-close" aria-label="Close">✕</button>
+                    <button class="fb-lb-btn left" id="fb-lb-prev" aria-label="Previous">‹</button>
+                    <button class="fb-lb-btn right" id="fb-lb-next" aria-label="Next">›</button>
+                    <img id="fb-lb-img" src="" alt="Preview">
+                `;
+                document.body.appendChild(lb);
+                const lbImg = document.getElementById('fb-lb-img');
+                const lbClose = document.getElementById('fb-lb-close');
+                const lbPrev = document.getElementById('fb-lb-prev');
+                const lbNext = document.getElementById('fb-lb-next');
+
+                imgs.forEach((src, i) => {
+                    const img = document.createElement('img');
+                    img.src = src;
+                    img.alt = `Інструкція ${i+1}`;
+                    img.dataset.index = i;
+                    img.draggable = false;
+                    img.style.cursor = 'pointer';
+                    img.style.userSelect = 'none';
+                    if (i === 0) img.classList.add('active');
+                    // Open lightbox on image click
+                    img.addEventListener('click', (e) => {
+                        console.log('per-image click handler', i, src, e.type, e.pointerType);
+                        e.stopPropagation();
+                        lbImg.src = src;
+                        lb.classList.add('open');
+                    });
+                    slidesEl.appendChild(img);
+                });
+
+                // Delegated click handler as a fallback (more robust)
+                slidesEl.addEventListener('click', (e) => {
+                    const target = e.target;
+                    let img = (target && target.tagName === 'IMG') ? target : (target && target.closest ? target.closest('img') : null);
+                    // If pointer capture or other behavior changed the event target, fall back to elementFromPoint
+                    if (!img) {
+                        try {
+                            const el = document.elementFromPoint(e.clientX, e.clientY);
+                            img = el && el.tagName === 'IMG' ? el : (el && el.closest ? el.closest('img') : null);
+                        } catch (err) { /* ignore */ }
+                    }
+                    console.log('delegated click', {targetTag: target && target.tagName, foundImg: img && img.dataset && img.dataset.index});
+                    if (img && img.dataset && typeof img.dataset.index !== 'undefined') {
+                        lbImg.src = img.src;
+                        lb.classList.add('open');
+                    }
+                });
+
+                // Pointerup handler to improve desktop mouse compatibility
+                slidesEl.addEventListener('pointerup', (e) => {
+                    const target = e.target;
+                    let img = (target && target.tagName === 'IMG') ? target : (target && target.closest ? target.closest('img') : null);
+                    if (!img) {
+                        try {
+                            const el = document.elementFromPoint(e.clientX, e.clientY);
+                            img = el && el.tagName === 'IMG' ? el : (el && el.closest ? el.closest('img') : null);
+                        } catch (err) { /* ignore */ }
+                    }
+                    console.log('pointerup on slides', {targetTag: target && target.tagName, foundImgIndex: img && img.dataset && img.dataset.index, pointerType: e.pointerType});
+                    if (img && img.dataset && typeof img.dataset.index !== 'undefined') {
+                        lbImg.src = img.src;
+                        lb.classList.add('open');
+                    }
+                });
+
+                function show(index){
+                    const total = imgs.length;
+                    if (index < 0) index = total - 1;
+                    if (index >= total) index = 0;
+                    current = index;
+                    slidesEl.querySelectorAll('img').forEach(img => {
+                        img.classList.toggle('active', Number(img.dataset.index) === current);
+                    });
+                    counterEl.textContent = `${current+1} / ${total}`;
+                }
+
+                function next(){ show(current+1); }
+                function prev(){ show(current-1); }
+
+                prevBtn.addEventListener('click', prev);
+                nextBtn.addEventListener('click', next);
+
+                document.addEventListener('keydown', (e) => {
+                    // If the lightbox is open, let the lightbox-specific handler manage navigation
+                    if (lb && lb.classList.contains('open')) return;
+                    if (e.key === 'ArrowLeft') prev();
+                    if (e.key === 'ArrowRight') next();
+                });
+
+                slidesEl.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, {passive:true});
+                slidesEl.addEventListener('touchend', (e) => {
+                    const endX = (e.changedTouches && e.changedTouches[0].clientX) || 0;
+                    const dx = endX - startX;
+                    if (Math.abs(dx) > 40) {
+                        if (dx < 0) next(); else prev();
+                    }
+                });
+
+                slidesEl.addEventListener('pointerdown', (e) => { startX = e.clientX; slidesEl.setPointerCapture?.(e.pointerId); });
+                slidesEl.addEventListener('pointerup', (e) => { const endX = e.clientX || 0; const dx = endX - startX; if (Math.abs(dx) > 40) { if (dx < 0) next(); else prev(); } });
+
+                // Remove global click-to-next; images open in lightbox. Close handlers for lightbox:
+                lbClose.addEventListener('click', () => lb.classList.remove('open'));
+                lb.addEventListener('click', (e) => { if (e.target === lb) lb.classList.remove('open'); });
+
+                // Lightbox navigation buttons
+                lbPrev.addEventListener('click', (e) => { e.stopPropagation(); show(current-1); lbImg.src = imgs[current]; });
+                lbNext.addEventListener('click', (e) => { e.stopPropagation(); show(current+1); lbImg.src = imgs[current]; });
+
+                // Keyboard: close + nav when lightbox open
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        if (lb.classList.contains('open')) lb.classList.remove('open');
+                    }
+                    if (e.key === 'ArrowLeft') {
+                        if (lb.classList.contains('open')) { show(current-1); lbImg.src = imgs[current]; } else prev();
+                    }
+                    if (e.key === 'ArrowRight') {
+                        if (lb.classList.contains('open')) { show(current+1); lbImg.src = imgs[current]; } else next();
+                    }
+                });
+
+                show(0);
+            } catch (err) {
+                // swallow errors for fallback view
+                console.warn('Carousel init failed', err);
+            }
+        })();
+
         return;
     }
 
