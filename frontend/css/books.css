@@ -209,3 +209,8 @@
         min-width: 60px;
     }
 }
+.book-avatar{
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}

@@ -60,7 +60,15 @@ const UIBooks = {
             
             return `
                 <div class="book-card" data-book-id="${book.id}">
-                    <div class="book-avatar" onclick="UIBooks.showBookDetails(${book.id})">📖</div>
+                <div class="book-avatar" onclick="UIBooks.showBookDetails(${book.id})">
+                <img
+                    class="book-cover"
+                    src="${UIBooks.getBookCoverUrl(book)}"
+                    alt="Обкладинка книги"
+                    loading="lazy"
+                    onerror="this.onerror=null; this.src='${UIBooks.getDefaultBookCoverUrl()}';"
+                />
+                </div>
                     <div class="book-info" onclick="UIBooks.showBookDetails(${book.id})">
                         <div class="book-title">${UIUtils.escapeHtml(book.title)}</div>
                         <div class="book-author">${UIUtils.escapeHtml(book.author || 'Невідомий автор')}</div>
@@ -125,6 +133,16 @@ const UIBooks = {
                 </div>
             `;
         }).join('');
+    },
+
+    getDefaultBookCoverUrl() {
+        return '/images/book_default_cover.png';
+    },
+
+    getBookCoverUrl(book) {
+        const fallback = UIBooks.getDefaultBookCoverUrl();
+        const url = (book?.cover_url || '').trim();
+        return url ? url : fallback;
     },
 
     /**
