@@ -77,9 +77,10 @@ const API = {
             });
         },
 
-        uploadCover: async (bookId, file) => {
+        uploadCover: async (bookId, file, client_request_id) => {
             const formData = new FormData();
             formData.append('file', file);
+            if (client_request_id) formData.append('client_request_id', client_request_id);
 
             const url = `${CONFIG.API_BASE_URL}/api/books/${bookId}/cover`;
 

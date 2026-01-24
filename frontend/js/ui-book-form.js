@@ -117,12 +117,23 @@ const UIBookForm = (() => {
     try {
       tg.HapticFeedback?.impactOccurred?.('medium');
 
+      // Generate client_request_id for tracing (use crypto if available)
+      let clientRequestId = null;
+      try {
+        clientRequestId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : `cid_${Date.now()}_${Math.floor(Math.random()*100000)}`;
+      } catch (e) {
+        clientRequestId = `cid_${Date.now()}_${Math.floor(Math.random()*100000)}`;
+      }
+
+      console.debug('Book form submit', { bookId, clubId, clientRequestId, payload });
+
       // 1) create/update текстових полів
       let result;
       if (bookId) {
         result = await API.books.update(bookId, payload); // PATCH
       } else {
-        result = await API.books.create({ ...payload, club_id: clubId }); // POST
+        result = await API.books.create({ ...payload, club_id: clubId, client_request_id: clientRequestId }); // POST
+        console.debug('Create response', result, { clientRequestId });
       }
 
       const effectiveBookId = bookId || result?.id;
@@ -133,7 +144,9 @@ const UIBookForm = (() => {
       // 2) upload cover (якщо вибрали файл)
       const file = els.coverInput?.files?.[0];
       if (file) {
-        const uploadRes = await API.books.uploadCover(effectiveBookId, file);
+        console.debug('Uploading cover', { effectiveBookId, clientRequestId, fileName: file.name });
+        const uploadRes = await API.books.uploadCover(effectiveBookId, file, clientRequestId);
+        console.debug('Upload response', uploadRes, { clientRequestId });
         // якщо upload повернув cover_url — оновимо preview (і не робимо PATCH)
         if (uploadRes?.cover_url && els.coverPreview) {
           els.coverPreview.src = uploadRes.cover_url;

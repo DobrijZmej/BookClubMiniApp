@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, File, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form
 import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
@@ -171,7 +171,11 @@ async def create_book(
     telegram_user = user['user']
     user_id = str(telegram_user['id'])
     
-    logger.info(f"Creating book '{book_data.title}' by user {user_id} (@{telegram_user.get('username', 'unknown')}) in club {book_data.club_id}")
+    client_request_id = getattr(book_data, 'client_request_id', None)
+    logger.info(
+        f"Creating book '{book_data.title}' by user {user_id} (@{telegram_user.get('username', 'unknown')}) "
+        f"in club {book_data.club_id} client_request_id={client_request_id}"
+    )
     
     # Отримуємо клуб за ID
     club = db.query(Club).filter(Club.id == book_data.club_id).first()
@@ -187,6 +191,27 @@ async def create_book(
     last_name = telegram_user.get('last_name', '')
     owner_name = f"{first_name} {last_name}".strip() or "Користувач"
     
+    # Duplicate-creation guard: if a book with same title/owner/club was just created recently,
+    # treat it as duplicate and return existing to avoid double entries caused by double submits.
+    existing = db.query(Book).filter(
+        Book.title == book_data.title,
+        Book.owner_id == str(telegram_user['id']),
+        Book.club_id == book_data.club_id,
+        Book.status != BookStatus.DELETED
+    ).order_by(desc(Book.created_at)).first()
+
+    if existing:
+        try:
+            age = (datetime.datetime.utcnow() - existing.created_at).total_seconds()
+        except Exception:
+            age = None
+
+        if age is not None and age <= 5:
+            logger.warning(f"Duplicate create detected (within {age}s). Returning existing book id={existing.id} client_request_id={client_request_id}")
+            book_dict = BookResponse.model_validate(existing).model_dump()
+            book_dict = enrich_book_with_stats(book_dict, existing.id, db)
+            return book_dict
+
     new_book = Book(
         title=book_data.title,
         author=book_data.author or "Невідомий автор",
@@ -581,6 +606,7 @@ async def get_book_reviews(
 def upload_book_cover(
     book_id: int,
     file: UploadFile = File(...),
+    client_request_id: Optional[str] = Form(None),
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user)
 ):
@@ -597,6 +623,8 @@ def upload_book_cover(
     try:
         telegram_user = current_user["user"]
         user_id = str(telegram_user["id"])
+
+        logger.info(f"Cover upload called for book_id={book_id} by user={user_id} client_request_id={client_request_id}")
         
         # 1) Перевірка існування книги (і що не DELETED)
         book = (

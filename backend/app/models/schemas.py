@@ -21,6 +21,7 @@ class BookCreate(BaseModel):
     description: Optional[str] = None
     cover_url: Optional[str] = None
     club_id: int  # Замість chat_id використовуємо club_id
+    client_request_id: Optional[str] = None
 
 class BookUpdate(BaseModel):
     title: Optional[str] = Field(None, max_length=500)
