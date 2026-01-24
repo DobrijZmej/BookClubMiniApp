@@ -178,3 +178,48 @@
         min-width: 70px;
     }
 }
+
+.invite-code-card{
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-tertiary);
+  margin-bottom: 12px;
+}
+
+.invite-code-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.invite-code-title{
+  font-weight: 600;
+}
+
+.invite-code-value{
+  font-family: var(--font-mono);
+  font-size: 18px;
+  letter-spacing: 0.12em;
+  padding: 10px 12px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  user-select: all;
+}
+
+.invite-code-copy-btn{
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.invite-code-hint{
+  margin-top: 8px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}

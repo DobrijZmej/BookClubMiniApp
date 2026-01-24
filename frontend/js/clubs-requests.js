@@ -3,15 +3,73 @@ const ClubsRequests = {
     async showClubRequests(clubId) {
         try {
             UIUtils.setLoading(true);
-            const requests = await API.clubs.getJoinRequests(clubId, 'pending');
+
+            // ВАЖЛИВО: нам треба і заявки, і invite_code
+            // Запускаємо паралельно
+            const [requests, club] = await Promise.all([
+            API.clubs.getJoinRequests(clubId, 'pending'),
+            API.clubs.getDetails(clubId)
+            ]);
+
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById('club-requests-view').classList.add('active');
+
+            this.renderInviteCode(club);
             this.renderRequests(requests);
         } catch (error) {
             console.error('❌ Error loading requests:', error);
+            tg?.showAlert?.('❌ Не вдалося завантажити заявки');
         } finally {
             UIUtils.setLoading(false);
         }
+    },
+
+    renderInviteCode(club) {
+    const card = document.getElementById('invite-code-card');
+    const valueEl = document.getElementById('invite-code-value');
+    const copyBtn = document.getElementById('copy-invite-btn');
+
+    if (!card || !valueEl || !copyBtn) return;
+
+    if (club?.is_public) {
+        card.style.display = 'none';
+        return;
+    }
+
+    card.style.display = 'block';
+
+    const code = (club?.invite_code || '').trim();
+    valueEl.textContent = code || '—';
+
+    copyBtn.onclick = async () => {
+        if (!code) return;
+
+        try {
+        tg?.HapticFeedback?.impactOccurred?.('soft');
+        await this.copyTextToClipboard(code);
+        tg?.showAlert?.('✅ Invite-код скопійовано');
+        } catch (e) {
+        console.error('Copy failed:', e);
+        tg?.showAlert?.('❌ Не вдалося скопіювати');
+        }
+    };
+    },
+
+    async copyTextToClipboard(text) {
+    // modern
+    if (navigator.clipboard?.writeText) {
+        return navigator.clipboard.writeText(text);
+    }
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
     },
 
     renderRequests(requests) {
