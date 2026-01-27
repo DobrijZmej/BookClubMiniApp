@@ -35,7 +35,8 @@ const API = {
         } catch (error) {
             console.error('API Error:', error);
             // showAlert не підтримується в старих версіях Telegram WebApp
-            if (tg.showAlert && tg.version && parseFloat(tg.version) >= 6.1) {
+            // Не показуємо alert якщо це тихий запит
+            if (options.silent !== true && tg.showAlert && tg.version && parseFloat(tg.version) >= 6.1) {
                 tg.showAlert(`Помилка: ${error.message}`);
             }
             throw error;
@@ -141,7 +142,7 @@ const API = {
         
         // Отримати мій відгук
         async getMyReview(bookId) {
-            return API.request(`/api/books/${bookId}/review`);
+            return API.request(`/api/books/${bookId}/review`, { silent: true });
         },
         
         // Видалити відгук

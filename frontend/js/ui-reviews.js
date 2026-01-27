@@ -12,11 +12,15 @@ const UIReviews = {
             // Відкрити модальне вікно
             document.getElementById('book-review-modal').classList.add('active');
             
-            // Спробувати завантажити існуючий відгук (тихо)
+            // Спробувати завантажити існуючий відгук (тихо, без alert)
+            let existingReview = null;
             try {
-                const existingReview = await API.books.getMyReview(bookId);
-                console.log('📝 Існуючий відгук:', existingReview);
-                
+                existingReview = await API.books.getMyReview(bookId);
+            } catch (error) {
+                // Тихо ігноруємо - просто немає відгуку
+            }
+            
+            if (existingReview) {
                 // Заповнити форму існуючими даними
                 this.fillReviewForm(existingReview);
                 
@@ -28,10 +32,8 @@ const UIReviews = {
                 
                 // Оновити заголовок
                 document.getElementById('review-modal-title').textContent = '⭐ Редагувати відгук';
-                
-            } catch (error) {
-                // Тихо обробляємо відсутність відгука - просто показуємо нову форму
-                console.log('📝 Відгук не знайдено, показую нову форму');
+            } else {
+                // Новий відгук
                 this.clearReviewForm();
                 
                 const deleteBtn = document.getElementById('delete-review-btn');
