@@ -338,6 +338,19 @@
 }
 
 /* Book Modal - Book Info */
+.book-modal-cover {
+    margin-bottom: var(--space-lg);
+    text-align: center;
+}
+
+.book-modal-cover img {
+    max-width: 200px;
+    max-height: 300px;
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    object-fit: cover;
+}
+
 .book-modal-info {
     margin-bottom: var(--space-md);
     line-height: 1.6;

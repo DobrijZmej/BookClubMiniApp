@@ -235,6 +235,12 @@ const UIBooks = {
             }
             
             modalBody.innerHTML = `
+                ${book.cover_url ? `
+                    <div class="book-modal-cover">
+                        <img src="${book.cover_url}" alt="Обкладинка" onerror="this.src='${UIBooks.getDefaultBookCoverUrl()}';">
+                    </div>
+                ` : ''}
+                
                 <div class="modal-title">${UIUtils.escapeHtml(book.title)}</div>
                 
                 <div class="book-modal-info">
