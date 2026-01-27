@@ -239,7 +239,7 @@ const UIBooks = {
                 
                 <div class="book-modal-info">
                     <strong>Автор:</strong> ${UIUtils.escapeHtml(book.author)}<br>
-                    <strong>Додав:</strong> @${UIUtils.escapeHtml(book.owner_username || 'невідомо')}<br>
+                    <strong>Додав:</strong> ${UIUtils.escapeHtml(book.owner_name || book.owner_username || 'невідомо')}<br>
                     <strong>Статус:</strong> ${book.status === 'AVAILABLE' ? '🟢 Доступна' : '🔴 Позичена'}
                 </div>
                 
@@ -255,7 +255,7 @@ const UIBooks = {
                     <strong>📅 Хронологія:</strong>
                     <div class="history-item">
                         <div class="history-item-header">
-                            <span class="history-username">@${UIUtils.escapeHtml(book.owner_username || 'невідомо')}</span>
+                            <span class="history-username">${UIUtils.escapeHtml(book.owner_name || book.owner_username || 'невідомо')}</span>
                             <span class="history-status">📚 Створив книгу</span>
                         </div>
                         <div class="history-date">
@@ -275,7 +275,7 @@ const UIBooks = {
                             ${book.loans.map(loan => `
                                 <div class="history-item">
                                     <div class="history-item-header">
-                                        <span class="history-username">@${UIUtils.escapeHtml(loan.username)}</span>
+                                        <span class="history-username">${UIUtils.escapeHtml(loan.user_name || loan.username)}</span>
                                         <span class="history-status">${loan.status === 'READING' ? '📖 Читає' : '✅ Повернув'}</span>
                                     </div>
                                     <div class="history-date">

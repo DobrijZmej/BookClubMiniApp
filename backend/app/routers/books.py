@@ -133,10 +133,23 @@ async def get_book_details(
     # Перевіряємо членство в клубі
     verify_club_membership(db, book.club_id, user_id)
     
-    # Завантажуємо історію loans
-    loans = db.query(BookLoan).filter(
+    # Завантажуємо історію loans з іменами користувачів з club_members
+    loans_raw = db.query(
+        BookLoan,
+        ClubMember.user_name
+    ).outerjoin(
+        ClubMember,
+        (BookLoan.user_id == ClubMember.user_id) & (ClubMember.club_id == book.club_id)
+    ).filter(
         BookLoan.book_id == book_id
     ).order_by(desc(BookLoan.borrowed_at)).all()
+    
+    # Збагачуємо loans іменами користувачів
+    loans = []
+    for loan, user_name in loans_raw:
+        loan_dict = loan.__dict__.copy()
+        loan_dict['user_name'] = user_name
+        loans.append(type('obj', (object,), loan_dict)())
     
     # Завантажуємо відгуки
     reviews = db.query(BookReview).filter(

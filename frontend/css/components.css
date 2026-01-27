@@ -2,6 +2,61 @@
    🧩 Components - Buttons & Generic Elements
    ============================================ */
 
+/* Generic Buttons */
+.btn {
+    padding: var(--space-sm) var(--space-md);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-text-inverse);
+}
+
+.btn-primary:hover {
+    background-color: var(--color-primary-dark);
+}
+
+.btn-success {
+    background-color: var(--color-success);
+    color: var(--color-text-inverse);
+}
+
+.btn-success:hover {
+    opacity: 0.9;
+}
+
+.btn-secondary {
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-bg-quaternary);
+}
+
+.btn-danger {
+    background-color: var(--color-danger);
+    color: var(--color-text-inverse);
+}
+
+.btn-danger:hover {
+    opacity: 0.9;
+}
+
 /* Back Button */
 .back-btn {
     display: flex;

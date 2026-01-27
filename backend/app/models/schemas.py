@@ -42,6 +42,7 @@ class BookReviewUpdate(BaseModel):
 class BookLoanResponse(BaseModel):
     id: int
     user_id: str
+    user_name: Optional[str] = None
     username: str
     status: str
     borrowed_at: datetime
