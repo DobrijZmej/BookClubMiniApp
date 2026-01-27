@@ -159,6 +159,17 @@ const UIBookForm = (() => {
       if (clubId) await UIBooks.loadBooks(clubId);
 
       backToClub();
+      
+      // 4) прокрутити до відредагованої книги
+      if (bookId) {
+        // Невелика затримка для завершення рендерингу
+        setTimeout(() => {
+          const bookCard = document.querySelector(`[data-book-id="${effectiveBookId}"]`);
+          if (bookCard) {
+            bookCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 500);
+      }
     } catch (err) {
       console.error('Book form submit error:', err);
       tg.showAlert?.('❌ Не вдалося зберегти книгу');
