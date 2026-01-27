@@ -2,9 +2,10 @@
    📖 Books - Book Cards & Related Styles
    ============================================ */
 
-/* Book Card - Horizontal Layout (like clubs) */
+/* Book Card - Horizontal Layout with bottom actions */
 .book-card {
     display: flex;
+    flex-wrap: wrap;
     align-items: flex-start;
     gap: var(--space-md);
     padding: var(--space-md);
@@ -74,19 +75,17 @@
     margin-top: 4px;
 }
 
-.book-readers svg {
-    width: 14px;
-    height: 14px;
-    stroke: var(--color-text-tertiary);
+.book-readers .readers-icon {
+    font-size: 0.875rem;
 }
 
-/* Book Status - Right Side */
+/* Book Status - Compact Row with Indicator */
 .book-status-col {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: var(--space-xs);
-    min-width: 80px;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-left: auto;
 }
 
 .book-rating {
@@ -98,43 +97,56 @@
     color: var(--color-warning);
 }
 
-.book-rating svg {
+.book-rating .rating-star {
+    font-size: 0.875rem;
+}
+
+/* Status Indicator - Лампочка */
+.book-status-indicator {
     width: 14px;
     height: 14px;
-    fill: var(--color-warning);
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 10px currentColor, inset 0 0 4px rgba(255,255,255,0.3);
+    flex-shrink: 0;
+    cursor: help;
+    position: relative;
+    transition: all var(--transition-base);
 }
 
-.book-status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 10px;
-    border-radius: var(--radius-full);
-    font-size: 0.75rem;
-    font-weight: 600;
-    white-space: nowrap;
+.book-status-indicator.available {
+    background: radial-gradient(circle at 30% 30%, #4ade80, #22c55e);
+    box-shadow: 0 0 12px #22c55e, inset 0 0 4px rgba(255,255,255,0.4);
 }
 
-.book-status-badge.available {
-    background-color: #d4edda;
-    color: #28a745;
+.book-status-indicator.reading {
+    background: radial-gradient(circle at 30% 30%, #f87171, #dc2626);
+    box-shadow: 0 0 12px #dc2626, inset 0 0 4px rgba(255,255,255,0.4);
+    animation: pulse-reading 2s ease-in-out infinite;
 }
 
-.book-status-badge.reading {
-    background-color: #fff3cd;
-    color: #856404;
+@keyframes pulse-reading {
+    0%, 100% {
+        box-shadow: 0 0 12px #dc2626, inset 0 0 4px rgba(255,255,255,0.4);
+    }
+    50% {
+        box-shadow: 0 0 20px #dc2626, inset 0 0 6px rgba(255,255,255,0.5);
+    }
 }
 
-/* Book Actions - кнопки дій */
+/* Book Actions - кнопки дій внизу карточки */
 .book-actions {
     display: flex;
     gap: var(--space-xs);
-    margin-top: var(--space-xs);
+    width: 100%;
+    margin-top: var(--space-sm);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--color-border-light);
 }
 
 .book-action-btn {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border-radius: var(--radius-sm);
     background-color: var(--color-primary);
     color: white;
@@ -145,6 +157,7 @@
     cursor: pointer;
     transition: all var(--transition-base);
     padding: 0;
+    font-size: 1.125rem;
 }
 
 .book-action-btn.danger {
@@ -158,11 +171,6 @@
 
 .book-action-btn:active {
     transform: translateY(0);
-}
-
-.book-action-btn svg {
-    width: 16px;
-    height: 16px;
 }
 
 .book-avatar,
