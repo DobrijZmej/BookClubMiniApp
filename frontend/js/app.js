@@ -86,6 +86,18 @@
     
     // ===== Event Listeners =====
     
+    // Close join club modal
+    document.getElementById('close-join-club-modal')?.addEventListener('click', () => {
+        document.getElementById('join-club-modal').classList.remove('active');
+    });
+
+    // Click outside to close join modal
+    document.getElementById('join-club-modal')?.addEventListener('click', (e) => {
+        if (e.target.id === 'join-club-modal') {
+            document.getElementById('join-club-modal').classList.remove('active');
+        }
+    });
+    
     // Back button
     document.getElementById('back-button').addEventListener('click', () => {
         tg.HapticFeedback.impactOccurred('soft');
@@ -104,8 +116,7 @@
             if (previousTitle) {
                 document.getElementById('header-title').textContent = previousTitle;
             }
-        } else if (document.getElementById('create-club-view').classList.contains('active') || 
-                   document.getElementById('join-club-view').classList.contains('active')) {
+        } else if (document.getElementById('create-club-view').classList.contains('active')) {
             // Повернутися до списку клубів
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById('clubs-list-view').classList.add('active');
@@ -140,10 +151,7 @@
     
     document.getElementById('join-code-btn')?.addEventListener('click', () => {
         tg.HapticFeedback.impactOccurred('medium');
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById('join-club-view').classList.add('active');
-        document.getElementById('header-title').textContent = 'Вступити за кодом';
-        document.getElementById('back-button').style.display = 'flex';
+        document.getElementById('join-club-modal').classList.add('active');
     });
     
     // Кнопки в секції "Знайти Книжковий Клуб"
@@ -157,10 +165,7 @@
     
     document.getElementById('join-code-main-btn')?.addEventListener('click', () => {
         tg.HapticFeedback.impactOccurred('medium');
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById('join-club-view').classList.add('active');
-        document.getElementById('header-title').textContent = 'Вступити за кодом';
-        document.getElementById('back-button').style.display = 'flex';
+        document.getElementById('join-club-modal').classList.add('active');
     });
     
     document.getElementById('create-club-main-btn')?.addEventListener('click', () => {
@@ -278,19 +283,8 @@
             // Очищуємо форму
             document.getElementById('join-club-form').reset();
             
-            // Повертаємось до списку та перезавантажуємо клуби
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById('clubs-list-view').classList.add('active');
-            document.getElementById('header-title').textContent = '📚 Мої клуби';
-            document.getElementById('back-button').style.display = 'none';
-            
-            // Показуємо header кнопки головної сторінки
-            document.getElementById('search-clubs-btn').style.display = 'flex';
-            document.getElementById('add-club-btn').style.display = 'flex';
-            document.getElementById('join-code-btn').style.display = 'flex';
-            document.getElementById('add-book-btn').style.display = 'none';
-            document.getElementById('edit-club-btn').style.display = 'none';
-            document.getElementById('delete-club-btn').style.display = 'none';
+            // Закриваємо модальне вікно
+            document.getElementById('join-club-modal').classList.remove('active');
             
             // Перезавантажуємо список клубів (з новою pending заявкою)
             await ClubsUI.loadClubsList();

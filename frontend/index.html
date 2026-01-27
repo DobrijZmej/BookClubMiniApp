@@ -12,15 +12,15 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <!-- Styles - All CSS modules -->
-    <link rel="stylesheet" href="css/variables.css?v=20260122-v4">
-    <link rel="stylesheet" href="css/base.css?v=20260122-v4">
-    <link rel="stylesheet" href="css/layout.css?v=20260122-v4">
-    <link rel="stylesheet" href="css/components.css?v=20260122-v12">
-    <link rel="stylesheet" href="css/clubs.css?v=20260122-v6">
-    <link rel="stylesheet" href="css/club-detail.css?v=20260122-v4">
-    <link rel="stylesheet" href="css/club-form.css?v=20260122-v2">
-    <link rel="stylesheet" href="css/books.css?v=20260122-v7">
-    <link rel="stylesheet" href="css/book-form.css?v=20260122-v2">
+    <link rel="stylesheet" href="css/variables.css?v=20260127-v1">
+    <link rel="stylesheet" href="css/base.css?v=20260127-v1">
+    <link rel="stylesheet" href="css/layout.css?v=20260127-v1">
+    <link rel="stylesheet" href="css/components.css?v=20260127-v1">
+    <link rel="stylesheet" href="css/clubs.css?v=20260127-v1">
+    <link rel="stylesheet" href="css/club-detail.css?v=20260127-v1">
+    <link rel="stylesheet" href="css/club-form.css?v=20260127-v1">
+    <link rel="stylesheet" href="css/books.css?v=20260127-v1">
+    <link rel="stylesheet" href="css/book-form.css?v=20260127-v1">
 </head>
 <body>
     <!-- Loader -->
@@ -303,25 +303,53 @@
                 </div>
             </div>
 
-            <!-- Join Club View -->
-            <div id="join-club-view" class="view">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">🔗 Приєднатися до клубу</div>
+            <!-- Join Club Modal -->
+            <div id="join-club-modal" class="modal">
+                <div class="modal-content club-form-modal-content">
+                    <!-- Modal Header -->
+                    <div class="club-form-header">
+                        <div class="club-form-header-left">
+                            <div class="app-icon">📚</div>
+                            <span class="app-title">Книжковий Обмін</span>
+                        </div>
+                        <button class="modal-close" id="close-join-club-modal">&times;</button>
                     </div>
-                    <div class="card-body">
-                        <form id="join-club-form">
+
+                    <!-- Modal Title -->
+                    <h2 class="club-form-title">🔗 Вступити до клубу</h2>
+
+                    <!-- Form Container -->
+                    <div class="club-form-container" style="display: block;">
+                        <form id="join-club-form" class="club-form">
                             <div class="form-group">
                                 <label class="form-label" for="join-invite-code">Код запрошення *</label>
-                                <input type="text" id="join-invite-code" class="form-input" required maxlength="20" placeholder="Введіть код запрошення" style="text-transform: uppercase;">
+                                <input type="text" id="join-invite-code" class="form-input" required maxlength="20" 
+                                    placeholder="Введіть код запрошення" style="text-transform: uppercase;">
                             </div>
                                 
                             <div class="form-group">
                                 <label class="form-label" for="join-message">Повідомлення (опціонально)</label>
-                                <textarea id="join-message" class="form-textarea" rows="2" maxlength="500" placeholder="Чому хочете приєднатися до цього клубу?"></textarea>
+                                <textarea id="join-message" class="form-textarea" rows="3" maxlength="500" 
+                                    placeholder="Чому хочете приєднатися до цього клубу?"></textarea>
+                            </div>
+
+                            <!-- Info Block -->
+                            <div class="club-privacy-info">
+                                <h4 class="privacy-info-title">💡 Як це працює</h4>
+                                <p class="privacy-info-text">
+                                    Запросіть код у адміністратора клубу та надішліть заявку. 
+                                    Після схвалення ви зможете додавати книги та брати участь в обміні.
+                                </p>
                             </div>
                                 
-                            <button type="submit" class="btn btn-primary btn-full">Надіслати запит</button>
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn btn-primary btn-full btn-submit-club">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"/>
+                                    <path d="M8 12h8"/>
+                                </svg>
+                                <span>Надіслати запит</span>
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -413,24 +441,24 @@
     </div>
 
     <!-- Scripts -->
-    <script src="js/config.js?v=20260122-v4"></script>
-    <script src="js/api.js?v=20260122-v12"></script>
+    <script src="js/config.js?v=20260127-v1"></script>
+    <script src="js/api.js?v=20260127-v1"></script>
     
     <!-- UI Modules -->
-    <script src="js/ui-utils.js?v=20260122-v5"></script>
-    <script src="js/ui-books.js?v=20260122-v11"></script>
-    <script src="js/ui-book-form.js?v=20260123-v3"></script>
-    <script src="js/ui-reviews.js?v=20260122-v5"></script>
-    <script src="js/ui.js?v=20260122-v6"></script>
+    <script src="js/ui-utils.js?v=20260127-v1"></script>
+    <script src="js/ui-books.js?v=20260127-v1"></script>
+    <script src="js/ui-book-form.js?v=20260127-v1"></script>
+    <script src="js/ui-reviews.js?v=20260127-v1"></script>
+    <script src="js/ui.js?v=20260127-v1"></script>
     
     <!-- Clubs Modules -->
-    <script src="js/clubs-list.js?v=20260122-v9"></script>
-    <script src="js/clubs-detail.js?v=20260122-v7"></script>
-    <script src="js/clubs-requests.js?v=20260122-v6"></script>
-    <script src="js/clubs-form.js?v=20260122-v2"></script>
-    <script src="js/clubs-ui.js?v=20260122-v6"></script>
+    <script src="js/clubs-list.js?v=20260127-v1"></script>
+    <script src="js/clubs-detail.js?v=20260127-v1"></script>
+    <script src="js/clubs-requests.js?v=20260127-v1"></script>
+    <script src="js/clubs-form.js?v=20260127-v1"></script>
+    <script src="js/clubs-ui.js?v=20260127-v1"></script>
     
     <!-- App -->
-    <script src="js/app.js?v=20260122-v15"></script>
+    <script src="js/app.js?v=20260127-v1"></script>
 </body>
 </html>
