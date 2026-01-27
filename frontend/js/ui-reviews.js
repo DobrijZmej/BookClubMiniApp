@@ -109,12 +109,26 @@ const UIReviews = {
             
             tg.HapticFeedback.impactOccurred('medium');
             
-            await API.books.createOrUpdateReview(this.currentBookId, reviewData);
+            const bookId = this.currentBookId;
+            await API.books.createOrUpdateReview(bookId, reviewData);
             tg.showAlert('✅ Відгук збережено!');
             
             // Закрити modal
             document.getElementById('book-review-modal').classList.remove('active');
             this.currentBookId = null;
+            
+            // Оновити список книг
+            if (ClubsUI?.currentClubId) {
+                await UIBooks.loadBooks(ClubsUI.currentClubId);
+                
+                // Прокрутити до оціненої книги
+                setTimeout(() => {
+                    const bookCard = document.querySelector(`[data-book-id="${bookId}"]`);
+                    if (bookCard) {
+                        bookCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 500);
+            }
             
         } catch (error) {
             console.error('Error saving review:', error);
