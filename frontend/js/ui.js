@@ -27,7 +27,7 @@ const UI = {
     showBookReview: (...args) => UIReviews.showBookReview(...args),
     saveBookReview: (...args) => UIReviews.saveBookReview(...args),
     deleteBookReview: (...args) => UIReviews.deleteBookReview(...args),
-    goBackFromReview: (...args) => UIReviews.goBackFromReview(...args),
+    closeReviewModal: (...args) => UIReviews.closeReviewModal(...args),
     
     // Getter/Setter для currentBookId (для зворотної сумісності)
     get currentBookId() {

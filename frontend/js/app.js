@@ -98,14 +98,24 @@
         }
     });
     
+    // Close review modal
+    document.getElementById('close-review-modal')?.addEventListener('click', () => {
+        UIReviews.closeReviewModal();
+    });
+
+    // Click outside to close review modal
+    document.getElementById('book-review-modal')?.addEventListener('click', (e) => {
+        if (e.target.id === 'book-review-modal') {
+            UIReviews.closeReviewModal();
+        }
+    });
+    
     // Back button
     document.getElementById('back-button').addEventListener('click', () => {
         tg.HapticFeedback.impactOccurred('soft');
         
         // Перевірити поточний view
-        if (document.getElementById('book-review-view').classList.contains('active')) {
-            UI.goBackFromReview();
-        } else if (document.getElementById('club-detail-view').classList.contains('active')) {
+        if (document.getElementById('club-detail-view').classList.contains('active')) {
             ClubsUI.backToClubsList();
         } else if (document.getElementById('add-book-view').classList.contains('active')) {
             // Повернутися до деталей клубу

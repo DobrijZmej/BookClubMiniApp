@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="css/variables.css?v=20260127-v1">
     <link rel="stylesheet" href="css/base.css?v=20260127-v1">
     <link rel="stylesheet" href="css/layout.css?v=20260127-v1">
-    <link rel="stylesheet" href="css/components.css?v=20260127-v1">
+    <link rel="stylesheet" href="css/components.css?v=20260127-v2">
     <link rel="stylesheet" href="css/clubs.css?v=20260127-v1">
     <link rel="stylesheet" href="css/club-detail.css?v=20260127-v1">
     <link rel="stylesheet" href="css/club-form.css?v=20260127-v1">
@@ -390,14 +390,24 @@
                     </div>
                 </div>
             </div>
-            <!-- Book Review View -->
-            <div id="book-review-view" class="view">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">⭐ Відгук на книгу</div>
+            <!-- Book Review Modal -->
+            <div id="book-review-modal" class="modal">
+                <div class="modal-content club-form-modal-content">
+                    <!-- Modal Header -->
+                    <div class="club-form-header">
+                        <div class="club-form-header-left">
+                            <div class="app-icon">📚</div>
+                            <span class="app-title">Книжковий Обмін</span>
+                        </div>
+                        <button class="modal-close" id="close-review-modal">&times;</button>
                     </div>
-                    <div class="card-body">
-                        <form id="book-review-form">
+
+                    <!-- Modal Title -->
+                    <h2 class="club-form-title" id="review-modal-title">⭐ Відгук на книгу</h2>
+
+                    <!-- Form Container -->
+                    <div class="club-form-container" style="display: block;">
+                        <form id="book-review-form" class="club-form">
                             <div class="form-group">
                                 <label class="form-label">Рейтинг *</label>
                                 <div class="rating-input">
@@ -419,10 +429,25 @@
                                 <textarea id="review-comment" class="form-textarea" rows="4" maxlength="1000" placeholder="Поділіться враженнями про книгу..."></textarea>
                             </div>
                             
-                            <div class="flex gap-4">
-                                <button type="submit" class="btn btn-primary btn-full">Зберегти відгук</button>
-                                <button type="button" id="delete-review-btn" class="btn btn-secondary" style="display: none;">Видалити</button>
-                            </div>
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn btn-primary btn-full btn-submit-club">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                </svg>
+                                <span>Зберегти відгук</span>
+                            </button>
+                            
+                            <!-- Delete Button (hidden by default) -->
+                            <button type="button" id="delete-review-btn" class="btn btn-danger btn-full" style="display: none; margin-top: var(--space-sm);">
+                                <span>🗑️ Видалити відгук</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- Book Review View (old) - Keep for back button compatibility -->
+            <div id="book-review-view" class="view" style="display: none;">
+            </div>
                         </form>
                     </div>
                 </div>
@@ -446,10 +471,10 @@
     
     <!-- UI Modules -->
     <script src="js/ui-utils.js?v=20260127-v1"></script>
-    <script src="js/ui-books.js?v=20260127-v4"></script>
+    <script src="js/ui-books.js?v=20260127-v5"></script>
     <script src="js/ui-book-form.js?v=20260127-v1"></script>
-    <script src="js/ui-reviews.js?v=20260127-v1"></script>
-    <script src="js/ui.js?v=20260127-v1"></script>
+    <script src="js/ui-reviews.js?v=20260127-v2"></script>
+    <script src="js/ui.js?v=20260127-v2"></script>
     
     <!-- Clubs Modules -->
     <script src="js/clubs-list.js?v=20260127-v1"></script>
@@ -459,6 +484,6 @@
     <script src="js/clubs-ui.js?v=20260127-v1"></script>
     
     <!-- App -->
-    <script src="js/app.js?v=20260127-v1"></script>
+    <script src="js/app.js?v=20260127-v2"></script>
 </body>
 </html>

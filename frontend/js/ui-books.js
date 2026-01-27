@@ -193,7 +193,7 @@ const UIBooks = {
                     const avgStars = UIUtils.generateStarRating(avgRating);
                     
                     reviewsHtml = `
-                        <div style="margin-top: 16px;">
+                        <div class="book-modal-section">
                             <strong>⭐ Відгуки:</strong>
                             <div class="reviews-stats">
                                 <div class="avg-rating">
@@ -221,9 +221,9 @@ const UIBooks = {
                     `;
                 } else {
                     reviewsHtml = `
-                        <div style="margin-top: 16px;">
+                        <div class="book-modal-section">
                             <strong>⭐ Відгуки:</strong>
-                            <div style="text-align: center; padding: 20px; color: var(--tg-theme-hint-color); background: rgba(128, 128, 128, 0.1); border-radius: 8px; margin-top: 8px;">
+                            <div class="empty-reviews">
                                 📝 Ще немає відгуків
                             </div>
                         </div>
@@ -231,51 +231,49 @@ const UIBooks = {
                 }
             } catch (error) {
                 console.error('Помилка завантаження відгуків:', error);
-                reviewsHtml = '<div style="margin-top: 16px;"><strong>⭐ Відгуки:</strong><div style="text-align: center; padding: 20px; color: var(--tg-theme-hint-color);">❌ Помилка завантаження відгуків</div></div>';
+                reviewsHtml = '<div class="book-modal-section"><strong>⭐ Відгуки:</strong><div class="empty-reviews">❌ Помилка завантаження відгуків</div></div>';
             }
             
             modalBody.innerHTML = `
                 <div class="modal-title">${UIUtils.escapeHtml(book.title)}</div>
                 
-                <div style="margin-bottom: 16px;">
+                <div class="book-modal-info">
                     <strong>Автор:</strong> ${UIUtils.escapeHtml(book.author)}<br>
                     <strong>Додав:</strong> @${UIUtils.escapeHtml(book.owner_username || 'невідомо')}<br>
                     <strong>Статус:</strong> ${book.status === 'AVAILABLE' ? '🟢 Доступна' : '🔴 Позичена'}
                 </div>
                 
                 ${book.description 
-                    ? `<div style="margin-bottom: 16px;">
-                        <strong>Опис:</strong><br>
+                    ? `<div class="book-modal-description">
+                        <strong>Опис:</strong>
                         ${UIUtils.escapeHtml(book.description)}
                        </div>`
                     : ''
                 }
                 
-                <div>
+                <div class="book-modal-section">
                     <strong>📅 Хронологія:</strong>
-                    <div style="background: rgba(6, 182, 212, 0.1); border-radius: 8px; padding: 12px; margin-top: 8px;">
-                        <div class="history-item">
-                            <div class="history-item-header">
-                                <span class="history-username">@${UIUtils.escapeHtml(book.owner_username || 'невідомо')}</span>
-                                <span class="history-status">📚 Створив книгу</span>
-                            </div>
-                            <div class="history-date">
-                                ${new Date(book.created_at).toLocaleDateString('uk-UA', { 
-                                    day: '2-digit', 
-                                    month: '2-digit', 
-                                    year: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                })}
-                            </div>
+                    <div class="history-item">
+                        <div class="history-item-header">
+                            <span class="history-username">@${UIUtils.escapeHtml(book.owner_username || 'невідомо')}</span>
+                            <span class="history-status">📚 Створив книгу</span>
+                        </div>
+                        <div class="history-date">
+                            ${new Date(book.created_at).toLocaleDateString('uk-UA', { 
+                                day: '2-digit', 
+                                month: '2-digit', 
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}
                         </div>
                     </div>
                     
                     ${book.loans && book.loans.length > 0
-                        ? `<div style="margin-top: 12px;">
+                        ? `<div class="book-modal-section">
                             <strong>📖 Історія читання:</strong>
                             ${book.loans.map(loan => `
-                                <div class="history-item" style="background: rgba(16, 185, 129, 0.1); border-radius: 8px; padding: 8px; margin-top: 8px;">
+                                <div class="history-item">
                                     <div class="history-item-header">
                                         <span class="history-username">@${UIUtils.escapeHtml(loan.username)}</span>
                                         <span class="history-status">${loan.status === 'READING' ? '📖 Читає' : '✅ Повернув'}</span>
@@ -299,29 +297,29 @@ const UIBooks = {
                                 </div>
                             `).join('')}
                            </div>`
-                        : '<div style="margin-top: 12px; color: var(--tg-theme-hint-color); text-align: center; padding: 20px; background: rgba(128, 128, 128, 0.1); border-radius: 8px;">📖 Ще ніхто не читав цю книгу</div>'
+                        : '<div class="empty-history">📖 Ще ніхто не читав цю книгу</div>'
                     }
                 </div>
                 
-                <div class="book-modal-actions" style="margin-top: 20px; display: flex; gap: 8px; flex-wrap: wrap;">
-                    ${isAvailable && !isOwner ? `
-                        <button class="btn btn-primary" onclick="UIBooks.borrowBook(${bookId}); UI.closeModal();" style="flex: 1;">
+                <div class="book-modal-actions">
+                    ${isAvailable ? `
+                        <button class="btn btn-primary" onclick="UIBooks.borrowBook(${bookId}); UI.closeModal();">
                             📖 Взяти книгу
                         </button>
                     ` : ''}
                     ${isReader ? `
-                        <button class="btn btn-success" onclick="UIBooks.returnBook(${bookId}); UI.closeModal();" style="flex: 1;">
+                        <button class="btn btn-success" onclick="UIBooks.returnBook(${bookId}); UI.closeModal();">
                             🏠 Повернути книгу
                         </button>
                     ` : ''}
-                    <button class="btn btn-primary" onclick="UIReviews.showBookReview(${bookId}); UI.closeModal();" style="flex: 1;">
+                    <button class="btn btn-primary" onclick="UIReviews.showBookReview(${bookId}); UI.closeModal();">
                         ⭐ Оцінити книгу
                     </button>
                     ${isOwner ? `
-                        <button class="btn btn-secondary" onclick="UIBooks.editBook(${bookId}); UI.closeModal();" style="flex: 1;">
+                        <button class="btn btn-secondary" onclick="UIBooks.editBook(${bookId}); UI.closeModal();">
                             ✏️ Редагувати
                         </button>
-                        <button class="btn btn-danger" onclick="UIBooks.deleteBook(${bookId}); UI.closeModal();" style="flex: 1;">
+                        <button class="btn btn-danger" onclick="UIBooks.deleteBook(${bookId}); UI.closeModal();">
                             🗑️ Видалити
                         </button>
                     ` : ''}

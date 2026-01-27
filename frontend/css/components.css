@@ -282,6 +282,178 @@
     color: var(--color-text-primary);
 }
 
+/* Book Modal - Book Info */
+.book-modal-info {
+    margin-bottom: var(--space-md);
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+}
+
+.book-modal-info strong {
+    color: var(--color-text-primary);
+}
+
+.book-modal-description {
+    margin-bottom: var(--space-md);
+    color: var(--color-text-secondary);
+}
+
+.book-modal-description strong {
+    color: var(--color-text-primary);
+    display: block;
+    margin-bottom: var(--space-xs);
+}
+
+.book-modal-section {
+    margin-top: var(--space-lg);
+}
+
+.book-modal-section strong {
+    color: var(--color-text-primary);
+    display: block;
+    margin-bottom: var(--space-sm);
+}
+
+/* Reviews */
+.reviews-stats {
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-md);
+}
+
+.avg-rating {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.avg-stars {
+    font-size: 1.25rem;
+}
+
+.avg-number {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-warning);
+}
+
+.reviews-count {
+    font-size: 0.875rem;
+    color: var(--color-text-tertiary);
+}
+
+.review-item {
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-top: var(--space-sm);
+    border-left: 3px solid var(--color-primary);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-xs);
+}
+
+.review-user {
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.review-date {
+    font-size: 0.8125rem;
+    color: var(--color-text-tertiary);
+}
+
+.review-rating {
+    margin-bottom: var(--space-xs);
+    font-size: 1rem;
+}
+
+.review-comment {
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+}
+
+/* History */
+.history-item {
+    background: var(--color-primary-light);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-top: var(--space-sm);
+}
+
+.history-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-xs);
+}
+
+.history-username {
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.history-status {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+}
+
+.history-date {
+    font-size: 0.8125rem;
+    color: var(--color-text-tertiary);
+    line-height: 1.4;
+}
+
+/* Empty states */
+.empty-reviews,
+.empty-history {
+    text-align: center;
+    padding: var(--space-xl);
+    color: var(--color-text-tertiary);
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-md);
+    margin-top: var(--space-sm);
+}
+
+/* Rating Input - Interactive Stars */
+.rating-input {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: var(--space-xs);
+    padding: var(--space-sm) 0;
+}
+
+.rating-input input[type="radio"] {
+    display: none;
+}
+
+.rating-input .star {
+    font-size: 2rem;
+    color: var(--color-border);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    user-select: none;
+}
+
+.rating-input .star:hover,
+.rating-input .star:hover ~ .star,
+.rating-input input[type="radio"]:checked ~ .star {
+    color: var(--color-warning);
+    transform: scale(1.1);
+}
+
+.rating-input .star:active {
+    transform: scale(0.95);
+}
+
 .book-modal-actions {
     margin-top: var(--space-lg);
     display: flex;

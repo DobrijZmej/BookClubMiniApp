@@ -9,13 +9,8 @@ const UIReviews = {
         try {
             this.currentBookId = bookId;
             
-            // Переключити на view відгука
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById('book-review-view').classList.add('active');
-            
-            // Оновити заголовок
-            document.getElementById('header-title').textContent = '⭐ Відгук на книгу';
-            document.getElementById('back-button').style.display = 'block';
+            // Відкрити модальне вікно
+            document.getElementById('book-review-modal').classList.add('active');
             
             // Спробувати завантажити існуючий відгук (тихо)
             try {
@@ -32,7 +27,7 @@ const UIReviews = {
                 }
                 
                 // Оновити заголовок
-                document.getElementById('header-title').textContent = '⭐ Редагувати відгук';
+                document.getElementById('review-modal-title').textContent = '⭐ Редагувати відгук';
                 
             } catch (error) {
                 // Тихо обробляємо відсутність відгука - просто показуємо нову форму
@@ -43,6 +38,9 @@ const UIReviews = {
                 if (deleteBtn) {
                     deleteBtn.style.display = 'none';
                 }
+                
+                // Оновити заголовок
+                document.getElementById('review-modal-title').textContent = '⭐ Відгук на книгу';
             }
             
         } catch (error) {
@@ -114,8 +112,9 @@ const UIReviews = {
             await API.books.createOrUpdateReview(this.currentBookId, reviewData);
             tg.showAlert('✅ Відгук збережено!');
             
-            // Повернутися назад
-            this.goBackFromReview();
+            // Закрити modal
+            document.getElementById('book-review-modal').classList.remove('active');
+            this.currentBookId = null;
             
         } catch (error) {
             console.error('Error saving review:', error);
@@ -140,8 +139,9 @@ const UIReviews = {
                     await API.books.deleteReview(this.currentBookId);
                     tg.showAlert('✅ Відгук видалено');
                     
-                    // Повернутися назад
-                    this.goBackFromReview();
+                    // Закрити modal
+                    document.getElementById('book-review-modal').classList.remove('active');
+                    this.currentBookId = null;
                     
                 } catch (error) {
                     console.error('Error deleting review:', error);
@@ -151,18 +151,11 @@ const UIReviews = {
         });
     },
 
-    /**
-     * Повернутися з форми відгука
+    /**Закрити модальне вікно відгука
      */
-    goBackFromReview() {
-        this.currentBookId = null;
-        
-        // Повернутися до деталей клубу
-        document.getElementById('book-review-view').classList.remove('active');
-        document.getElementById('club-detail-view').classList.add('active');
-        
-        // Відновити заголовок
-        const clubName = document.getElementById('header-title').dataset.clubName || 'Клуб';
+    closeReviewModal() {
+        document.getElementById('book-review-modal').classList.remove('active');
+        this.currentBookId = nullame || 'Клуб';
         document.getElementById('header-title').textContent = `📚 ${clubName}`;
     }
 };
