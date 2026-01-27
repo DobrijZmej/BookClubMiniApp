@@ -212,7 +212,45 @@ const UIBookForm = (() => {
       if (!f || !els.coverPreview) return;
       els.coverPreview.src = URL.createObjectURL(f);
     });
-  }
+    // вставка зображення з буферу обміну (Ctrl+V)
+    document.addEventListener('paste', (e) => {
+      // Перевіряємо чи форма видима
+      if (!els.view?.classList.contains('active')) return;
+
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        
+        // Шукаємо зображення
+        if (item.type.indexOf('image') === 0) {
+          e.preventDefault();
+          
+          const blob = item.getAsFile();
+          if (!blob) continue;
+
+          // Створюємо File об'єкт з датою в назві
+          const timestamp = Date.now();
+          const file = new File([blob], `pasted-image-${timestamp}.png`, { type: blob.type });
+
+          // Оновлюємо preview
+          if (els.coverPreview) {
+            els.coverPreview.src = URL.createObjectURL(file);
+          }
+
+          // Створюємо DataTransfer для оновлення input
+          const dataTransfer = new DataTransfer();
+          dataTransfer.items.add(file);
+          if (els.coverInput) {
+            els.coverInput.files = dataTransfer.files;
+          }
+
+          tg.showAlert?.('📋 Зображення вставлено з буферу обміну');
+          break;
+        }
+      }
+    });  }
 
   function init() {
     cache();
