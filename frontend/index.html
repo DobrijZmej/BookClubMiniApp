@@ -15,10 +15,10 @@
     <link rel="stylesheet" href="css/variables.css?v=20260127-v1">
     <link rel="stylesheet" href="css/base.css?v=20260127-v1">
     <link rel="stylesheet" href="css/layout.css?v=20260127-v1">
-    <link rel="stylesheet" href="css/components.css?v=20260127-v4">
-    <link rel="stylesheet" href="css/clubs.css?v=20260127-v1">
-    <link rel="stylesheet" href="css/club-detail.css?v=20260127-v1">
-    <link rel="stylesheet" href="css/club-form.css?v=20260127-v1">
+    <link rel="stylesheet" href="css/components.css?v=20260129-v1">
+    <link rel="stylesheet" href="css/clubs.css?v=20260129-v1">
+    <link rel="stylesheet" href="css/club-detail.css?v=20260129-v1">
+    <link rel="stylesheet" href="css/club-form.css?v=20260129-v1">
     <link rel="stylesheet" href="css/books.css?v=20260127-v3">
     <link rel="stylesheet" href="css/book-form.css?v=20260127-v1">
 </head>
@@ -35,9 +35,7 @@
             <div class="header-content">
                 <div class="header-left">
                     <button id="back-button" class="back-btn" style="display: none;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M19 12H5M12 19l-7-7 7-7"/>
-                        </svg>
+                        <span class="icon-emoji">◀️</span>
                     </button>
                     <div class="app-branding">
                         <div class="app-icon">📚</div>
@@ -48,40 +46,20 @@
                     <span id="username" class="user-badge"></span>
                     <!-- Club Actions (visible only in club detail view) -->
                     <button id="add-book-btn" class="icon-btn" style="display: none;" title="Додати книгу">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-                            <path d="M12 8v8M8 12h8"/>
-                        </svg>
+                        <span class="icon-emoji">➕</span>
                     </button>
                     <button id="edit-club-btn" class="icon-btn" style="display: none;" title="Редагувати клуб">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                        </svg>
+                        <span class="icon-emoji">✏️</span>
                     </button>
                     <button id="delete-club-btn" class="icon-btn" style="display: none;" title="Видалити клуб">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                        </svg>
+                        <span class="icon-emoji">🗑️</span>
                     </button>
                     <!-- Main Actions (visible on clubs list) -->
-                    <button id="search-clubs-btn" class="icon-btn" title="Пошук клубів">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"/>
-                            <path d="m21 21-4.35-4.35"/>
-                        </svg>
-                    </button>
                     <button id="add-club-btn" class="icon-btn" title="Створити клуб">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 5v14M5 12h14"/>
-                        </svg>
+                        <span class="icon-emoji">➕</span>
                     </button>
                     <button id="join-code-btn" class="icon-btn" title="Вступити за кодом">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"/>
-                            <path d="M8 12h8"/>
-                        </svg>
+                        <span class="icon-emoji">🔑</span>
                     </button>
                 </div>
             </div>
@@ -115,29 +93,17 @@
                     <div class="club-detail-info">
                         <h2 class="club-detail-name" id="club-detail-name">Назва клубу</h2>
                         <button id="view-club-requests-btn" class="club-requests-btn" style="display: none;">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                                <circle cx="8.5" cy="7" r="4"/>
-                                <path d="M20 8v6M23 11h-6"/>
-                            </svg>
+                            <span class="icon-emoji">📩</span>
                             <span>Заявки на вступ</span>
                             <span id="requests-count" class="requests-badge">0</span>
                         </button>
                         <div class="club-detail-stats">
                             <div class="club-detail-stat">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                                    <circle cx="9" cy="7" r="4"/>
-                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                                </svg>
+                                <span class="icon-emoji">👥</span>
                                 <span id="club-members-count">0 учасників</span>
                             </div>
                             <div class="club-detail-stat">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-                                </svg>
+                                <span class="icon-emoji">📚</span>
                                 <span id="club-books-count">0 книг у обігу</span>
                             </div>
                         </div>
@@ -152,10 +118,7 @@
                 <!-- Search and Filter Section -->
                 <div class="books-controls">
                     <div class="search-box">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"/>
-                            <path d="m21 21-4.35-4.35"/>
-                        </svg>
+                        <span class="icon-emoji search-icon">🔍</span>
                         <input type="text" id="search-input" class="search-input" placeholder="Пошук книги">
                     </div>
                     <select id="sort-by" class="filter-select">
@@ -431,9 +394,7 @@
                             
                             <!-- Submit Button -->
                             <button type="submit" class="btn btn-primary btn-full btn-submit-club">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                                </svg>
+                                <span class="icon-emoji">⭐</span>
                                 <span>Зберегти відгук</span>
                             </button>
                             
@@ -477,13 +438,13 @@
     <script src="js/ui.js?v=20260127-v2"></script>
     
     <!-- Clubs Modules -->
-    <script src="js/clubs-list.js?v=20260127-v1"></script>
-    <script src="js/clubs-detail.js?v=20260127-v1"></script>
+    <script src="js/clubs-list.js?v=20260129-v1"></script>
+    <script src="js/clubs-detail.js?v=20260129-v1"></script>
     <script src="js/clubs-requests.js?v=20260127-v1"></script>
     <script src="js/clubs-form.js?v=20260127-v1"></script>
     <script src="js/clubs-ui.js?v=20260127-v1"></script>
     
     <!-- App -->
-    <script src="js/app.js?v=20260127-v2"></script>
+    <script src="js/app.js?v=20260129-v1"></script>
 </body>
 </html>

@@ -96,10 +96,8 @@
     color: var(--color-text-secondary);
 }
 
-.club-detail-stat svg {
-    width: 16px;
-    height: 16px;
-    stroke: var(--color-text-secondary);
+.club-detail-stat .icon-emoji {
+    font-size: 1em;
 }
 
 /* Club Description */
@@ -126,12 +124,14 @@
     flex: 1;
 }
 
-.search-box svg {
+.search-box .search-icon {
     position: absolute;
     left: var(--space-sm);
     top: 50%;
     transform: translateY(-50%);
     color: var(--color-text-tertiary);
+    font-size: 1.1em;
+    pointer-events: none;
 }
 
 .search-input {

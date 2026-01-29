@@ -18,15 +18,15 @@ class LoanStatus(str, Enum):
 class BookCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=500)
     author: Optional[str] = Field("Невідомий автор", max_length=255)
-    description: Optional[str] = None
+    description: Optional[str] = Field(None, max_length=2000)
     cover_url: Optional[str] = None
     club_id: int  # Замість chat_id використовуємо club_id
     client_request_id: Optional[str] = None
 
 class BookUpdate(BaseModel):
-    title: Optional[str] = Field(None, max_length=500)
+    title: Optional[str] = Field(None, min_length=1, max_length=500)
     author: Optional[str] = Field(None, max_length=255)
-    description: Optional[str] = None
+    description: Optional[str] = Field(None, max_length=2000)
     cover_url: Optional[str] = None
 
 class BookReviewCreate(BaseModel):

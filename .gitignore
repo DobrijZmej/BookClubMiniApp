@@ -39,3 +39,8 @@ Thumbs.db
 .pytest_cache/
 .coverage
 htmlcov/
+# Security audits and sensitive documentation
+SECURITY_AUDIT.md
+security_audit*.md
+penetration_test*.md
+vulnerability*.md

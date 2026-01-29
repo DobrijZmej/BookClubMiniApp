@@ -139,14 +139,6 @@
     });
     
     // Header кнопки
-    document.getElementById('search-clubs-btn')?.addEventListener('click', () => {
-        tg.HapticFeedback.impactOccurred('medium');
-        // TODO: відкрити пошук клубів
-        if (tg.showAlert) {
-            tg.showAlert('Пошук клубів - в розробці');
-        }
-    });
-    
     document.getElementById('add-club-btn')?.addEventListener('click', () => {
         tg.HapticFeedback.impactOccurred('medium');
         ClubForm.openCreateMode();

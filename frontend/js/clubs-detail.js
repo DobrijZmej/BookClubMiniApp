@@ -12,7 +12,6 @@ const ClubsDetail = {
         
         // Показуємо кнопки клубу, ховаємо кнопки головної
         document.getElementById('add-book-btn').style.display = 'flex';
-        document.getElementById('search-clubs-btn').style.display = 'none';
         document.getElementById('add-club-btn').style.display = 'none';
         document.getElementById('join-code-btn').style.display = 'none';
         

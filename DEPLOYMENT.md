@@ -123,6 +123,11 @@ sudo nginx -t
 - Блокування прихованих файлів (`/\.`)
 - Блокування backend директорії
 - Блокування файлів `.env`, `.log`, `.sql`, тощо
+- Security headers (X-Frame-Options, CSP, тощо)
+- Rate limiting для API endpoints
+- Request size limits
+
+Запустіть `bash security_check.sh` для перевірки конфігурації.
 
 ## Крок 7: Отримання SSL сертифіката
 

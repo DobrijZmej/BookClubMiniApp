@@ -83,19 +83,11 @@ const ClubsList = {
                             <div class="club-type">${clubType}</div>
                             <div class="club-stats">
                                 <div class="club-stat">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                                        <circle cx="9" cy="7" r="4"/>
-                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                                    </svg>
+                                    <span class="icon-emoji">👥</span>
                                     <span>${club.members_count || 1} учасників</span>
                                 </div>
                                 <div class="club-stat">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-                                    </svg>
+                                    <span class="icon-emoji">📚</span>
                                     <span>${booksCount} книг у обігу</span>
                                 </div>
                             </div>
@@ -166,7 +158,6 @@ const ClubsList = {
         document.getElementById('add-book-btn').style.display = 'none';
         document.getElementById('edit-club-btn').style.display = 'none';
         document.getElementById('delete-club-btn').style.display = 'none';
-        document.getElementById('search-clubs-btn').style.display = 'flex';
         document.getElementById('add-club-btn').style.display = 'flex';
         document.getElementById('join-code-btn').style.display = 'flex';
         

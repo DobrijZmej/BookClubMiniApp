@@ -2,6 +2,15 @@
    🧩 Components - Buttons & Generic Elements
    ============================================ */
 
+/* Emoji Icons */
+.icon-emoji {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-style: normal;
+    line-height: 1;
+}
+
 /* Generic Buttons */
 .btn {
     padding: var(--space-sm) var(--space-md);
@@ -72,6 +81,10 @@
     transition: all var(--transition-fast);
 }
 
+.back-btn .icon-emoji {
+    font-size: 1.4em;
+}
+
 .back-btn:hover {
     background-color: var(--color-bg-tertiary);
 }
@@ -93,6 +106,10 @@
     border-radius: var(--radius-md);
     cursor: pointer;
     transition: all var(--transition-fast);
+}
+
+.icon-btn .icon-emoji {
+    font-size: 1.3em;
 }
 
 .icon-btn:hover {
@@ -178,9 +195,8 @@
     width: 100%;
 }
 
-.action-btn svg {
-    width: 20px;
-    height: 20px;
+.action-btn .icon-emoji {
+    font-size: 1.2em;
 }
 
 .action-btn-primary {

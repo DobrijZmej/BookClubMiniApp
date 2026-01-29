@@ -91,7 +91,17 @@ Mini App валідує користувачів через `initData` від Te
 - Перевірка hash підпису
 - Перевірка часу (max 1 година)
 - Захист від підробки даних
+**Security Features:**
+- ✅ Telegram WebApp signature validation (HMAC SHA-256)
+- ✅ SQL injection protection (SQLAlchemy ORM)
+- ✅ File upload validation (type, size, content)
+- ✅ Rate limiting (nginx)
+- ✅ Security headers (CSP, X-Frame-Options, тощо)
+- ✅ HTTPS enforcement
+- ✅ Sensitive files blocking (.env, .git)
 
+**Security Audit:** `bash security_check.sh`  
+**Details:** See [SECURITY_AUDIT.md](SECURITY_AUDIT.md)
 ## 📱 Можливості
 
 - ✅ Перегляд бібліотеки з пошуком і фільтрами
