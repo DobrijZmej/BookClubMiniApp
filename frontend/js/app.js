@@ -178,7 +178,7 @@
         document.getElementById('back-button').style.display = 'flex';
     });
     
-    document.getElementById('requests-back-button')?.addEventListener('click', () => {
+    document.getElementById('requests-close-button')?.addEventListener('click', () => {
         tg.HapticFeedback.impactOccurred('soft');
         ClubsRequests.backToClubDetails();
     });
