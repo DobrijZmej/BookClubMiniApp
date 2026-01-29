@@ -271,18 +271,22 @@
         font-size: 1rem;
     }
     
+    .app-main {
+        padding-bottom: calc(var(--space-md) + 32px);
+    }
+    
     .app-footer {
-        height: 48px;
-        gap: var(--space-md);
+        height: 28px;
+        gap: var(--space-sm);
     }
     
     .footer-link {
-        width: 40px;
-        height: 40px;
+        width: 28px;
+        height: 28px;
     }
     
     .footer-emoji {
-        font-size: 1.375rem;
+        font-size: 1.125rem;
     }
     
     /* Hide tooltip on small screens (touch devices) */
