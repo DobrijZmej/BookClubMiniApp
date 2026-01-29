@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="css/clubs.css?v=20260129-v1">
     <link rel="stylesheet" href="css/club-detail.css?v=20260129-v1">
     <link rel="stylesheet" href="css/club-form.css?v=20260129-v2">
+    <link rel="stylesheet" href="css/club-management.css?v=20260129-v2">
     <link rel="stylesheet" href="css/books.css?v=20260127-v3">
     <link rel="stylesheet" href="css/book-form.css?v=20260127-v1">
 </head>
@@ -48,11 +49,8 @@
                     <button id="add-book-btn" class="icon-btn" style="display: none;" title="Додати книгу">
                         <span class="icon-emoji">➕</span>
                     </button>
-                    <button id="edit-club-btn" class="icon-btn" style="display: none;" title="Редагувати клуб">
-                        <span class="icon-emoji">✏️</span>
-                    </button>
-                    <button id="delete-club-btn" class="icon-btn" style="display: none;" title="Видалити клуб">
-                        <span class="icon-emoji">🗑️</span>
+                    <button id="manage-club-btn" class="icon-btn" style="display: none;" title="Управління клубом">
+                        <span class="icon-emoji">⚙️</span>
                     </button>
                     <!-- Main Actions (visible on clubs list) -->
                     <button id="add-club-btn" class="icon-btn" title="Створити клуб">
@@ -426,9 +424,50 @@
         </div>
     </div>
 
+    <!-- Club Management Modal -->
+    <div id="club-management-modal" class="modal">
+        <div class="modal-content management-modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">⚙️ Управління клубом</h2>
+                <button class="modal-close" id="close-management-modal">&times;</button>
+            </div>
+            
+            <!-- Tabs Navigation -->
+            <div class="management-tabs">
+                <button class="management-tab active" data-tab="members">👥 Учасники</button>
+                <button class="management-tab" data-tab="requests">📩 Заявки</button>
+                <button class="management-tab" data-tab="settings">⚙️ Налаштування</button>
+            </div>
+            
+            <!-- Tab Content -->
+            <div class="management-content">
+                <!-- Members Tab -->
+                <div id="members-tab" class="management-tab-content active">
+                    <div class="members-list" id="members-list">
+                        <!-- Members will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Requests Tab -->
+                <div id="requests-tab" class="management-tab-content">
+                    <div class="requests-list" id="management-requests-list">
+                        <!-- Requests will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Settings Tab -->
+                <div id="settings-tab" class="management-tab-content">
+                    <div class="settings-form" id="club-settings-form">
+                        <!-- Club settings will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="js/config.js?v=20260127-v1"></script>
-    <script src="js/api.js?v=20260127-v2"></script>
+    <script src="js/api.js?v=20260129-v3"></script>
     
     <!-- UI Modules -->
     <script src="js/ui-utils.js?v=20260127-v1"></script>
@@ -439,7 +478,8 @@
     
     <!-- Clubs Modules -->
     <script src="js/clubs-list.js?v=20260129-v1"></script>
-    <script src="js/clubs-detail.js?v=20260129-v1"></script>
+    <script src="js/club-management.js?v=20260129-v2"></script>
+    <script src="js/clubs-detail.js?v=20260129-v2"></script>
     <script src="js/clubs-requests.js?v=20260127-v1"></script>
     <script src="js/clubs-form.js?v=20260127-v1"></script>
     <script src="js/clubs-ui.js?v=20260127-v1"></script>

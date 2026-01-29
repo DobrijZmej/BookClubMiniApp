@@ -206,6 +206,13 @@ const API = {
                 body: JSON.stringify(clubData)
             });
         },
+        
+        // Видалити клуб (soft delete)
+        async delete(clubId) {
+            return API.request(`/api/clubs/${clubId}`, {
+                method: 'DELETE'
+            });
+        },
 
         // Завантажити аватар клубу
         async uploadAvatar(clubId, file) {
@@ -269,6 +276,14 @@ const API = {
         async removeMember(clubId, userId) {
             return API.request(`/api/clubs/${clubId}/members/${userId}`, {
                 method: 'DELETE'
+            });
+        },
+        
+        // Змінити роль учасника
+        async updateMemberRole(clubId, userId, role) {
+            return API.request(`/api/clubs/${clubId}/members/${userId}/role`, {
+                method: 'PATCH',
+                body: JSON.stringify({ role })
             });
         }
     },

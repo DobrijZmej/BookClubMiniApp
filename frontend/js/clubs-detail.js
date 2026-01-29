@@ -64,22 +64,29 @@ const ClubsDetail = {
 
     async checkClubPermissions(clubId) {
         try {
-            const userTelegramId = tg.initDataUnsafe?.user?.id?.toString();
-            const isOwnerOrAdmin = this.currentClubData && this.currentClubData.owner_id === userTelegramId;
+            // Перевіряємо роль користувача
+            const userRole = this.currentClubData?.user_role?.toUpperCase();
+            const isOwnerOrAdmin = userRole === 'OWNER' || userRole === 'ADMIN';
             
-            // Show/hide edit and delete buttons based on permissions
-            const editBtn = document.getElementById('edit-club-btn');
-            const deleteBtn = document.getElementById('delete-club-btn');
+            // Показуємо/ховаємо кнопку управління
+            const manageBtn = document.getElementById('manage-club-btn');
             const requestsBtn = document.getElementById('view-club-requests-btn');
             
             if (isOwnerOrAdmin) {
-                if (editBtn) editBtn.style.display = 'flex';
-                if (deleteBtn) deleteBtn.style.display = 'flex';
-                if (requestsBtn) requestsBtn.style.display = 'flex';
-                await this.loadRequestsCount(clubId);
+                if (manageBtn) {
+                    manageBtn.style.display = 'flex';
+                    manageBtn.onclick = () => {
+                        ClubManagement.open(this.currentClubId, this.currentClubData);
+                    };
+                }
+                
+                // Завантажуємо кількість заявок для бейджа
+                if (requestsBtn) {
+                    requestsBtn.style.display = 'flex';
+                    await this.loadRequestsCount(clubId);
+                }
             } else {
-                if (editBtn) editBtn.style.display = 'none';
-                if (deleteBtn) deleteBtn.style.display = 'none';
+                if (manageBtn) manageBtn.style.display = 'none';
                 if (requestsBtn) requestsBtn.style.display = 'none';
             }
         } catch (error) {

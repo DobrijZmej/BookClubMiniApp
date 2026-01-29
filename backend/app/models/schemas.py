@@ -175,3 +175,7 @@ class JoinRequestResponse(BaseModel):
 
 class JoinRequestAction(BaseModel):
     action: str = Field(..., pattern="^(approve|reject)$")
+
+class MemberRoleUpdate(BaseModel):
+    """Схема для зміни ролі учасника клубу"""
+    role: str = Field(..., pattern="^(ADMIN|MEMBER)$")  # Тільки ADMIN або MEMBER, OWNER не можна змінювати

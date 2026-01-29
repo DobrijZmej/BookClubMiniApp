@@ -16,7 +16,7 @@ from app.models.db_models import (
 from app.models.schemas import (
     ClubCreate, ClubUpdate, ClubResponse, ClubDetailResponse,
     ClubMemberResponse, JoinRequestCreate, JoinRequestResponse,
-    JoinRequestAction
+    JoinRequestAction, MemberRoleUpdate
 )
 from app.utils import file_storage
 
@@ -543,10 +543,64 @@ async def remove_member(
     if member.role == MemberRole.OWNER:
         raise HTTPException(status_code=400, detail="Не можна видалити власника клубу")
     
+    # ADMIN не може видаляти інших ADMIN
+    if role == MemberRole.ADMIN and member.role == MemberRole.ADMIN:
+        raise HTTPException(status_code=403, detail="Адміністратор не може видалити іншого адміністратора")
+    
     db.delete(member)
     db.commit()
     
+    logger.info(f"✅ Member {member_user_id} removed from club {club_id} by user {user_id}")
+    
     return None
+
+
+@router.patch("/{club_id}/members/{member_user_id}/role", response_model=ClubMemberResponse)
+async def update_member_role(
+    club_id: int,
+    member_user_id: str,
+    role_data: MemberRoleUpdate,
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user)
+):
+    """Змінити роль учасника клубу (тільки OWNER)"""
+    user_id = str(user['user']['id'])
+    
+    logger.info(f"User {user_id} attempting to change role for {member_user_id} in club {club_id} to {role_data.role}")
+    
+    # Перевірка прав - тільки OWNER може змінювати ролі
+    current_role = get_user_club_role(db, club_id, user_id)
+    if current_role != MemberRole.OWNER:
+        logger.warning(f"❌ User {user_id} (role: {current_role}) tried to change roles without OWNER permission")
+        raise HTTPException(status_code=403, detail="Тільки власник клубу може змінювати ролі")
+    
+    # Не можна змінювати свою власну роль
+    if user_id == member_user_id:
+        raise HTTPException(status_code=400, detail="Не можна змінювати свою власну роль")
+    
+    # Знаходимо учасника
+    member = db.query(ClubMember).filter(
+        ClubMember.club_id == club_id,
+        ClubMember.user_id == member_user_id
+    ).first()
+    
+    if not member:
+        raise HTTPException(status_code=404, detail="Учасник не знайдений")
+    
+    # Не можна змінити роль OWNER
+    if member.role == MemberRole.OWNER:
+        raise HTTPException(status_code=400, detail="Не можна змінити роль власника клубу")
+    
+    # Оновлюємо роль
+    old_role = member.role
+    member.role = MemberRole[role_data.role]  # Конвертуємо string в enum
+    
+    db.commit()
+    db.refresh(member)
+    
+    logger.success(f"✅ Role changed for {member_user_id} in club {club_id}: {old_role} → {member.role}")
+    
+    return member
 
 
 @router.post("/{club_id}/avatar", status_code=200)
@@ -597,3 +651,39 @@ async def upload_club_avatar(
             status_code=500,
             detail="Помилка завантаження аватару"
         )
+
+
+@router.delete("/{club_id}", status_code=204)
+async def delete_club(
+    club_id: int,
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user)
+):
+    """Видалити клуб (тільки OWNER) - soft delete"""
+    user_id = str(user['user']['id'])
+    
+    logger.info(f"User {user_id} attempting to delete club {club_id}")
+    
+    # Перевірка існування клубу
+    club = db.query(Club).filter(Club.id == club_id).first()
+    if not club:
+        raise HTTPException(status_code=404, detail="Клуб не знайдено")
+    
+    # Перевірка що клуб не видалений
+    if club.status == ClubStatus.DELETED:
+        raise HTTPException(status_code=400, detail="Клуб вже видалено")
+    
+    # Перевірка прав - тільки OWNER може видалити клуб
+    role = get_user_club_role(db, club_id, user_id)
+    if role != MemberRole.OWNER:
+        logger.warning(f"❌ User {user_id} (role: {role}) tried to delete club without OWNER permission")
+        raise HTTPException(status_code=403, detail="Тільки власник клубу може видалити його")
+    
+    # Soft delete - змінюємо статус
+    club.status = ClubStatus.DELETED
+    
+    db.commit()
+    
+    logger.success(f"✅ Club {club_id} marked as deleted by owner {user_id}")
+    
+    return None

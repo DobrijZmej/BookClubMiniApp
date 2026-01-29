@@ -8,6 +8,7 @@ import secrets
 class ClubStatus(str, enum.Enum):
     ACTIVE = "ACTIVE"
     INACTIVE = "INACTIVE"
+    DELETED = "DELETED"
 
 class BookStatus(str, enum.Enum):
     AVAILABLE = "AVAILABLE"
