@@ -119,6 +119,9 @@ class ClubMemberResponse(BaseModel):
     username: Optional[str]
     role: str
     joined_at: datetime
+    books_created: int = 0
+    books_borrowed: int = 0
+    reviews_count: int = 0
     
     class Config:
         from_attributes = True

@@ -500,7 +500,7 @@ async def get_club_members(
     db: Session = Depends(get_db),
     user: dict = Depends(get_current_user)
 ):
-    """Отримати список учасників клубу"""
+    """Отримати список учасників клубу зі статистикою"""
     user_id = str(user['user']['id'])
     
     # Перевірка чи користувач є членом
@@ -512,7 +512,44 @@ async def get_club_members(
         ClubMember.club_id == club_id
     ).order_by(ClubMember.joined_at).all()
     
-    return members
+    # Додаємо статистику для кожного учасника
+    result = []
+    for member in members:
+        # Підраховуємо книжки створені учасником
+        books_created = db.query(Book).filter(
+            Book.club_id == club_id,
+            Book.owner_id == member.user_id,
+            Book.status != BookStatus.DELETED
+        ).count()
+        
+        # Підраховуємо скільки разів брав книжки (унікальні позичання)
+        from app.models.db_models import Loan
+        books_borrowed = db.query(Loan).filter(
+            Loan.club_id == club_id,
+            Loan.borrower_id == member.user_id
+        ).count()
+        
+        # Підраховуємо відгуки
+        from app.models.db_models import BookReview
+        reviews_count = db.query(BookReview).filter(
+            BookReview.club_id == club_id,
+            BookReview.user_id == member.user_id
+        ).count()
+        
+        member_dict = {
+            "id": member.id,
+            "user_id": member.user_id,
+            "user_name": member.user_name,
+            "username": member.username,
+            "role": member.role.value if hasattr(member.role, 'value') else member.role,
+            "joined_at": member.joined_at,
+            "books_created": books_created,
+            "books_borrowed": books_borrowed,
+            "reviews_count": reviews_count
+        }
+        result.append(member_dict)
+    
+    return result
 
 
 @router.delete("/{club_id}/members/{member_user_id}", status_code=204)

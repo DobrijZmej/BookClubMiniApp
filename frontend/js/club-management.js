@@ -134,6 +134,15 @@ const ClubManagement = {
                                 memberRole === 'ADMIN' ? '⚙️ Адміністратор' : 
                                 '✓ Учасник';
                 
+                // Статистика учасника
+                const stats = `
+                    <div class="member-stats">
+                        <span class="member-stat" title="Книжок додано">📚 ${member.books_created || 0}</span>
+                        <span class="member-stat" title="Книжок позичено">📖 ${member.books_borrowed || 0}</span>
+                        <span class="member-stat" title="Відгуків залишено">⭐ ${member.reviews_count || 0}</span>
+                    </div>
+                `;
+                
                 return `
                     <div class="member-item">
                         <div class="member-avatar">${initials}</div>
@@ -141,6 +150,7 @@ const ClubManagement = {
                             <div class="member-name">${UIUtils.escapeHtml(userName)}</div>
                             ${member.username ? `<div class="member-username">@${UIUtils.escapeHtml(member.username)}</div>` : ''}
                             <span class="member-role-badge ${roleBadgeClass}">${roleText}</span>
+                            ${stats}
                         </div>
                         ${actionsHTML ? `<div class="member-actions">${actionsHTML}</div>` : ''}
                     </div>

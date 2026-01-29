@@ -152,10 +152,27 @@
     color: var(--color-success);
 }
 
+.member-stats {
+    display: flex;
+    gap: var(--space-sm);
+    margin-top: var(--space-xs);
+    flex-wrap: wrap;
+}
+
+.member-stat {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    padding: 2px 6px;
+    background-color: var(--color-bg-tertiary);
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+}
+
 .member-actions {
     display: flex;
     gap: var(--space-xs);
     flex-shrink: 0;
+    align-items: center;
 }
 
 /* Members List */
