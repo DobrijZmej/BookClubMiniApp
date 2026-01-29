@@ -11,7 +11,7 @@ const ClubsRequests = {
             API.clubs.getDetails(clubId)
             ]);
 
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            // Відкриваємо модальне вікно
             document.getElementById('club-requests-view').classList.add('active');
 
             this.renderInviteCode(club);
@@ -153,10 +153,8 @@ const ClubsRequests = {
 
     backToClubDetails() {
         if (!ClubsDetail.currentClubId) return;
+        // Закриваємо модальне вікно
         document.getElementById('club-requests-view').classList.remove('active');
-        document.getElementById('club-detail-view').classList.add('active');
-        const clubName = document.getElementById('header-title').dataset.clubName || 'Клуб';
-        document.getElementById('header-title').textContent = `📚 ${clubName}`;
         if (tg?.BackButton) tg.BackButton.hide();
     }
 };

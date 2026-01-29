@@ -140,48 +140,57 @@
                 </div>
             </div>
 
-            <!-- Add/Edit Book View (Telegram-style, mobile) -->
-            <div id="add-book-view" class="view">
-                <div class="tg-top-bar">
-                    <button id="book-back-button" class="tg-back-btn">←</button>
-                    <div class="tg-title">Бібліотекар клубу <span id="tg-username"></span></div>
-                    <button id="book-close-button" class="tg-close-btn">×</button>
-                </div>
-                <div class="tg-page-title">Редагування книги</div>
-                <div class="tg-book-card rounded-card">
-                    <form id="add-book-form">
-                        <div class="tg-book-form-row">
-                            <div class="tg-book-cover-col">
-                                <img id="book-cover-preview" src="images/book_default_cover.png" alt="Обкладинка книги" class="tg-book-cover-img">
-                                <label for="book-cover-input" class="tg-change-cover-btn">
-                                    <span class="tg-camera-icon">📷</span> Змінити обкладинку
-                                </label>
-                                <input type="file" id="book-cover-input" accept="image/*" style="display:none;">
-                            </div>
-                            <div class="tg-book-fields-col">
-                                <div class="form-group">
-                                    <label class="form-label" for="book-title">Назва книги</label>
-                                    <input type="text" id="book-title" class="form-input" required maxlength="500" placeholder="Назва книги">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="book-author">Автор</label>
-                                    <input type="text" id="book-author" class="form-input" maxlength="255" placeholder="Автор">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="book-description">Опис книги</label>
-                                    <textarea id="book-description" class="form-textarea" rows="3" maxlength="1000" placeholder="Опис книги"></textarea>
-                                </div>
-                            </div>
+            <!-- Add/Edit Book Modal -->
+            <div id="add-book-view" class="modal">
+                <div class="modal-content club-form-modal-content">
+                    <!-- Modal Header -->
+                    <div class="club-form-header">
+                        <div class="club-form-header-left">
+                            <div class="app-icon">📚</div>
+                            <span class="app-title">Книжковий Обмін</span>
                         </div>
-                        <div class="tg-book-actions-row">
-                            <button type="button" id="delete-book-btn" class="btn btn-danger tg-action-btn">
-                                🗑️ Видалити
-                            </button>
-                            <button type="submit" id="save-book-btn" class="btn btn-success tg-action-btn">
-                                ✔️ Зберегти
-                            </button>
-                        </div>
-                    </form>
+                        <button class="modal-close" id="book-close-button">&times;</button>
+                    </div>
+
+                    <!-- Modal Title -->
+                    <h2 class="club-form-title" id="book-form-title">Редагування книги</h2>
+
+                    <!-- Form Container -->
+                    <div class="club-form-container" style="display: block; padding: 0 20px 24px;">
+                        <form id="add-book-form">
+                            <div class="tg-book-form-row">
+                                <div class="tg-book-cover-col">
+                                    <img id="book-cover-preview" src="images/book_default_cover.png" alt="Обкладинка книги" class="tg-book-cover-img">
+                                    <label for="book-cover-input" class="tg-change-cover-btn">
+                                        <span class="tg-camera-icon">📷</span> Змінити обкладинку
+                                    </label>
+                                    <input type="file" id="book-cover-input" accept="image/*" style="display:none;">
+                                </div>
+                                <div class="tg-book-fields-col">
+                                    <div class="form-group">
+                                        <label class="form-label" for="book-title">Назва книги</label>
+                                        <input type="text" id="book-title" class="form-input" required maxlength="500" placeholder="Назва книги">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="book-author">Автор</label>
+                                        <input type="text" id="book-author" class="form-input" maxlength="255" placeholder="Автор">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="book-description">Опис книги</label>
+                                        <textarea id="book-description" class="form-textarea" rows="3" maxlength="1000" placeholder="Опис книги"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tg-book-actions-row">
+                                <button type="button" id="delete-book-btn" class="btn btn-danger tg-action-btn">
+                                    🗑️ Видалити
+                                </button>
+                                <button type="submit" id="save-book-btn" class="btn btn-success tg-action-btn">
+                                    ✔️ Зберегти
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
 
@@ -298,28 +307,34 @@
                 </div>
             </div>
 
-            <!-- Club Requests View -->
-            <div id="club-requests-view" class="view">
-                <div class="tg-top-bar">
-                    <div></div>
-                    <div class="tg-title">Заявки на вступ</div>
-                    <button id="requests-close-button" class="tg-close-btn">×</button>
-                </div>
-
-                <div class="card">
-                    <div class="card-body">
-
-                    <div id="invite-code-card" class="invite-code-card" style="display:none;">
-                    <div class="invite-code-head">
-                        <div class="invite-code-title">Invite-код</div>
-                        <button id="copy-invite-btn" class="invite-code-copy-btn" type="button">Скопіювати</button>
+            <!-- Club Requests Modal -->
+            <div id="club-requests-view" class="modal">
+                <div class="modal-content club-form-modal-content">
+                    <!-- Modal Header -->
+                    <div class="club-form-header">
+                        <div class="club-form-header-left">
+                            <div class="app-icon">📚</div>
+                            <span class="app-title">Книжковий Обмін</span>
+                        </div>
+                        <button class="modal-close" id="requests-close-button">&times;</button>
                     </div>
 
-                    <div id="invite-code-value" class="invite-code-value">••••••••</div>
-                    <div class="invite-code-hint">
-                        Надішліть цей код людині, щоб вона могла подати заявку на вступ.
-                    </div>
-                    </div>
+                    <!-- Modal Title -->
+                    <h2 class="club-form-title">📩 Заявки на вступ</h2>
+
+                    <!-- Modal Content -->
+                    <div class="club-form-container" style="display: block; padding: 0 20px 24px;">
+                        <div id="invite-code-card" class="invite-code-card" style="display:none;">
+                            <div class="invite-code-head">
+                                <div class="invite-code-title">Invite-код</div>
+                                <button id="copy-invite-btn" class="invite-code-copy-btn" type="button">Скопіювати</button>
+                            </div>
+
+                            <div id="invite-code-value" class="invite-code-value">••••••••</div>
+                            <div class="invite-code-hint">
+                                Надішліть цей код людині, щоб вона могла подати заявку на вступ.
+                            </div>
+                        </div>
 
                         <div id="requests-container">
                             <!-- Requests will be loaded here -->
@@ -483,7 +498,7 @@
     <!-- UI Modules -->
     <script src="js/ui-utils.js?v=20260127-v1"></script>
     <script src="js/ui-books.js?v=20260127-v7"></script>
-    <script src="js/ui-book-form.js?v=20260127-v3"></script>
+    <script src="js/ui-book-form.js?v=20260129-v2"></script>
     <script src="js/ui-reviews.js?v=20260127-v4"></script>
     <script src="js/ui.js?v=20260127-v2"></script>
     
@@ -491,11 +506,11 @@
     <script src="js/clubs-list.js?v=20260129-v2"></script>
     <script src="js/club-management.js?v=20260129-v8"></script>
     <script src="js/clubs-detail.js?v=20260129-v2"></script>
-    <script src="js/clubs-requests.js?v=20260129-v2"></script>
+    <script src="js/clubs-requests.js?v=20260129-v3"></script>
     <script src="js/clubs-form.js?v=20260129-v2"></script>
     <script src="js/clubs-ui.js?v=20260127-v1"></script>
     
     <!-- App -->
-    <script src="js/app.js?v=20260129-v2"></script>
+    <script src="js/app.js?v=20260129-v4"></script>
 </body>
 </html>

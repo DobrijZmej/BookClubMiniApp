@@ -26,8 +26,9 @@ const UIBookForm = (() => {
 
   function setMode(mode) {
     // mode: 'create' | 'edit'
-    if (els.pageTitle) {
-      els.pageTitle.textContent = mode === 'create' ? 'Додавання книги' : 'Редагування книги';
+    const titleEl = q('book-form-title');
+    if (titleEl) {
+      titleEl.textContent = mode === 'create' ? '📚 Додавання книги' : '📚 Редагування книги';
     }
     if (els.deleteBtn) {
       els.deleteBtn.style.display = mode === 'create' ? 'none' : 'inline-flex';
@@ -44,13 +45,11 @@ const UIBookForm = (() => {
   }
 
   function show() {
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     els.view?.classList.add('active');
   }
 
   function backToClub() {
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    q('club-detail-view')?.classList.add('active');
+    els.view?.classList.remove('active');
   }
 
   function getEditingId() {

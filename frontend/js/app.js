@@ -117,15 +117,6 @@
         // Перевірити поточний view
         if (document.getElementById('club-detail-view').classList.contains('active')) {
             ClubsUI.backToClubsList();
-        } else if (document.getElementById('add-book-view').classList.contains('active')) {
-            // Повернутися до деталей клубу
-            document.getElementById('add-book-view').classList.remove('active');
-            document.getElementById('club-detail-view').classList.add('active');
-            // Відновлюємо назву клубу
-            const previousTitle = document.getElementById('header-title').dataset.previousTitle;
-            if (previousTitle) {
-                document.getElementById('header-title').textContent = previousTitle;
-            }
         } else if (document.getElementById('create-club-view').classList.contains('active')) {
             // Повернутися до списку клубів
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -183,31 +174,33 @@
         ClubsRequests.backToClubDetails();
     });
 
-    // Кнопка "Додати книгу" в деталях клубу
-    const addBookToClubBtn = document.getElementById('add-book-to-club-btn');
-    if (addBookToClubBtn) {
-        addBookToClubBtn.addEventListener('click', () => {
-            tg.HapticFeedback.impactOccurred('medium');
-            // Зберігаємо поточну назву клубу
-            const currentClubName = document.getElementById('header-title').textContent;
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById('add-book-view').classList.add('active');
-            document.getElementById('header-title').textContent = 'Додати книгу';
-            document.getElementById('header-title').dataset.previousTitle = currentClubName;
-            document.getElementById('back-button').style.display = 'block';
-        });
-    }
+    // Закриття модального вікна заявок при кліку поза ним
+    document.getElementById('club-requests-view')?.addEventListener('click', (e) => {
+        if (e.target.id === 'club-requests-view') {
+            tg.HapticFeedback.impactOccurred('soft');
+            ClubsRequests.backToClubDetails();
+        }
+    });
+
+    // Закриття модального вікна книги при кліку поза ним
+    document.getElementById('add-book-view')?.addEventListener('click', (e) => {
+        if (e.target.id === 'add-book-view') {
+            tg.HapticFeedback.impactOccurred('soft');
+            UIBookForm.backToClub();
+        }
+    });
+
     
     // Кнопка "Додати книгу" в header (club context)
     const addBookBtn = document.getElementById('add-book-btn');
     if (addBookBtn) {
-    addBookBtn.addEventListener('click', () => {
-        tg.HapticFeedback?.impactOccurred?.('medium');
+        addBookBtn.addEventListener('click', () => {
+            tg.HapticFeedback?.impactOccurred?.('medium');
 
-        if (!ClubsUI.currentClubId) {
-        tg.showAlert?.('Оберіть клуб спочатку');
-        return;
-        }
+            if (!ClubsUI.currentClubId) {
+                tg.showAlert?.('Оберіть клуб спочатку');
+                return;
+            }
 
         // Нова логіка: відкриваємо окремий екран форми
         UIBookForm.openCreate(ClubsUI.currentClubId);
