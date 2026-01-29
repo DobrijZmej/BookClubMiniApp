@@ -556,6 +556,17 @@
     color: var(--color-text-secondary);
 }
 
+.request-message {
+    margin-top: var(--space-xs);
+    padding: var(--space-xs) var(--space-sm);
+    background-color: var(--color-bg-tertiary);
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+    border-left: 2px solid var(--color-primary);
+}
+
 .request-actions {
     display: flex;
     gap: var(--space-xs);

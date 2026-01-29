@@ -270,6 +270,7 @@ const ClubManagement = {
                                 ${request.username ? `<span class="request-username">@${UIUtils.escapeHtml(request.username)}</span>` : ''}
                             </div>
                             <div class="request-date">${formattedDate}</div>
+                            ${request.message ? `<div class="request-message">${UIUtils.escapeHtml(request.message)}</div>` : ''}
                         </div>
                         <div class="request-actions">
                             <button class="request-action-btn btn-approve" 
