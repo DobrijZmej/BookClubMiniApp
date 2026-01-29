@@ -452,6 +452,19 @@
                 <!-- Requests Tab -->
                 <div id="requests-tab" class="management-tab-content">
                     <h3 class="tab-heading">📩 Заявки на вступ</h3>
+                    
+                    <!-- Invite Code Card (for private clubs) -->
+                    <div id="management-invite-code-card" class="invite-code-card" style="display:none;">
+                        <div class="invite-code-head">
+                            <div class="invite-code-title">Invite-код</div>
+                            <button id="management-copy-invite-btn" class="invite-code-copy-btn" type="button">Скопіювати</button>
+                        </div>
+                        <div id="management-invite-code-value" class="invite-code-value">••••••••</div>
+                        <div class="invite-code-hint">
+                            Надішліть цей код людині, щоб вона могла подати заявку на вступ.
+                        </div>
+                    </div>
+                    
                     <div class="requests-list" id="management-requests-list">
                         <!-- Requests will be loaded here -->
                     </div>
@@ -494,9 +507,9 @@
     
     <!-- Clubs Modules -->
     <script src="js/clubs-list.js?v=20260129-v2"></script>
-    <script src="js/club-management.js?v=20260129-v6"></script>
+    <script src="js/club-management.js?v=20260129-v8"></script>
     <script src="js/clubs-detail.js?v=20260129-v2"></script>
-    <script src="js/clubs-requests.js?v=20260127-v1"></script>
+    <script src="js/clubs-requests.js?v=20260129-v2"></script>
     <script src="js/clubs-form.js?v=20260127-v1"></script>
     <script src="js/clubs-ui.js?v=20260127-v1"></script>
     

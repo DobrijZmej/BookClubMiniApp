@@ -25,34 +25,48 @@ const ClubsRequests = {
     },
 
     renderInviteCode(club) {
-    const card = document.getElementById('invite-code-card');
-    const valueEl = document.getElementById('invite-code-value');
-    const copyBtn = document.getElementById('copy-invite-btn');
+        const card = document.getElementById('invite-code-card');
+        const valueEl = document.getElementById('invite-code-value');
+        const copyBtn = document.getElementById('copy-invite-btn');
 
-    if (!card || !valueEl || !copyBtn) return;
+        console.log('🔍 renderInviteCode called:', {
+            card: !!card,
+            valueEl: !!valueEl,
+            copyBtn: !!copyBtn,
+            club: club,
+            is_public: club?.is_public,
+            invite_code: club?.invite_code
+        });
 
-    if (club?.is_public) {
-        card.style.display = 'none';
-        return;
-    }
-
-    card.style.display = 'block';
-
-    const code = (club?.invite_code || '').trim();
-    valueEl.textContent = code || '—';
-
-    copyBtn.onclick = async () => {
-        if (!code) return;
-
-        try {
-        tg?.HapticFeedback?.impactOccurred?.('soft');
-        await this.copyTextToClipboard(code);
-        tg?.showAlert?.('✅ Invite-код скопійовано');
-        } catch (e) {
-        console.error('Copy failed:', e);
-        tg?.showAlert?.('❌ Не вдалося скопіювати');
+        if (!card || !valueEl || !copyBtn) {
+            console.warn('⚠️ Elements not found for invite code');
+            return;
         }
-    };
+
+        if (club?.is_public) {
+            console.log('📢 Club is public, hiding invite code');
+            card.style.display = 'none';
+            return;
+        }
+
+        console.log('🔐 Club is private, showing invite code');
+        card.style.display = 'block';
+
+        const code = (club?.invite_code || '').trim();
+        valueEl.textContent = code || '—';
+
+        copyBtn.onclick = async () => {
+            if (!code) return;
+
+            try {
+                tg?.HapticFeedback?.impactOccurred?.('soft');
+                await this.copyTextToClipboard(code);
+                tg?.showAlert?.('✅ Invite-код скопійовано');
+            } catch (e) {
+                console.error('Copy failed:', e);
+                tg?.showAlert?.('❌ Не вдалося скопіювати');
+            }
+        };
     },
 
     async copyTextToClipboard(text) {

@@ -239,6 +239,10 @@ const ClubManagement = {
         
         try {
             UIUtils.showLoader();
+            
+            // Показуємо інвайт-код для закритих клубів
+            this.renderInviteCode();
+            
             const requests = await API.clubs.getJoinRequests(this.currentClubId, 'pending');
             
             if (requests.length === 0) {
@@ -296,6 +300,74 @@ const ClubManagement = {
         } finally {
             UIUtils.hideLoader();
         }
+    },
+    
+    /**
+     * Відобразити інвайт-код для закритих клубів
+     */
+    renderInviteCode() {
+        const card = document.getElementById('management-invite-code-card');
+        const valueEl = document.getElementById('management-invite-code-value');
+        const copyBtn = document.getElementById('management-copy-invite-btn');
+        
+        console.log('🔍 ClubManagement.renderInviteCode called:', {
+            card: !!card,
+            valueEl: !!valueEl,
+            copyBtn: !!copyBtn,
+            currentClubData: this.currentClubData,
+            is_public: this.currentClubData?.is_public,
+            invite_code: this.currentClubData?.invite_code
+        });
+        
+        if (!card || !valueEl || !copyBtn || !this.currentClubData) {
+            console.warn('⚠️ Elements or club data not found for invite code');
+            return;
+        }
+        
+        // Показуємо тільки для закритих клубів
+        if (this.currentClubData.is_public) {
+            console.log('📢 Club is public, hiding invite code');
+            card.style.display = 'none';
+            return;
+        }
+        
+        console.log('🔐 Club is private, showing invite code');
+        card.style.display = 'block';
+        
+        const code = (this.currentClubData.invite_code || '').trim();
+        valueEl.textContent = code || '—';
+        
+        copyBtn.onclick = async () => {
+            if (!code) return;
+            
+            try {
+                window.Telegram?.WebApp?.HapticFeedback?.impactOccurred?.('soft');
+                await this.copyToClipboard(code);
+                UIUtils.showSuccess('Invite-код скопійовано');
+            } catch (e) {
+                console.error('Copy failed:', e);
+                UIUtils.showError('Не вдалося скопіювати');
+            }
+        };
+    },
+    
+    /**
+     * Копіювати текст в буфер обміну
+     */
+    async copyToClipboard(text) {
+        if (navigator.clipboard?.writeText) {
+            return navigator.clipboard.writeText(text);
+        }
+        // Fallback для старих браузерів
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
     },
     
     /**
