@@ -62,7 +62,6 @@ const ClubForm = {
         this.form.reset();
         
         // Set defaults
-        document.getElementById('club-type').value = 'public';
         document.getElementById('club-requires-approval').checked = true;
         
         // Reset avatar preview
@@ -96,7 +95,6 @@ const ClubForm = {
             // Fill form with existing data
             document.getElementById('club-name').value = club.name || '';
             document.getElementById('club-description').value = club.description || '';
-            document.getElementById('club-type').value = club.is_public ? 'public' : 'private';
             document.getElementById('club-requires-approval').checked = club.requires_approval !== false;
 
             // Set avatar preview
@@ -176,7 +174,6 @@ const ClubForm = {
         // Get form data
         const name = document.getElementById('club-name').value.trim();
         const description = document.getElementById('club-description').value.trim();
-        const clubType = document.getElementById('club-type').value;
         const requiresApproval = document.getElementById('club-requires-approval').checked;
 
         // Validation
@@ -189,7 +186,7 @@ const ClubForm = {
         const clubData = {
             name: name,
             description: description,
-            is_public: clubType === 'public',
+            is_public: false,  // Завжди закритий клуб
             requires_approval: requiresApproval
         };
 
