@@ -156,14 +156,27 @@ const ClubsList = {
         
         // Ховаємо кнопки клубу, показуємо кнопки головної
         document.getElementById('add-book-btn').style.display = 'none';
-        document.getElementById('edit-club-btn').style.display = 'none';
-        document.getElementById('delete-club-btn').style.display = 'none';
+        const editBtn = document.getElementById('edit-club-btn');
+        const deleteBtn = document.getElementById('delete-club-btn');
+        const manageBtn = document.getElementById('manage-club-btn');
+        const requestsBtn = document.getElementById('view-club-requests-btn');
+        
+        if (editBtn) editBtn.style.display = 'none';
+        if (deleteBtn) deleteBtn.style.display = 'none';
+        if (manageBtn) manageBtn.style.display = 'none';
+        if (requestsBtn) requestsBtn.style.display = 'none';
+        
         document.getElementById('add-club-btn').style.display = 'flex';
         document.getElementById('join-code-btn').style.display = 'flex';
         
+        // Перемикаємо views
         document.getElementById('club-detail-view').classList.remove('active');
         document.getElementById('club-requests-view').classList.remove('active');
         document.getElementById('clubs-list-view').classList.add('active');
+        
+        // Завантажуємо список клубів
+        this.showClubsList();
+        this.loadMyClubs();
     }
 };
 

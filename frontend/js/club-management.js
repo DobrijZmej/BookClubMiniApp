@@ -88,6 +88,10 @@ const ClubManagement = {
                 const memberRole = member.role.toUpperCase();
                 const isCurrentUser = member.user_id === currentUserId;
                 
+                // Створюємо ініціали для аватара
+                const userName = member.user_name || member.username || 'User';
+                const initials = userName.split(' ').map(n => n.charAt(0).toUpperCase()).slice(0, 2).join('');
+                
                 // Визначаємо які кнопки показувати
                 let actionsHTML = '';
                 
@@ -98,36 +102,28 @@ const ClubManagement = {
                             actionsHTML += `
                                 <button class="member-action-btn btn-remove-admin" 
                                         onclick="ClubManagement.changeRole('${member.user_id}', 'MEMBER')"
-                                        title="Зняти права адміністратора">
-                                    ⬇️ Зняти адміна
-                                </button>
+                                        title="Зняти права адміністратора">⬇️</button>
                             `;
                         } else {
                             actionsHTML += `
                                 <button class="member-action-btn btn-make-admin" 
                                         onclick="ClubManagement.changeRole('${member.user_id}', 'ADMIN')"
-                                        title="Призначити адміністратором">
-                                    ⬆️ Зробити адміном
-                                </button>
+                                        title="Призначити адміністратором">⬆️</button>
                             `;
                         }
                         
                         actionsHTML += `
                             <button class="member-action-btn btn-remove-member" 
-                                    onclick="ClubManagement.removeMember('${member.user_id}', '${UIUtils.escapeHtml(member.user_name || member.username)}')"
-                                    title="Видалити з клубу">
-                                🗑️ Видалити
-                            </button>
+                                    onclick="ClubManagement.removeMember('${member.user_id}', '${UIUtils.escapeHtml(userName)}')"
+                                    title="Видалити з клубу">🗑️</button>
                         `;
                     }
                     // ADMIN може тільки видаляти звичайних учасників
                     else if (isAdmin && memberRole === 'MEMBER') {
                         actionsHTML += `
                             <button class="member-action-btn btn-remove-member" 
-                                    onclick="ClubManagement.removeMember('${member.user_id}', '${UIUtils.escapeHtml(member.user_name || member.username)}')"
-                                    title="Видалити з клубу">
-                                🗑️ Видалити
-                            </button>
+                                    onclick="ClubManagement.removeMember('${member.user_id}', '${UIUtils.escapeHtml(userName)}')"
+                                    title="Видалити з клубу">🗑️</button>
                         `;
                     }
                 }
@@ -140,8 +136,9 @@ const ClubManagement = {
                 
                 return `
                     <div class="member-item">
+                        <div class="member-avatar">${initials}</div>
                         <div class="member-info">
-                            <div class="member-name">${UIUtils.escapeHtml(member.user_name || member.username || 'Користувач')}</div>
+                            <div class="member-name">${UIUtils.escapeHtml(userName)}</div>
                             ${member.username ? `<div class="member-username">@${UIUtils.escapeHtml(member.username)}</div>` : ''}
                             <span class="member-role-badge ${roleBadgeClass}">${roleText}</span>
                         </div>
@@ -246,7 +243,8 @@ const ClubManagement = {
             
             // Рендеримо заявки напряму в контейнер
             container.innerHTML = requests.map(request => {
-                const initials = request.user_name ? request.user_name.charAt(0).toUpperCase() : '?';
+                const userName = request.user_name || 'Користувач';
+                const initials = userName.split(' ').map(n => n.charAt(0).toUpperCase()).slice(0, 2).join('');
                 const formattedDate = new Date(request.created_at).toLocaleDateString('uk-UA', {
                     day: '2-digit',
                     month: '2-digit',
@@ -258,18 +256,18 @@ const ClubManagement = {
                         <div class="request-avatar">${initials}</div>
                         <div class="request-info">
                             <div class="request-user">
-                                ${UIUtils.escapeHtml(request.user_name || 'Користувач')}
+                                ${UIUtils.escapeHtml(userName)}
                                 ${request.username ? `<span class="request-username">@${UIUtils.escapeHtml(request.username)}</span>` : ''}
                             </div>
                             <div class="request-date">${formattedDate}</div>
                         </div>
                         <div class="request-actions">
-                            <button class="btn btn-success btn-sm" onclick="ClubManagement.handleRequest(${request.id}, 'approved')">
-                                ✓ Прийняти
-                            </button>
-                            <button class="btn btn-danger btn-sm" onclick="ClubManagement.handleRequest(${request.id}, 'rejected')">
-                                ✕ Відхилити
-                            </button>
+                            <button class="request-action-btn btn-approve" 
+                                    onclick="ClubManagement.handleRequest(${request.id}, 'approved')"
+                                    title="Прийняти">✓</button>
+                            <button class="request-action-btn btn-reject" 
+                                    onclick="ClubManagement.handleRequest(${request.id}, 'rejected')"
+                                    title="Відхилити">✕</button>
                         </div>
                     </div>
                 `;

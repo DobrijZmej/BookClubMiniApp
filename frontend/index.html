@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="css/clubs.css?v=20260129-v1">
     <link rel="stylesheet" href="css/club-detail.css?v=20260129-v1">
     <link rel="stylesheet" href="css/club-form.css?v=20260129-v2">
-    <link rel="stylesheet" href="css/club-management.css?v=20260129-v2">
+    <link rel="stylesheet" href="css/club-management.css?v=20260129-v5">
     <link rel="stylesheet" href="css/books.css?v=20260127-v3">
     <link rel="stylesheet" href="css/book-form.css?v=20260127-v1">
 </head>
@@ -434,15 +434,16 @@
             
             <!-- Tabs Navigation -->
             <div class="management-tabs">
-                <button class="management-tab active" data-tab="members">👥 Учасники</button>
-                <button class="management-tab" data-tab="requests">📩 Заявки</button>
-                <button class="management-tab" data-tab="settings">⚙️ Налаштування</button>
+                <button class="management-tab active" data-tab="members" title="Учасники">👥</button>
+                <button class="management-tab" data-tab="requests" title="Заявки">📩</button>
+                <button class="management-tab" data-tab="settings" title="Налаштування">⚙️</button>
             </div>
             
             <!-- Tab Content -->
             <div class="management-content">
                 <!-- Members Tab -->
                 <div id="members-tab" class="management-tab-content active">
+                    <h3 class="tab-heading">👥 Учасники клубу</h3>
                     <div class="members-list" id="members-list">
                         <!-- Members will be loaded here -->
                     </div>
@@ -450,6 +451,7 @@
                 
                 <!-- Requests Tab -->
                 <div id="requests-tab" class="management-tab-content">
+                    <h3 class="tab-heading">📩 Заявки на вступ</h3>
                     <div class="requests-list" id="management-requests-list">
                         <!-- Requests will be loaded here -->
                     </div>
@@ -457,6 +459,7 @@
                 
                 <!-- Settings Tab -->
                 <div id="settings-tab" class="management-tab-content">
+                    <h3 class="tab-heading">⚙️ Налаштування клубу</h3>
                     <div class="settings-form" id="club-settings-form">
                         <!-- Club settings will be loaded here -->
                     </div>
@@ -477,8 +480,8 @@
     <script src="js/ui.js?v=20260127-v2"></script>
     
     <!-- Clubs Modules -->
-    <script src="js/clubs-list.js?v=20260129-v1"></script>
-    <script src="js/club-management.js?v=20260129-v2"></script>
+    <script src="js/clubs-list.js?v=20260129-v2"></script>
+    <script src="js/club-management.js?v=20260129-v4"></script>
     <script src="js/clubs-detail.js?v=20260129-v2"></script>
     <script src="js/clubs-requests.js?v=20260127-v1"></script>
     <script src="js/clubs-form.js?v=20260127-v1"></script>
