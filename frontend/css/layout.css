@@ -96,6 +96,7 @@
 .app-main {
     flex: 1;
     padding: var(--space-lg);
+    padding-bottom: calc(var(--space-lg) + 60px); /* Space for footer */
     max-width: 1200px;
     width: 100%;
     margin: 0 auto;
@@ -162,6 +163,77 @@
     margin: 0 auto;
 }
 
+/* App Footer */
+.app-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background-color: var(--color-bg-secondary);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xl);
+    z-index: 90;
+    backdrop-filter: blur(12px);
+    background-color: rgba(255, 255, 255, 0.95);
+}
+
+.dark-theme .app-footer {
+    background-color: rgba(31, 41, 55, 0.95);
+}
+
+.footer-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--transition-base);
+    position: relative;
+}
+
+.footer-link:hover {
+    background-color: var(--color-bg-hover);
+    transform: translateY(-2px);
+}
+
+.footer-link:active {
+    transform: translateY(0);
+}
+
+.footer-emoji {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+/* Tooltip on hover */
+.footer-link::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 8px;
+    padding: 6px 12px;
+    background-color: var(--color-text-primary);
+    color: var(--color-bg-primary);
+    font-size: 0.75rem;
+    white-space: nowrap;
+    border-radius: var(--radius-sm);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-base);
+}
+
+.footer-link:hover::after {
+    opacity: 1;
+}
+
 /* Responsive Layout */
 @media (max-width: 768px) {
     .clubs-grid {
@@ -178,6 +250,11 @@
     
     .app-main {
         padding: var(--space-md);
+        padding-bottom: calc(var(--space-md) + 60px);
+    }
+    
+    .app-footer {
+        gap: var(--space-lg);
     }
 }
 
@@ -192,5 +269,24 @@
     
     .app-title {
         font-size: 1rem;
+    }
+    
+    .app-footer {
+        height: 48px;
+        gap: var(--space-md);
+    }
+    
+    .footer-link {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .footer-emoji {
+        font-size: 1.375rem;
+    }
+    
+    /* Hide tooltip on small screens (touch devices) */
+    .footer-link::after {
+        display: none;
     }
 }
