@@ -523,16 +523,16 @@ async def get_club_members(
         ).count()
         
         # Підраховуємо скільки разів брав книжки (унікальні позичання)
-        from app.models.db_models import Loan
-        books_borrowed = db.query(Loan).filter(
-            Loan.club_id == club_id,
-            Loan.borrower_id == member.user_id
+        from app.models.db_models import BookLoan
+        books_borrowed = db.query(BookLoan).join(Book).filter(
+            Book.club_id == club_id,
+            BookLoan.user_id == member.user_id
         ).count()
         
         # Підраховуємо відгуки
         from app.models.db_models import BookReview
-        reviews_count = db.query(BookReview).filter(
-            BookReview.club_id == club_id,
+        reviews_count = db.query(BookReview).join(Book).filter(
+            Book.club_id == club_id,
             BookReview.user_id == member.user_id
         ).count()
         
