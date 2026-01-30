@@ -5,14 +5,57 @@ const ClubsList = {
             UIUtils.setLoading(true);
             const clubs = await API.clubs.getMy();
             const container = document.getElementById('my-clubs-list');
+            const onboarding = document.getElementById('clubs-onboarding');
             const emptyState = document.getElementById('clubs-empty-state');
             
             if (clubs.length === 0) {
                 container.style.display = 'none';
-                emptyState.style.display = 'block';
+                emptyState.style.display = 'none';
+                onboarding.style.display = 'block';
+                
+                // Встановлюємо обробники кнопок onboarding (з видаленням попередніх)
+                const createBtn = document.getElementById('onboarding-create-btn');
+                const joinBtn = document.getElementById('onboarding-join-btn');
+                const clubNameInput = document.getElementById('onboarding-club-name');
+                const inviteCodeInput = document.getElementById('onboarding-invite-code');
+                
+                if (createBtn) {
+                    // Клонуємо і замінюємо щоб видалити старі обробники
+                    const newCreateBtn = createBtn.cloneNode(true);
+                    createBtn.parentNode.replaceChild(newCreateBtn, createBtn);
+                    newCreateBtn.addEventListener('click', () => {
+                        const clubName = clubNameInput?.value.trim() || '';
+                        ClubForm.openCreateMode(clubName);
+                    });
+                }
+                
+                if (joinBtn) {
+                    const newJoinBtn = joinBtn.cloneNode(true);
+                    joinBtn.parentNode.replaceChild(newJoinBtn, joinBtn);
+                    newJoinBtn.addEventListener('click', () => {
+                        const inviteCode = inviteCodeInput?.value.trim().toUpperCase() || '';
+                        
+                        // Відкриваємо модальне вікно
+                        document.getElementById('join-club-modal')?.classList.add('active');
+                        
+                        // Предзаповнюємо код якщо введено
+                        if (inviteCode) {
+                            const joinCodeInput = document.getElementById('join-invite-code');
+                            if (joinCodeInput) {
+                                joinCodeInput.value = inviteCode;
+                            }
+                        }
+                        
+                        if (window.Telegram?.WebApp?.HapticFeedback) {
+                            window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+                        }
+                    });
+                }
+                
                 return;
             }
             
+            onboarding.style.display = 'none';
             emptyState.style.display = 'none';
             container.style.display = 'block';
             

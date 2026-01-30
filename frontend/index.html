@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="css/club-detail.css?v=20260129-v1">
     <link rel="stylesheet" href="css/club-form.css?v=20260129-v3">
     <link rel="stylesheet" href="css/club-management.css?v=20260129-v7">
+    <link rel="stylesheet" href="css/onboarding.css?v=20260130-v2">
     <link rel="stylesheet" href="css/books.css?v=20260127-v3">
     <link rel="stylesheet" href="css/book-form.css?v=20260127-v1">
 </head>
@@ -75,6 +76,42 @@
                         <!-- User's clubs will be loaded here -->
                     </div>
                     
+                    <!-- Onboarding Screen (shown when user has 0 clubs) -->
+                    <div id="clubs-onboarding" class="onboarding-container" style="display: none;">
+                        <div class="onboarding-hero">
+                            <img src="images/onboarding_cover.png" alt="Книжковий клуб" class="onboarding-image">
+                            <h3 class="onboarding-title">Створюй приватні книжкові клуби або приєднуйся до існуючих</h3>
+                        </div>
+                        
+                        <div class="onboarding-actions">
+                            <div class="onboarding-card onboarding-card-primary">
+                                <div class="onboarding-card-icon">➕</div>
+                                <h4 class="onboarding-card-title">Створи свій клуб</h4>
+                                <p class="onboarding-card-text">Додай книги та запроси друзів за кодом</p>
+                                <input type="text" 
+                                       id="onboarding-club-name" 
+                                       class="onboarding-input" 
+                                       placeholder="Назва клубу" 
+                                       maxlength="100">
+                                <button class="btn btn-primary btn-full" id="onboarding-create-btn">Продовжити</button>
+                            </div>
+                            
+                            <div class="onboarding-card onboarding-card-secondary">
+                                <div class="onboarding-card-icon">🔑</div>
+                                <h4 class="onboarding-card-title">Приєднайся до клубу</h4>
+                                <p class="onboarding-card-text">Маєш код запрошення? Введи його тут</p>
+                                <input type="text" 
+                                       id="onboarding-invite-code" 
+                                       class="onboarding-input" 
+                                       placeholder="Код запрошення" 
+                                       maxlength="20" 
+                                       style="text-transform: uppercase;">
+                                <button class="btn btn-secondary btn-full" id="onboarding-join-btn">Продовжити</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Regular Empty State (not used when onboarding is shown) -->
                     <div id="clubs-empty-state" class="empty-state" style="display: none;">
                         <div class="empty-icon">🏛️</div>
                         <h3 class="empty-title">У вас поки немає клубів</h3>
@@ -503,11 +540,11 @@
     <script src="js/ui.js?v=20260127-v2"></script>
     
     <!-- Clubs Modules -->
-    <script src="js/clubs-list.js?v=20260129-v2"></script>
+    <script src="js/clubs-list.js?v=20260130-v4"></script>
     <script src="js/club-management.js?v=20260129-v8"></script>
     <script src="js/clubs-detail.js?v=20260129-v2"></script>
     <script src="js/clubs-requests.js?v=20260129-v3"></script>
-    <script src="js/clubs-form.js?v=20260129-v2"></script>
+    <script src="js/clubs-form.js?v=20260130-v3"></script>
     <script src="js/clubs-ui.js?v=20260127-v1"></script>
     
     <!-- App -->

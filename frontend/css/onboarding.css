@@ -1,0 +1,129 @@
+/* ============================================
+   🎨 Onboarding Screen Styles
+   ============================================ */
+
+/* Container */
+.onboarding-container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: var(--space-lg) var(--space-md);
+    animation: onboardingFadeIn 0.5s ease-out;
+}
+
+@keyframes onboardingFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hero Section */
+.onboarding-hero {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+}
+
+.onboarding-image {
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.onboarding-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-text);
+    line-height: 1.4;
+    margin: 0;
+    padding: 0 var(--space-md);
+}
+
+/* Action Cards */
+.onboarding-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.onboarding-card {
+    background-color: var(--color-bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border);
+    animation: onboardingSlideUp 0.5s ease-out;
+    animation-fill-mode: backwards;
+}
+
+.onboarding-card-primary {
+    animation-delay: 0.1s;
+}
+
+.onboarding-card-secondary {
+    animation-delay: 0.2s;
+}
+
+@keyframes onboardingSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.onboarding-card-icon {
+    font-size: 2.5rem;
+    margin-bottom: var(--space-sm);
+}
+
+.onboarding-card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0 0 var(--space-xs) 0;
+}
+
+.onboarding-card-text {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin: 0 0 var(--space-md) 0;
+}
+
+/* Input Fields */
+.onboarding-input {
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    background-color: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    font-size: 1rem;
+    margin-bottom: var(--space-sm);
+    transition: all var(--transition-base);
+}
+
+.onboarding-input::placeholder {
+    color: var(--color-text-secondary);
+}
+
+.onboarding-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    background-color: var(--color-bg-secondary);
+}
+
+/* Buttons */
+.btn-full {
+    width: 100%;
+}

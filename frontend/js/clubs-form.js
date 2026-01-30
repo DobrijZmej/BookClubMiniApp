@@ -48,8 +48,9 @@ const ClubForm = {
 
     /**
      * Open modal in CREATE mode
+     * @param {string} prefillName - Optional club name to prefill
      */
-    openCreateMode() {
+    openCreateMode(prefillName = '') {
         this.isEditMode = false;
         this.currentClubId = null;
         this.avatarFile = null;
@@ -64,11 +65,26 @@ const ClubForm = {
         // Set defaults
         document.getElementById('club-requires-approval').checked = true;
         
+        // Prefill club name if provided
+        const clubNameInput = document.getElementById('club-name');
+        if (prefillName && clubNameInput) {
+            clubNameInput.value = prefillName;
+        }
+        
         // Reset avatar preview
         document.getElementById('club-avatar-preview').src = 'images/club_default_avatar.png';
 
         // Show modal
         this.modal.classList.add('active');
+        
+        // Focus on description field if name was prefilled, otherwise on name field
+        setTimeout(() => {
+            if (prefillName) {
+                document.getElementById('club-description')?.focus();
+            } else {
+                clubNameInput?.focus();
+            }
+        }, 300);
         
         // Haptic feedback
         if (window.Telegram?.WebApp?.HapticFeedback) {
