@@ -498,6 +498,73 @@ document.addEventListener("DOMContentLoaded", () => {
                     text-decoration: underline;
                 }
 
+                /* Accordion styles */
+                .accordion {
+                    margin-bottom: 12px;
+                }
+                .accordion-header {
+                    width: 100%;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 14px 16px;
+                    background: #020617;
+                    border: 1px solid rgba(148,163,184,0.15);
+                    border-radius: 12px;
+                    color: #e5e7eb;
+                    font-size: 15px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    text-align: left;
+                }
+                .accordion-header:hover {
+                    background: rgba(34,197,94,0.05);
+                    border-color: rgba(34,197,94,0.3);
+                }
+                .accordion-icon {
+                    transition: transform 0.2s ease;
+                    font-size: 12px;
+                }
+                .accordion-header.active .accordion-icon {
+                    transform: rotate(180deg);
+                }
+                .accordion-content {
+                    max-height: 0;
+                    overflow: hidden;
+                    transition: max-height 0.3s ease;
+                }
+                .accordion-content.open {
+                    max-height: 500px;
+                }
+                .guide-steps {
+                    margin: 16px 0 12px;
+                    padding: 16px 20px 16px 32px;
+                    background: rgba(2,6,23,0.5);
+                    border-radius: 8px;
+                    line-height: 1.6;
+                }
+                .guide-steps li {
+                    margin-bottom: 10px;
+                    color: #e5e7eb;
+                }
+                .guide-steps li:last-child {
+                    margin-bottom: 0;
+                }
+                .guide-tip {
+                    margin: 12px 0 16px;
+                    padding: 12px;
+                    background: rgba(34,197,94,0.08);
+                    border: 1px solid rgba(34,197,94,0.2);
+                    border-radius: 8px;
+                    font-size: 14px;
+                    line-height: 1.5;
+                    color: #e5e7eb;
+                }
+                .guide-tip b {
+                    color: #22c55e;
+                }
+
                 /* Carousel mini-styles (fallback) */
                 .fb-carousel { max-width: 420px; margin: 12px 0; border-radius: 12px; overflow: hidden; background: #020617; position: relative; }
                 .fb-slides { position: relative; width: 100%; height: 0; padding-bottom: 72%; }
@@ -519,6 +586,11 @@ document.addEventListener("DOMContentLoaded", () => {
             </style>
 
             <div class="wrapper">
+                <div style="text-align:center; margin-bottom: 16px;">
+                    <img src="images/onboarding_cover.png" alt="Бібліотекар клубу" 
+                         style="max-width: 220px; width: 100%; height: auto; border-radius: 12px;">
+                </div>
+                
                 <h1>📚 Бібліотекар клубу</h1>
                 <div class="subtitle">
                     Сервіс обміну книжками для друзів і спільнот.<br>
@@ -550,7 +622,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="section">
                     <h2>Що тут можна робити</h2>
                     <ul>
-                        <li>Створювати книжкові клуби (публічні або закриті)</li>
+                        <li>Створювати приватні книжкові клуби з запрошеннями</li>
                         <li>Додавати власні книги в бібліотеку клубу</li>
                         <li>Брати книги, ставати в чергу та повертати після читання</li>
                         <li>Залишати оцінки (1–5) та відгуки</li>
@@ -587,6 +659,50 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 </div>
 
+                <div class="section">
+                    <h2>Як це працює</h2>
+                    
+                    <div class="accordion">
+                        <button class="accordion-header" onclick="toggleAccordion('create-guide')">
+                            <span>➕ Створити свій клуб</span>
+                            <span class="accordion-icon">▼</span>
+                        </button>
+                        <div class="accordion-content" id="create-guide">
+                            <ol class="guide-steps">
+                                <li>Натисніть <b>"Створити клуб"</b> на головному екрані</li>
+                                <li>Введіть назву клубу та опис (опціонально)</li>
+                                <li>Додайте обкладинку клубу (за бажанням)</li>
+                                <li>Отримаєте <b>код запрошення</b> для друзів</li>
+                                <li>Почніть додавати свої книги до бібліотеки</li>
+                                <li>Поділіться кодом з тими, кого хочете запросити</li>
+                            </ol>
+                            <div class="guide-tip">
+                                💡 <b>Порада:</b> Як власник, ви можете призначати адміністраторів та керувати заявками на вступ.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion">
+                        <button class="accordion-header" onclick="toggleAccordion('join-guide')">
+                            <span>🔑 Приєднатися до клубу</span>
+                            <span class="accordion-icon">▼</span>
+                        </button>
+                        <div class="accordion-content" id="join-guide">
+                            <ol class="guide-steps">
+                                <li>Отримайте <b>код запрошення</b> від адміністратора клубу</li>
+                                <li>Натисніть <b>"Приєднатися до клубу"</b> на головному екрані</li>
+                                <li>Введіть код запрошення</li>
+                                <li>Додайте коментар до заявки (за бажанням)</li>
+                                <li>Дочекайтеся схвалення від адміністратора</li>
+                                <li>Після схвалення можете додавати книги та брати їх у інших</li>
+                            </ol>
+                            <div class="guide-tip">
+                                💡 <b>Порада:</b> Коли берете книгу, одразу напишіть власнику в Telegram щоб домовитись про передачу.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="community">
                     <div class="community-title">Спільнота і підтримка</div>
                     <div class="community-links">
@@ -603,6 +719,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             </div>
             `;
+
+        // Accordion toggle function
+        window.toggleAccordion = function(id) {
+            const content = document.getElementById(id);
+            const header = content.previousElementSibling;
+            
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                header.classList.remove('active');
+            } else {
+                content.classList.add('open');
+                header.classList.add('active');
+            }
+        };
 
         // Initialize lightweight carousel after injecting markup
         (function initFallbackCarouselSimple(){

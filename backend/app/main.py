@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, HTMLResponse, RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from dotenv import load_dotenv
 import os
 import sys
@@ -88,16 +88,8 @@ app.include_router(clubs.router)
 
 @app.get("/")
 async def root(request: Request):
-    """Головна сторінка"""
-    tg_auth = request.query_params.get("tg_auth")
-    dev_mode = os.getenv("DEBUG", "False") == "True"
-
-    if tg_auth or dev_mode:
-        return RedirectResponse(url="/index.html")
-
-    with open("frontend/info.html", "r", encoding="utf-8") as file:
-        content = file.read()
-        return HTMLResponse(content=content)
+    """Головна сторінка - завжди віддає index.html, який сам визначить режим роботи"""
+    return RedirectResponse(url="/index.html")
 
 
 @app.get("/api/health")
