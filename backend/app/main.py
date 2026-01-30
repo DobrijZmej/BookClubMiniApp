@@ -48,6 +48,7 @@ app = FastAPI(
 async def log_requests(request: Request, call_next):
     """Логування всіх HTTP запитів"""
     import time
+    from app.analytics import track_request
     
     start_time = time.time()
     logger.info(f"➡️  {request.method} {request.url.path}")
@@ -61,6 +62,13 @@ async def log_requests(request: Request, call_next):
             f"Status: {response.status_code} - "
             f"Time: {process_time:.2f}ms"
         )
+        
+        # Track analytics (skip static files)
+        if not request.url.path.startswith(("/css/", "/js/", "/images/", "/favicon")):
+            try:
+                track_request(request.url.path, request.method, response.status_code)
+            except:
+                pass
         
         return response
     except Exception as e:
@@ -113,6 +121,13 @@ async def health_check():
         "database": db_status,
         "bot_token_configured": bool(os.getenv("BOT_TOKEN"))
     }
+
+
+@app.get("/api/internal/analytics")
+async def get_analytics():
+    """Get analytics data"""
+    from app.analytics import get_stats
+    return get_stats()
 
 
 @app.exception_handler(Exception)

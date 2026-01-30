@@ -31,6 +31,9 @@ dist/
 *.log
 logs/
 
+# Analytics data
+backend/data/
+
 # OS
 .DS_Store
 Thumbs.db
