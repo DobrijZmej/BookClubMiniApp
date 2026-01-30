@@ -15,6 +15,7 @@ def ensure_stats_file():
             "methods": {},
             "status_codes": {},
             "daily": {},
+            "unique_users": [],
             "total_requests": 0,
             "first_request": None,
             "last_request": None
@@ -31,6 +32,7 @@ def load_stats() -> Dict[str, Any]:
             "methods": {},
             "status_codes": {},
             "daily": {},
+            "unique_users": [],
             "total_requests": 0,
             "first_request": None,
             "last_request": None
@@ -41,7 +43,7 @@ def save_stats(stats: Dict[str, Any]):
     with open(STATS_FILE, 'w', encoding='utf-8') as f:
         json.dump(stats, f, indent=2, ensure_ascii=False)
 
-def track_request(path: str, method: str, status_code: int):
+def track_request(path: str, method: str, status_code: int, user_id: str = None):
     stats = load_stats()
     
     now = datetime.now().isoformat()
@@ -52,6 +54,10 @@ def track_request(path: str, method: str, status_code: int):
     stats["endpoints"][path] = stats["endpoints"].get(path, 0) + 1
     stats["methods"][method] = stats["methods"].get(method, 0) + 1
     stats["status_codes"][str(status_code)] = stats["status_codes"].get(str(status_code), 0) + 1
+    
+    # Track unique users (only if provided and valid)
+    if user_id and user_id not in stats["unique_users"]:
+        stats["unique_users"].append(user_id)
     
     # Daily stats
     if today not in stats["daily"]:

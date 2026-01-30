@@ -63,10 +63,25 @@ async def log_requests(request: Request, call_next):
             f"Time: {process_time:.2f}ms"
         )
         
-        # Track analytics (skip static files)
-        if not request.url.path.startswith(("/css/", "/js/", "/images/", "/favicon")):
+        # Track analytics (skip static files and internal endpoints)
+        if not request.url.path.startswith(("/css/", "/js/", "/images/", "/favicon", "/api/internal/")):
             try:
-                track_request(request.url.path, request.method, response.status_code)
+                # Extract user_id from validated Telegram init data
+                user_id = None
+                init_data = request.headers.get("X-Telegram-Init-Data", "")
+                if init_data:
+                    # Parse init data safely
+                    try:
+                        from urllib.parse import parse_qs
+                        parsed = parse_qs(init_data)
+                        if "user" in parsed:
+                            import json
+                            user_data = json.loads(parsed["user"][0])
+                            user_id = str(user_data.get("id"))
+                    except:
+                        pass
+                
+                track_request(request.url.path, request.method, response.status_code, user_id)
             except:
                 pass
         

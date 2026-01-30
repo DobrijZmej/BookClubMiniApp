@@ -221,6 +221,11 @@
                 </div>
                 
                 <div class="stat-card">
+                    <h3>Унікальних користувачів</h3>
+                    <div class="stat-value" id="unique-users">0</div>
+                </div>
+                
+                <div class="stat-card">
                     <h3>Унікальних endpoints</h3>
                     <div class="stat-value" id="unique-endpoints">0</div>
                 </div>
@@ -327,6 +332,7 @@
                 
                 // Overview stats
                 document.getElementById('total-requests').textContent = data.total_requests.toLocaleString();
+                document.getElementById('unique-users').textContent = (data.unique_users?.length || 0).toLocaleString();
                 document.getElementById('unique-endpoints').textContent = Object.keys(data.endpoints).length;
                 document.getElementById('last-request').textContent = 'Останній: ' + formatDate(data.last_request);
                 document.getElementById('first-request').textContent = 'Перший: ' + formatDate(data.first_request);
