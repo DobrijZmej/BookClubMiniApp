@@ -278,10 +278,10 @@ const ClubManagement = {
                         </div>
                         <div class="request-actions">
                             <button class="request-action-btn btn-approve" 
-                                    onclick="ClubManagement.handleRequest(${request.id}, 'approved')"
+                                    onclick="ClubManagement.handleRequest(${request.id}, 'approve')"
                                     title="Прийняти">✓</button>
                             <button class="request-action-btn btn-reject" 
-                                    onclick="ClubManagement.handleRequest(${request.id}, 'rejected')"
+                                    onclick="ClubManagement.handleRequest(${request.id}, 'reject')"
                                     title="Відхилити">✕</button>
                         </div>
                     </div>
@@ -380,7 +380,7 @@ const ClubManagement = {
             UIUtils.showLoader();
             await API.clubs.reviewJoinRequest(this.currentClubId, requestId, status);
             
-            const message = status === 'approved' ? 'Заявку прийнято' : 'Заявку відхилено';
+            const message = status === 'approve' ? 'Заявку прийнято' : 'Заявку відхилено';
             UIUtils.showSuccess(message);
             tg.HapticFeedback.notificationOccurred('success');
             
