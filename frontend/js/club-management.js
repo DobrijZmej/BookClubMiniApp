@@ -378,7 +378,7 @@ const ClubManagement = {
             tg.HapticFeedback.impactOccurred('medium');
             
             UIUtils.showLoader();
-            await API.clubs.handleJoinRequest(this.currentClubId, requestId, status);
+            await API.clubs.reviewJoinRequest(this.currentClubId, requestId, status);
             
             const message = status === 'approved' ? 'Заявку прийнято' : 'Заявку відхилено';
             UIUtils.showSuccess(message);
