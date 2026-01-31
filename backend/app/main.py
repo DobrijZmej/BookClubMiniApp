@@ -49,7 +49,7 @@ async def log_requests(request: Request, call_next):
     """Логування всіх HTTP запитів"""
     import time
     import re
-    from app.analytics import track_request
+    from app.analytics import track_activity
     
     start_time = time.time()
     logger.info(f"➡️  {request.method} {request.url.path}")
@@ -64,14 +64,14 @@ async def log_requests(request: Request, call_next):
             f"Time: {process_time:.2f}ms"
         )
         
-        # Track analytics (skip static files and internal endpoints)
-        if not request.url.path.startswith(("/css/", "/js/", "/images/", "/favicon", "/api/internal/")):
+        # Track business activity (skip static files, internal endpoints, and health checks)
+        if (response.status_code < 400 and 
+            not request.url.path.startswith(("/css/", "/js/", "/images/", "/favicon", "/api/internal/", "/api/health"))):
             try:
                 # Extract user_id from validated Telegram init data
                 user_id = None
                 init_data = request.headers.get("X-Telegram-Init-Data", "")
                 if init_data:
-                    # Parse init data safely
                     try:
                         from urllib.parse import parse_qs
                         parsed = parse_qs(init_data)
@@ -82,40 +82,103 @@ async def log_requests(request: Request, call_next):
                     except:
                         pass
                 
-                # Extract resource names from path
+                # Determine activity type and extract resources
+                activity_type = None
+                club_id = None
                 club_name = None
+                book_id = None
                 book_title = None
+                members_count = None
+                books_count = None
                 
-                # Try to extract club_id and book_id from path
-                club_match = re.search(r'/clubs/(\d+)', request.url.path)
-                book_match = re.search(r'/books/(\d+)', request.url.path)
-                
-                if club_match or book_match:
+                # Club views
+                club_match = re.search(r'/clubs/(\d+)$', request.url.path)
+                if club_match and request.method == "GET":
+                    activity_type = "club_view"
+                    club_id = int(club_match.group(1))
+                    
                     try:
                         from app.database import SessionLocal
-                        from app.models.db_models import Club, Book
+                        from app.models.db_models import Club, ClubMember, Book
                         
                         db = SessionLocal()
                         try:
-                            if club_match:
-                                club_id = int(club_match.group(1))
-                                club = db.query(Club).filter(Club.id == club_id).first()
-                                if club:
-                                    club_name = club.name
-                            
-                            if book_match:
-                                book_id = int(book_match.group(1))
-                                book = db.query(Book).filter(Book.id == book_id).first()
-                                if book:
-                                    book_title = book.title
+                            club = db.query(Club).filter(Club.id == club_id).first()
+                            if club:
+                                club_name = club.name
+                                members_count = db.query(ClubMember).filter(ClubMember.club_id == club_id).count()
+                                books_count = db.query(Book).filter(Book.club_id == club_id).count()
                         finally:
                             db.close()
                     except:
                         pass
                 
-                track_request(request.url.path, request.method, response.status_code, 
-                            user_id, club_name, book_title)
-            except:
+                # Book views
+                book_match = re.search(r'/books/book/(\d+)$', request.url.path)
+                if book_match and request.method == "GET":
+                    activity_type = "book_view"
+                    book_id = int(book_match.group(1))
+                    
+                    try:
+                        from app.database import SessionLocal
+                        from app.models.db_models import Book, Club
+                        
+                        db = SessionLocal()
+                        try:
+                            book = db.query(Book).filter(Book.id == book_id).first()
+                            if book:
+                                book_title = book.title
+                                club = db.query(Club).filter(Club.id == book.club_id).first()
+                                if club:
+                                    club_name = club.name
+                        finally:
+                            db.close()
+                    except:
+                        pass
+                
+                # Review created
+                if re.search(r'/books/\d+/review$', request.url.path) and request.method == "POST":
+                    activity_type = "review_created"
+                    book_id_match = re.search(r'/books/(\d+)/review$', request.url.path)
+                    if book_id_match:
+                        book_id = int(book_id_match.group(1))
+                        
+                        try:
+                            from app.database import SessionLocal
+                            from app.models.db_models import Book, Club
+                            
+                            db = SessionLocal()
+                            try:
+                                book = db.query(Book).filter(Book.id == book_id).first()
+                                if book:
+                                    book_title = book.title
+                                    club = db.query(Club).filter(Club.id == book.club_id).first()
+                                    if club:
+                                        club_name = club.name
+                            finally:
+                                db.close()
+                        except:
+                            pass
+                
+                # Member joined (approved join request)
+                if re.search(r'/clubs/\d+/requests/\d+$', request.url.path) and request.method == "POST":
+                    # Will be tracked when processing the join request with action=approve
+                    pass
+                
+                # Track if we identified an activity
+                if activity_type:
+                    track_activity(
+                        activity_type=activity_type,
+                        user_id=user_id,
+                        club_id=club_id,
+                        club_name=club_name,
+                        book_id=book_id,
+                        book_title=book_title,
+                        members_count=members_count,
+                        books_count=books_count
+                    )
+            except Exception as e:
+                logger.debug(f"Analytics tracking error: {e}")
                 pass
         
         return response

@@ -201,7 +201,7 @@
 <body>
     <div class="container">
         <h1>📊 Analytics Dashboard</h1>
-        <p class="subtitle">Book Club Mini App</p>
+        <p class="subtitle">Book Club Mini App - Активність</p>
         
         <button class="refresh-btn" onclick="loadStats()">🔄 Оновити</button>
         
@@ -211,83 +211,70 @@
             
             <div class="stats-grid">
                 <div class="stat-card">
-                    <h3>Всього запитів</h3>
-                    <div class="stat-value" id="total-requests">0</div>
-                    <div class="timestamp" id="last-request"></div>
+                    <h3>Клубів</h3>
+                    <div class="stat-value" id="clubs-count">0</div>
                 </div>
                 
                 <div class="stat-card">
-                    <h3>Унікальних користувачів</h3>
+                    <h3>Книжок</h3>
+                    <div class="stat-value" id="books-count">0</div>
+                </div>
+                
+                <div class="stat-card">
+                    <h3>Відгуків</h3>
+                    <div class="stat-value" id="reviews-count">0</div>
+                </div>
+                
+                <div class="stat-card">
+                    <h3>Активних користувачів</h3>
                     <div class="stat-value" id="unique-users">0</div>
-                </div>
-                
-                <div class="stat-card">
-                    <h3>Успішних (2xx)</h3>
-                    <div class="stat-value" id="success-rate">0</div>
-                </div>
-                
-                <div class="stat-card">
-                    <h3>Днів збору даних</h3>
-                    <div class="stat-value" id="days-tracked">0</div>
                 </div>
             </div>
             
             <div class="section">
-                <h2>🔗 Топ Endpoints</h2>
+                <h2>📚 Клуби (топ за переглядами)</h2>
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Шлях</th>
-                            <th>Ресурси (популярні)</th>
-                            <th style="text-align: right;">Запити</th>
+                            <th>Назва клубу</th>
+                            <th style="text-align: center;">Учасників</th>
+                            <th style="text-align: center;">Книжок</th>
+                            <th style="text-align: center;">Переглядів</th>
+                            <th style="text-align: right;">Остання активність</th>
                         </tr>
                     </thead>
-                    <tbody id="endpoints-table"></tbody>
+                    <tbody id="clubs-table"></tbody>
                 </table>
             </div>
             
-            <div class="grid-2col">
-                <div class="section">
-                    <h2>📊 HTTP Methods</h2>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Метод</th>
-                                <th style="text-align: right;">Запити</th>
-                            </tr>
-                        </thead>
-                        <tbody id="methods-table"></tbody>
-                    </table>
-                </div>
-                
-                <div class="section">
-                    <h2>⚡ Status Codes</h2>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Код</th>
-                                <th>Тип</th>
-                                <th style="text-align: right;">Запити</th>
-                            </tr>
-                        </thead>
-                        <tbody id="status-table"></tbody>
-                    </table>
-                </div>
+            <div class="section">
+                <h2>📖 Книжки (топ за активністю)</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Назва книжки</th>
+                            <th>Клуб</th>
+                            <th style="text-align: center;">Переглядів</th>
+                            <th style="text-align: center;">Позичань</th>
+                            <th style="text-align: center;">Відгуків</th>
+                        </tr>
+                    </thead>
+                    <tbody id="books-table"></tbody>
+                </table>
             </div>
             
             <div class="section">
-                <h2>📜 Останні 50 запитів</h2>
+                <h2>⚡ Остання активність (50 подій)</h2>
                 <div class="log-table">
                     <table class="table">
                         <thead>
                             <tr>
                                 <th style="width: 140px;">Час</th>
-                                <th>Endpoint</th>
-                                <th style="width: 80px;">Метод</th>
-                                <th style="width: 80px;">Статус</th>
+                                <th style="width: 150px;">Тип</th>
+                                <th>Деталі</th>
                             </tr>
                         </thead>
-                        <tbody id="recent-table"></tbody>
+                        <tbody id="activity-table"></tbody>
                     </table>
                 </div>
             </div>
@@ -300,12 +287,10 @@
             if (!isoString) return 'N/A';
             const d = new Date(isoString);
             return d.toLocaleString('uk-UA', { 
-                year: 'numeric', 
-                month: '2-digit', 
                 day: '2-digit',
+                month: '2-digit',
                 hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
+                minute: '2-digit'
             });
         }
         
@@ -319,13 +304,15 @@
             });
         }
         
-        function getStatusType(code) {
-            const c = parseInt(code);
-            if (c >= 200 && c < 300) return { text: 'Success', class: '' };
-            if (c >= 300 && c < 400) return { text: 'Redirect', class: '' };
-            if (c >= 400 && c < 500) return { text: 'Client Error', class: 'warning' };
-            if (c >= 500) return { text: 'Server Error', class: 'error' };
-            return { text: 'Unknown', class: '' };
+        function getActivityTypeLabel(type) {
+            const labels = {
+                'club_view': '👁️ Перегляд клубу',
+                'book_view': '📖 Перегляд книжки',
+                'review_created': '⭐ Новий відгук',
+                'member_joined': '👥 Приєднався',
+                'book_borrowed': '📚 Позичив книгу'
+            };
+            return labels[type] || type;
         }
         
         async function loadStats() {
@@ -344,126 +331,93 @@
                 const data = await response.json();
                 
                 // Overview stats
-                document.getElementById('total-requests').textContent = data.total_requests.toLocaleString();
+                document.getElementById('clubs-count').textContent = Object.keys(data.clubs || {}).length;
+                document.getElementById('books-count').textContent = Object.keys(data.books || {}).length;
+                document.getElementById('reviews-count').textContent = (data.reviews_total || 0).toLocaleString();
                 document.getElementById('unique-users').textContent = (data.unique_users?.length || 0).toLocaleString();
-                document.getElementById('last-request').textContent = 'Останній: ' + formatDate(data.last_request);
                 
-                // Success rate
-                let successCount = 0;
-                for (let code in data.status_codes) {
-                    if (parseInt(code) >= 200 && parseInt(code) < 300) {
-                        successCount += data.status_codes[code];
-                    }
-                }
-                const successRate = data.total_requests > 0 ? 
-                    Math.round((successCount / data.total_requests) * 100) : 0;
-                document.getElementById('success-rate').textContent = successRate + '%';
+                // Clubs table
+                const clubsTable = document.getElementById('clubs-table');
+                clubsTable.innerHTML = '';
                 
-                // Days tracked
-                const daysTracked = Object.keys(data.daily).length;
-                document.getElementById('days-tracked').textContent = daysTracked;
+                const clubsArray = Object.entries(data.clubs || {})
+                    .map(([id, club]) => ({ id, ...club }))
+                    .sort((a, b) => (b.views || 0) - (a.views || 0))
+                    .slice(0, 20);
                 
-                // Endpoints table with resources
-                const endpointsTable = document.getElementById('endpoints-table');
-                endpointsTable.innerHTML = '';
-                
-                // Convert endpoints to array and sort by count
-                const endpointsArray = [];
-                for (let path in data.endpoints) {
-                    const endpoint = data.endpoints[path];
-                    // Handle both old format (int) and new format (object)
-                    if (typeof endpoint === 'number') {
-                        endpointsArray.push({ path, count: endpoint, resources: {} });
-                    } else {
-                        endpointsArray.push({ 
-                            path, 
-                            count: endpoint.count, 
-                            resources: endpoint.resources || {} 
-                        });
-                    }
+                if (clubsArray.length === 0) {
+                    clubsTable.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #9ca3af;">Немає даних</td></tr>';
+                } else {
+                    clubsArray.forEach(club => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td><strong>${club.name || 'Unnamed'}</strong></td>
+                            <td style="text-align: center;">${club.members_count || 0}</td>
+                            <td style="text-align: center;">${club.books_count || 0}</td>
+                            <td style="text-align: center;"><span class="badge">${club.views || 0}</span></td>
+                            <td style="text-align: right; font-size: 11px; color: #9ca3af;">${formatDate(club.last_activity)}</td>
+                        `;
+                        clubsTable.appendChild(row);
+                    });
                 }
                 
-                endpointsArray.sort((a, b) => b.count - a.count);
-                endpointsArray.slice(0, 15).forEach(endpoint => {
-                    const row = document.createElement('tr');
-                    
-                    // Get top 3 resources
-                    const resourcesArray = Object.entries(endpoint.resources)
-                        .sort((a, b) => b[1] - a[1])
-                        .slice(0, 3);
-                    
-                    let resourcesHtml = '';
-                    if (resourcesArray.length > 0) {
-                        resourcesHtml = resourcesArray.map(([name, count]) => 
-                            `<span class="resource-tag">${name} (${count})</span>`
-                        ).join(' ');
-                    }
-                    
-                    row.innerHTML = `
-                        <td><code>${endpoint.path}</code></td>
-                        <td>${resourcesHtml}</td>
-                        <td style="text-align: right;">${endpoint.count.toLocaleString()}</td>
-                    `;
-                    endpointsTable.appendChild(row);
-                });
+                // Books table
+                const booksTable = document.getElementById('books-table');
+                booksTable.innerHTML = '';
                 
-                // Methods table
-                const methodsTable = document.getElementById('methods-table');
-                methodsTable.innerHTML = '';
-                const sortedMethods = Object.entries(data.methods)
-                    .sort((a, b) => b[1] - a[1]);
+                const booksArray = Object.entries(data.books || {})
+                    .map(([id, book]) => ({ 
+                        id, 
+                        ...book,
+                        activity_score: (book.views || 0) + (book.borrows || 0) * 2 + (book.reviews || 0) * 3
+                    }))
+                    .sort((a, b) => b.activity_score - a.activity_score)
+                    .slice(0, 20);
                 
-                sortedMethods.forEach(([method, count]) => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td><span class="badge method">${method}</span></td>
-                        <td style="text-align: right;">${count.toLocaleString()}</td>
-                    `;
-                    methodsTable.appendChild(row);
-                });
+                if (booksArray.length === 0) {
+                    booksTable.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #9ca3af;">Немає даних</td></tr>';
+                } else {
+                    booksArray.forEach(book => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td><strong>${book.title || 'Unnamed'}</strong></td>
+                            <td><span class="resource-tag">${book.club_name || 'Unknown'}</span></td>
+                            <td style="text-align: center;">${book.views || 0}</td>
+                            <td style="text-align: center;">${book.borrows || 0}</td>
+                            <td style="text-align: center;"><span class="badge">${book.reviews || 0}</span></td>
+                        `;
+                        booksTable.appendChild(row);
+                    });
+                }
                 
-                // Status codes table
-                const statusTable = document.getElementById('status-table');
-                statusTable.innerHTML = '';
-                const sortedStatus = Object.entries(data.status_codes)
-                    .sort((a, b) => b[1] - a[1]);
+                // Recent activity
+                const activityTable = document.getElementById('activity-table');
+                activityTable.innerHTML = '';
                 
-                sortedStatus.forEach(([code, count]) => {
-                    const type = getStatusType(code);
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td><span class="badge ${type.class}">${code}</span></td>
-                        <td>${type.text}</td>
-                        <td style="text-align: right;">${count.toLocaleString()}</td>
-                    `;
-                    statusTable.appendChild(row);
-                });
+                const activities = data.recent_activity || [];
                 
-                // Recent requests log
-                const recentTable = document.getElementById('recent-table');
-                recentTable.innerHTML = '';
-                const recentRequests = data.recent_requests || [];
-                
-                recentRequests.forEach(req => {
-                    const type = getStatusType(req.status);
-                    const row = document.createElement('tr');
-                    
-                    let pathDisplay = req.path;
-                    if (req.club_name) {
-                        pathDisplay += ` <span class="resource-tag">${req.club_name}</span>`;
-                    }
-                    if (req.book_title) {
-                        pathDisplay += ` <span class="resource-tag">${req.book_title}</span>`;
-                    }
-                    
-                    row.innerHTML = `
-                        <td style="font-size: 11px;">${formatTime(req.timestamp)}</td>
-                        <td><code style="font-size: 11px;">${pathDisplay}</code></td>
-                        <td><span class="badge method">${req.method}</span></td>
-                        <td><span class="badge ${type.class}">${req.status}</span></td>
-                    `;
-                    recentTable.appendChild(row);
-                });
+                if (activities.length === 0) {
+                    activityTable.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #9ca3af;">Немає даних</td></tr>';
+                } else {
+                    activities.forEach(activity => {
+                        const row = document.createElement('tr');
+                        
+                        let details = '';
+                        if (activity.club) {
+                            details += `<span class="resource-tag">${activity.club}</span> `;
+                        }
+                        if (activity.book) {
+                            details += `<span class="resource-tag">${activity.book}</span>`;
+                        }
+                        
+                        row.innerHTML = `
+                            <td style="font-size: 11px;">${formatTime(activity.timestamp)}</td>
+                            <td><span class="badge method">${getActivityTypeLabel(activity.type)}</span></td>
+                            <td>${details}</td>
+                        `;
+                        activityTable.appendChild(row);
+                    });
+                }
                 
                 loading.style.display = 'none';
                 content.style.display = 'block';
