@@ -48,6 +48,7 @@ app = FastAPI(
 async def log_requests(request: Request, call_next):
     """Логування всіх HTTP запитів"""
     import time
+    import re
     from app.analytics import track_request
     
     start_time = time.time()
@@ -81,7 +82,39 @@ async def log_requests(request: Request, call_next):
                     except:
                         pass
                 
-                track_request(request.url.path, request.method, response.status_code, user_id)
+                # Extract resource names from path
+                club_name = None
+                book_title = None
+                
+                # Try to extract club_id and book_id from path
+                club_match = re.search(r'/clubs/(\d+)', request.url.path)
+                book_match = re.search(r'/books/(\d+)', request.url.path)
+                
+                if club_match or book_match:
+                    try:
+                        from app.database import SessionLocal
+                        from app.models.db_models import Club, Book
+                        
+                        db = SessionLocal()
+                        try:
+                            if club_match:
+                                club_id = int(club_match.group(1))
+                                club = db.query(Club).filter(Club.id == club_id).first()
+                                if club:
+                                    club_name = club.name
+                            
+                            if book_match:
+                                book_id = int(book_match.group(1))
+                                book = db.query(Book).filter(Book.id == book_id).first()
+                                if book:
+                                    book_title = book.title
+                        finally:
+                            db.close()
+                    except:
+                        pass
+                
+                track_request(request.url.path, request.method, response.status_code, 
+                            user_id, club_name, book_title)
             except:
                 pass
         

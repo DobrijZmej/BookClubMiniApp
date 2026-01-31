@@ -15,35 +15,38 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background: #0f172a;
             color: #e5e7eb;
-            padding: 20px;
-            line-height: 1.6;
+            padding: 16px;
+            line-height: 1.4;
+            font-size: 14px;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
         
         h1 {
-            font-size: 32px;
-            margin-bottom: 8px;
+            font-size: 24px;
+            margin-bottom: 4px;
             color: #fff;
         }
         
         .subtitle {
             color: #9ca3af;
-            margin-bottom: 32px;
+            margin-bottom: 16px;
+            font-size: 13px;
         }
         
         .refresh-btn {
-            padding: 10px 20px;
+            padding: 8px 16px;
             background: #22c55e;
             color: #052e16;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
+            font-size: 13px;
         }
         
         .refresh-btn:hover {
@@ -52,28 +55,28 @@
         
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 16px;
-            margin-bottom: 32px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
         }
         
         .stat-card {
             background: #1e293b;
             border: 1px solid rgba(148,163,184,0.15);
-            border-radius: 12px;
-            padding: 20px;
+            border-radius: 8px;
+            padding: 12px;
         }
         
         .stat-card h3 {
-            font-size: 14px;
+            font-size: 11px;
             color: #9ca3af;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
         
         .stat-value {
-            font-size: 32px;
+            font-size: 24px;
             font-weight: 700;
             color: #22c55e;
         }
@@ -81,34 +84,35 @@
         .section {
             background: #1e293b;
             border: 1px solid rgba(148,163,184,0.15);
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 24px;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
         }
         
         .section h2 {
-            font-size: 20px;
-            margin-bottom: 16px;
+            font-size: 16px;
+            margin-bottom: 12px;
             color: #fff;
         }
         
         .table {
             width: 100%;
             border-collapse: collapse;
+            font-size: 13px;
         }
         
         .table th {
             text-align: left;
-            padding: 12px;
+            padding: 8px;
             background: #0f172a;
             color: #9ca3af;
-            font-size: 13px;
+            font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
         
         .table td {
-            padding: 12px;
+            padding: 8px;
             border-top: 1px solid rgba(148,163,184,0.1);
         }
         
@@ -118,11 +122,11 @@
         
         .badge {
             display: inline-block;
-            padding: 4px 8px;
+            padding: 2px 6px;
             background: rgba(34,197,94,0.2);
             color: #22c55e;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
         }
         
@@ -136,49 +140,19 @@
             color: #ef4444;
         }
         
-        .chart {
-            margin-top: 16px;
-            height: 200px;
-            position: relative;
+        .badge.method {
+            background: rgba(59,130,246,0.2);
+            color: #3b82f6;
         }
         
-        .bar-chart {
-            display: flex;
-            align-items: flex-end;
-            height: 100%;
-            gap: 4px;
-        }
-        
-        .bar {
-            flex: 1;
-            background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
-            border-radius: 4px 4px 0 0;
-            position: relative;
-            min-height: 2px;
-        }
-        
-        .bar:hover {
-            opacity: 0.8;
-        }
-        
-        .bar-label {
-            position: absolute;
-            bottom: -24px;
-            left: 50%;
-            transform: translateX(-50%);
+        .resource-tag {
+            display: inline-block;
+            padding: 2px 6px;
+            background: rgba(139,92,246,0.2);
+            color: #a78bfa;
+            border-radius: 3px;
             font-size: 11px;
-            color: #9ca3af;
-            white-space: nowrap;
-        }
-        
-        .bar-value {
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 11px;
-            font-weight: 600;
-            color: #22c55e;
+            margin-left: 6px;
         }
         
         .loading {
@@ -197,8 +171,30 @@
         
         .timestamp {
             color: #9ca3af;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+        
+        .log-table {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        @media (max-width: 768px) {
+            .grid-2col {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        code {
+            font-family: 'Courier New', monospace;
             font-size: 12px;
-            margin-top: 8px;
         }
     </style>
 </head>
@@ -226,11 +222,6 @@
                 </div>
                 
                 <div class="stat-card">
-                    <h3>Унікальних endpoints</h3>
-                    <div class="stat-value" id="unique-endpoints">0</div>
-                </div>
-                
-                <div class="stat-card">
                     <h3>Успішних (2xx)</h3>
                     <div class="stat-value" id="success-rate">0</div>
                 </div>
@@ -238,14 +229,6 @@
                 <div class="stat-card">
                     <h3>Днів збору даних</h3>
                     <div class="stat-value" id="days-tracked">0</div>
-                    <div class="timestamp" id="first-request"></div>
-                </div>
-            </div>
-            
-            <div class="section">
-                <h2>📈 Активність по днях (останні 14 днів)</h2>
-                <div class="chart">
-                    <div class="bar-chart" id="daily-chart"></div>
                 </div>
             </div>
             
@@ -255,39 +238,58 @@
                     <thead>
                         <tr>
                             <th>Шлях</th>
+                            <th>Ресурси (популярні)</th>
                             <th style="text-align: right;">Запити</th>
-                            <th style="text-align: right;">%</th>
                         </tr>
                     </thead>
                     <tbody id="endpoints-table"></tbody>
                 </table>
             </div>
             
-            <div class="section">
-                <h2>📊 HTTP Methods</h2>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Метод</th>
-                            <th style="text-align: right;">Запити</th>
-                        </tr>
-                    </thead>
-                    <tbody id="methods-table"></tbody>
-                </table>
+            <div class="grid-2col">
+                <div class="section">
+                    <h2>📊 HTTP Methods</h2>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Метод</th>
+                                <th style="text-align: right;">Запити</th>
+                            </tr>
+                        </thead>
+                        <tbody id="methods-table"></tbody>
+                    </table>
+                </div>
+                
+                <div class="section">
+                    <h2>⚡ Status Codes</h2>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Код</th>
+                                <th>Тип</th>
+                                <th style="text-align: right;">Запити</th>
+                            </tr>
+                        </thead>
+                        <tbody id="status-table"></tbody>
+                    </table>
+                </div>
             </div>
             
             <div class="section">
-                <h2>⚡ Status Codes</h2>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Код</th>
-                            <th>Тип</th>
-                            <th style="text-align: right;">Запити</th>
-                        </tr>
-                    </thead>
-                    <tbody id="status-table"></tbody>
-                </table>
+                <h2>📜 Останні 50 запитів</h2>
+                <div class="log-table">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th style="width: 140px;">Час</th>
+                                <th>Endpoint</th>
+                                <th style="width: 80px;">Метод</th>
+                                <th style="width: 80px;">Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-table"></tbody>
+                    </table>
+                </div>
             </div>
             
         </div>
@@ -302,7 +304,18 @@
                 month: '2-digit', 
                 day: '2-digit',
                 hour: '2-digit',
-                minute: '2-digit'
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+        
+        function formatTime(isoString) {
+            if (!isoString) return 'N/A';
+            const d = new Date(isoString);
+            return d.toLocaleTimeString('uk-UA', { 
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
             });
         }
         
@@ -333,9 +346,7 @@
                 // Overview stats
                 document.getElementById('total-requests').textContent = data.total_requests.toLocaleString();
                 document.getElementById('unique-users').textContent = (data.unique_users?.length || 0).toLocaleString();
-                document.getElementById('unique-endpoints').textContent = Object.keys(data.endpoints).length;
                 document.getElementById('last-request').textContent = 'Останній: ' + formatDate(data.last_request);
-                document.getElementById('first-request').textContent = 'Перший: ' + formatDate(data.first_request);
                 
                 // Success rate
                 let successCount = 0;
@@ -352,39 +363,46 @@
                 const daysTracked = Object.keys(data.daily).length;
                 document.getElementById('days-tracked').textContent = daysTracked;
                 
-                // Daily chart (last 14 days)
-                const dailyChart = document.getElementById('daily-chart');
-                dailyChart.innerHTML = '';
-                const sortedDays = Object.keys(data.daily).sort().slice(-14);
-                const maxDaily = Math.max(...sortedDays.map(d => data.daily[d]));
-                
-                sortedDays.forEach(day => {
-                    const count = data.daily[day];
-                    const height = maxDaily > 0 ? (count / maxDaily) * 100 : 0;
-                    const bar = document.createElement('div');
-                    bar.className = 'bar';
-                    bar.style.height = height + '%';
-                    bar.innerHTML = `
-                        <span class="bar-value">${count}</span>
-                        <span class="bar-label">${day.slice(5)}</span>
-                    `;
-                    dailyChart.appendChild(bar);
-                });
-                
-                // Endpoints table
+                // Endpoints table with resources
                 const endpointsTable = document.getElementById('endpoints-table');
                 endpointsTable.innerHTML = '';
-                const sortedEndpoints = Object.entries(data.endpoints)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 20);
                 
-                sortedEndpoints.forEach(([path, count]) => {
-                    const percent = ((count / data.total_requests) * 100).toFixed(1);
+                // Convert endpoints to array and sort by count
+                const endpointsArray = [];
+                for (let path in data.endpoints) {
+                    const endpoint = data.endpoints[path];
+                    // Handle both old format (int) and new format (object)
+                    if (typeof endpoint === 'number') {
+                        endpointsArray.push({ path, count: endpoint, resources: {} });
+                    } else {
+                        endpointsArray.push({ 
+                            path, 
+                            count: endpoint.count, 
+                            resources: endpoint.resources || {} 
+                        });
+                    }
+                }
+                
+                endpointsArray.sort((a, b) => b.count - a.count);
+                endpointsArray.slice(0, 15).forEach(endpoint => {
                     const row = document.createElement('tr');
+                    
+                    // Get top 3 resources
+                    const resourcesArray = Object.entries(endpoint.resources)
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 3);
+                    
+                    let resourcesHtml = '';
+                    if (resourcesArray.length > 0) {
+                        resourcesHtml = resourcesArray.map(([name, count]) => 
+                            `<span class="resource-tag">${name} (${count})</span>`
+                        ).join(' ');
+                    }
+                    
                     row.innerHTML = `
-                        <td><code>${path}</code></td>
-                        <td style="text-align: right;">${count.toLocaleString()}</td>
-                        <td style="text-align: right;">${percent}%</td>
+                        <td><code>${endpoint.path}</code></td>
+                        <td>${resourcesHtml}</td>
+                        <td style="text-align: right;">${endpoint.count.toLocaleString()}</td>
                     `;
                     endpointsTable.appendChild(row);
                 });
@@ -398,7 +416,7 @@
                 sortedMethods.forEach(([method, count]) => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td><span class="badge">${method}</span></td>
+                        <td><span class="badge method">${method}</span></td>
                         <td style="text-align: right;">${count.toLocaleString()}</td>
                     `;
                     methodsTable.appendChild(row);
@@ -419,6 +437,32 @@
                         <td style="text-align: right;">${count.toLocaleString()}</td>
                     `;
                     statusTable.appendChild(row);
+                });
+                
+                // Recent requests log
+                const recentTable = document.getElementById('recent-table');
+                recentTable.innerHTML = '';
+                const recentRequests = data.recent_requests || [];
+                
+                recentRequests.forEach(req => {
+                    const type = getStatusType(req.status);
+                    const row = document.createElement('tr');
+                    
+                    let pathDisplay = req.path;
+                    if (req.club_name) {
+                        pathDisplay += ` <span class="resource-tag">${req.club_name}</span>`;
+                    }
+                    if (req.book_title) {
+                        pathDisplay += ` <span class="resource-tag">${req.book_title}</span>`;
+                    }
+                    
+                    row.innerHTML = `
+                        <td style="font-size: 11px;">${formatTime(req.timestamp)}</td>
+                        <td><code style="font-size: 11px;">${pathDisplay}</code></td>
+                        <td><span class="badge method">${req.method}</span></td>
+                        <td><span class="badge ${type.class}">${req.status}</span></td>
+                    `;
+                    recentTable.appendChild(row);
                 });
                 
                 loading.style.display = 'none';

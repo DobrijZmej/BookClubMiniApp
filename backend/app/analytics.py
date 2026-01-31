@@ -16,6 +16,7 @@ def ensure_stats_file():
             "status_codes": {},
             "daily": {},
             "unique_users": [],
+            "recent_requests": [],
             "total_requests": 0,
             "first_request": None,
             "last_request": None
@@ -33,6 +34,7 @@ def load_stats() -> Dict[str, Any]:
             "status_codes": {},
             "daily": {},
             "unique_users": [],
+            "recent_requests": [],
             "total_requests": 0,
             "first_request": None,
             "last_request": None
@@ -43,7 +45,8 @@ def save_stats(stats: Dict[str, Any]):
     with open(STATS_FILE, 'w', encoding='utf-8') as f:
         json.dump(stats, f, indent=2, ensure_ascii=False)
 
-def track_request(path: str, method: str, status_code: int, user_id: str = None):
+def track_request(path: str, method: str, status_code: int, user_id: str = None, 
+                  club_name: str = None, book_title: str = None):
     stats = load_stats()
     
     now = datetime.now().isoformat()
@@ -51,7 +54,33 @@ def track_request(path: str, method: str, status_code: int, user_id: str = None)
     
     # Update counters
     stats["total_requests"] += 1
-    stats["endpoints"][path] = stats["endpoints"].get(path, 0) + 1
+    
+    # Enhanced endpoint tracking with resource names
+    if path not in stats["endpoints"]:
+        stats["endpoints"][path] = {
+            "count": 0,
+            "resources": {}  # {"club_name": count} or {"book_title": count}
+        }
+    
+    # Handle both old format (int) and new format (dict)
+    if isinstance(stats["endpoints"][path], int):
+        stats["endpoints"][path] = {
+            "count": stats["endpoints"][path],
+            "resources": {}
+        }
+    
+    stats["endpoints"][path]["count"] += 1
+    
+    # Track resource names
+    if club_name:
+        if club_name not in stats["endpoints"][path]["resources"]:
+            stats["endpoints"][path]["resources"][club_name] = 0
+        stats["endpoints"][path]["resources"][club_name] += 1
+    elif book_title:
+        if book_title not in stats["endpoints"][path]["resources"]:
+            stats["endpoints"][path]["resources"][book_title] = 0
+        stats["endpoints"][path]["resources"][book_title] += 1
+    
     stats["methods"][method] = stats["methods"].get(method, 0) + 1
     stats["status_codes"][str(status_code)] = stats["status_codes"].get(str(status_code), 0) + 1
     
@@ -63,6 +92,22 @@ def track_request(path: str, method: str, status_code: int, user_id: str = None)
     if today not in stats["daily"]:
         stats["daily"][today] = 0
     stats["daily"][today] += 1
+    
+    # Recent requests log (keep last 50)
+    request_entry = {
+        "timestamp": now,
+        "path": path,
+        "method": method,
+        "status": status_code,
+        "user_id": user_id
+    }
+    if club_name:
+        request_entry["club_name"] = club_name
+    if book_title:
+        request_entry["book_title"] = book_title
+    
+    stats["recent_requests"].insert(0, request_entry)
+    stats["recent_requests"] = stats["recent_requests"][:50]  # Keep only last 50
     
     # Timestamps
     if not stats["first_request"]:
