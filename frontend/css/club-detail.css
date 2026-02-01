@@ -140,11 +140,11 @@
 .member-tag {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: 6px 10px;
+    gap: 1px;
+    padding: 1px 2px;
     background-color: var(--color-bg-secondary);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-full);
+    border-radius: 4px;
     font-size: 0.8125rem;
     color: var(--color-text-secondary);
     cursor: pointer;
