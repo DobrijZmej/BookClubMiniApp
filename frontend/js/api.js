@@ -23,6 +23,12 @@ const API = {
                 const errorMessage = typeof error.detail === 'string' 
                     ? error.detail 
                     : JSON.stringify(error.detail) || `HTTP ${response.status}`;
+                
+                // Спеціальне повідомлення для помилок автентифікації
+                if (response.status === 401 || response.status === 403) {
+                    throw new Error('Схоже сесія завершилась, спробуйте закрити і відкрити додаток заново');
+                }
+                
                 throw new Error(errorMessage);
             }
             
@@ -100,6 +106,12 @@ const API = {
                 const errorMessage = typeof error.detail === 'string'
                     ? error.detail
                     : JSON.stringify(error.detail) || `HTTP ${response.status}`;
+                
+                // Спеціальне повідомлення для помилок автентифікації
+                if (response.status === 401 || response.status === 403) {
+                    throw new Error('Схоже сесія завершилась, спробуйте закрити і відкрити додаток заново');
+                }
+                
                 throw new Error(errorMessage);
                 }
 
