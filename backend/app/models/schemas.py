@@ -193,6 +193,8 @@ class ActivityEventType(str, Enum):
     BORROW_BOOK = "BORROW_BOOK"
     RETURN_BOOK = "RETURN_BOOK"
     REVIEW_BOOK = "REVIEW_BOOK"
+    MEMBER_JOINED = "MEMBER_JOINED"
+    MEMBER_LEFT = "MEMBER_LEFT"
 
 
 class ActivityActor(BaseModel):
@@ -216,7 +218,7 @@ class ActivityEvent(BaseModel):
     event_type: ActivityEventType
     event_time: datetime
     actor: ActivityActor
-    book: ActivityBook
+    book: Optional[ActivityBook] = None  # Optional for member events
     rating: Optional[int] = Field(None, ge=1, le=5)
     review_text: Optional[str] = None
     

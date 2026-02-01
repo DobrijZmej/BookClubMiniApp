@@ -731,7 +731,7 @@ async def delete_club(
 @router.get("/{club_id}/activity", response_model=ActivityFeedResponse)
 async def get_club_activity(
     club_id: int,
-    event_type: str = Query(None, description="Фільтр по типу події: ADD_BOOK, BORROW_BOOK, RETURN_BOOK, REVIEW_BOOK"),
+    event_type: str = Query(None, description="Фільтр по типу події: ADD_BOOK, BORROW_BOOK, RETURN_BOOK, REVIEW_BOOK, MEMBER_JOINED, MEMBER_LEFT"),
     limit: int = Query(50, ge=1, le=100, description="Кількість подій на сторінку"),
     offset: int = Query(0, ge=0, description="Зсув для пагінації"),
     db: Session = Depends(get_db),
@@ -831,6 +831,42 @@ async def get_club_activity(
         WHERE b.club_id = :club_id AND b.status != 'DELETED'
     """
     
+    member_joined_query = """
+        SELECT 
+            CONCAT('member_join_', cm.id) as event_id,
+            'MEMBER_JOINED' as event_type,
+            cm.joined_at as event_time,
+            cm.user_id as actor_id,
+            cm.user_name as actor_name,
+            cm.username as actor_username,
+            NULL as book_id,
+            NULL as book_title,
+            NULL as book_author,
+            NULL as book_cover_url,
+            NULL as rating,
+            NULL as review_text
+        FROM club_members cm
+        WHERE cm.club_id = :club_id AND cm.status = 'APPROVED'
+    """
+    
+    member_left_query = """
+        SELECT 
+            CONCAT('member_leave_', cm.id) as event_id,
+            'MEMBER_LEFT' as event_type,
+            cm.left_at as event_time,
+            cm.user_id as actor_id,
+            cm.user_name as actor_name,
+            cm.username as actor_username,
+            NULL as book_id,
+            NULL as book_title,
+            NULL as book_author,
+            NULL as book_cover_url,
+            NULL as rating,
+            NULL as review_text
+        FROM club_members cm
+        WHERE cm.club_id = :club_id AND cm.status = 'LEFT' AND cm.left_at IS NOT NULL
+    """
+    
     # Фільтр по типу події
     queries = []
     if not event_type or event_type == "ADD_BOOK":
@@ -841,6 +877,10 @@ async def get_club_activity(
         queries.append(return_query)
     if not event_type or event_type == "REVIEW_BOOK":
         queries.append(review_query)
+    if not event_type or event_type == "MEMBER_JOINED":
+        queries.append(member_joined_query)
+    if not event_type or event_type == "MEMBER_LEFT":
+        queries.append(member_left_query)
     
     # Об'єднуємо запити через UNION ALL
     combined_query = " UNION ALL ".join(queries)
@@ -869,12 +909,15 @@ async def get_club_activity(
             username=row.actor_username
         )
         
-        book = ActivityBook(
-            book_id=row.book_id,
-            title=row.book_title,
-            author=row.book_author,
-            cover_url=row.book_cover_url
-        )
+        # Book is optional for member events
+        book = None
+        if row.book_id is not None:
+            book = ActivityBook(
+                book_id=row.book_id,
+                title=row.book_title,
+                author=row.book_author,
+                cover_url=row.book_cover_url
+            )
         
         event = ActivityEvent(
             event_id=row.event_id,

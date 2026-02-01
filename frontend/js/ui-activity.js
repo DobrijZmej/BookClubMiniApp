@@ -68,8 +68,16 @@ const UIActivity = {
     createEventElement(event) {
         const div = document.createElement('div');
         div.className = 'activity-event';
-        div.dataset.bookId = event.book.book_id;
-        div.onclick = () => UIBooks.showBookDetails(event.book.book_id);
+        
+        // Тільки для подій з книгою додаємо можливість відкриття
+        if (event.book && event.book.book_id) {
+            div.dataset.bookId = event.book.book_id;
+            div.onclick = () => UIBooks.showBookDetails(event.book.book_id);
+            div.style.cursor = 'pointer';
+        } else {
+            // Для member events прибираємо pointer cursor
+            div.style.cursor = 'default';
+        }
         
         const icon = this.getEventIcon(event.event_type);
         const text = this.getEventText(event);
@@ -88,8 +96,8 @@ const UIActivity = {
             `;
         }
         
-        // Додаємо обкладинку книги
-        const coverHtml = event.book.cover_url ? 
+        // Додаємо обкладинку книги (тільки для book events)
+        const coverHtml = (event.book && event.book.cover_url) ? 
             `<div class="activity-event-cover" style="background-image: url('${event.book.cover_url}');"></div>` : '';
         
         div.innerHTML = `
@@ -113,7 +121,9 @@ const UIActivity = {
             'ADD_BOOK': '➕',
             'BORROW_BOOK': '📚',
             'RETURN_BOOK': '🔙',
-            'REVIEW_BOOK': '⭐'
+            'REVIEW_BOOK': '⭐',
+            'MEMBER_JOINED': '👋',
+            'MEMBER_LEFT': '👋'
         };
         return icons[eventType] || '📌';
     },
@@ -123,6 +133,15 @@ const UIActivity = {
      */
     getEventText(event) {
         const actorName = UIUtils.escapeHtml(event.actor.display_name);
+        
+        // Для member events немає книги
+        if (event.event_type === 'MEMBER_JOINED') {
+            return `<span class="activity-event-actor">${actorName}</span> приєднався до клубу`;
+        }
+        if (event.event_type === 'MEMBER_LEFT') {
+            return `<span class="activity-event-actor">${actorName}</span> покинув клуб`;
+        }
+        
         const bookTitle = UIUtils.escapeHtml(event.book.title);
         
         const texts = {
