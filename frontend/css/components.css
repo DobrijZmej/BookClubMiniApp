@@ -507,37 +507,6 @@
 }
 
 /* Rating Input - Interactive Stars */
-.rating-input {
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: flex-end;
-    gap: var(--space-xs);
-    padding: var(--space-sm) 0;
-}
-
-.rating-input input[type="radio"] {
-    display: none;
-}
-
-.rating-input .star {
-    font-size: 2rem;
-    color: var(--color-border);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    user-select: none;
-}
-
-.rating-input .star:hover,
-.rating-input .star:hover ~ .star,
-.rating-input input[type="radio"]:checked ~ .star {
-    color: var(--color-warning);
-    transform: scale(1.1);
-}
-
-.rating-input .star:active {
-    transform: scale(0.95);
-}
-
 /* Half-star rating system - простий підхід */
 .half-star-rating {
     display: inline-flex;
