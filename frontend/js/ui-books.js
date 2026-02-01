@@ -87,13 +87,15 @@ const UIBooks = {
                     <div class="book-info" onclick="UIBooks.showBookDetails(${book.id})">
                         <div class="book-title">${UIUtils.escapeHtml(book.title)}</div>
                         <div class="book-author">${UIUtils.escapeHtml(book.author || 'Невідомий автор')}</div>
-                        <div class="book-readers">
-                            <span class="readers-icon">👥</span>
-                            <span>${readersCount} ${UIUtils.getPluralForm(readersCount, 'читач', 'читачі', 'читачів')}</span>
-                        </div>
-                        <div class="book-holder">
-                            <span class="holder-icon">👤</span>
-                            <span>Тримач: @${UIUtils.escapeHtml(holderUsername)}</span>
+                        <div class="book-meta-row">
+                            <div class="book-readers">
+                                <span class="readers-icon">👥</span>
+                                <span>${readersCount} ${UIUtils.getPluralForm(readersCount, 'читач', 'читачі', 'читачів')}</span>
+                            </div>
+                            <div class="book-holder">
+                                <span class="holder-icon">👤</span>
+                                <span>${UIUtils.escapeHtml(holderName)}</span>
+                            </div>
                         </div>
                     </div>
                     <div class="book-status-col">
@@ -254,7 +256,7 @@ const UIBooks = {
                 <div class="book-modal-info">
                     <strong>Автор:</strong> ${UIUtils.escapeHtml(book.author)}<br>
                     <strong>Додав:</strong> ${UIUtils.escapeHtml(book.owner_name || book.owner_username || 'невідомо')}<br>
-                    <strong>Тримач:</strong> ${UIUtils.escapeHtml(book.holder_name || book.holder_username || 'невідомо')} (@${UIUtils.escapeHtml(book.holder_username || 'невідомо')})<br>
+                    <strong>Тримач:</strong> ${UIUtils.escapeHtml(book.holder_name || book.holder_username || 'невідомо')}<br>
                     <strong>Статус:</strong> ${book.status === 'AVAILABLE' ? '🟢 Доступна' : '🔴 Позичена'}
                 </div>
                 

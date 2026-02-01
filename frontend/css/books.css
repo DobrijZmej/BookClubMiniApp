@@ -66,28 +66,24 @@
     line-height: 1.3;
 }
 
-.book-readers {
+.book-meta-row {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 12px;
     font-size: 0.8125rem;
     color: var(--color-text-tertiary);
     margin-top: 4px;
+    flex-wrap: wrap;
 }
 
-.book-readers .readers-icon {
-    font-size: 0.875rem;
-}
-
+.book-readers,
 .book-holder {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 0.8125rem;
-    color: var(--color-text-tertiary);
-    margin-top: 4px;
 }
 
+.book-readers .readers-icon,
 .book-holder .holder-icon {
     font-size: 0.875rem;
 }
