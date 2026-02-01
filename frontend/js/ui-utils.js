@@ -58,30 +58,25 @@ const UIUtils = {
         const actualFullStars = fullStars + (hasFullFromHalf ? 1 : 0);
         const emptyStars = 5 - actualFullStars - (hasHalfStar ? 1 : 0);
         
-        const svgStar = (type) => {
-            const classes = {
-                'full': 'star-display star-full',
-                'half': 'star-display star-half-display',
-                'empty': 'star-display star-empty'
-            };
-            return `<svg viewBox="0 0 24 24" class="${classes[type]}" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
-        };
+        const svgStarFull = `<svg viewBox="0 0 24 24" class="star-display star-full" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
+        const svgStarHalf = `<span class="star-half-display"><svg viewBox="0 0 24 24" class="star-display" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>`;
+        const svgStarEmpty = `<svg viewBox="0 0 24 24" class="star-display star-empty" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
         
         let stars = '';
         
         // Повні зірки
         for (let i = 0; i < actualFullStars; i++) {
-            stars += svgStar('full');
+            stars += svgStarFull;
         }
         
         // Половина зірки
         if (hasHalfStar) {
-            stars += svgStar('half');
+            stars += svgStarHalf;
         }
         
         // Порожні зірки
         for (let i = 0; i < emptyStars; i++) {
-            stars += svgStar('empty');
+            stars += svgStarEmpty;
         }
         
         return stars;

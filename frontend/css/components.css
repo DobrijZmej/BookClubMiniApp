@@ -24,9 +24,16 @@
 }
 
 .star-half-display {
-    color: var(--color-warning);
+    display: inline-block;
+    width: 1.2em;
+    height: 1.2em;
     position: relative;
     overflow: hidden;
+    vertical-align: middle;
+}
+
+.star-half-display svg {
+    color: var(--color-warning);
 }
 
 .star-half-display::after {
