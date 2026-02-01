@@ -86,8 +86,10 @@ async def log_requests(request: Request, call_next):
                 activity_type = None
                 club_id = None
                 club_name = None
+                club_cover = None
                 book_id = None
                 book_title = None
+                book_cover = None
                 members_count = None
                 books_count = None
                 
@@ -106,6 +108,7 @@ async def log_requests(request: Request, call_next):
                             club = db.query(Club).filter(Club.id == club_id).first()
                             if club:
                                 club_name = club.name
+                                club_cover = club.cover_url
                                 members_count = db.query(ClubMember).filter(ClubMember.club_id == club_id).count()
                                 books_count = db.query(Book).filter(Book.club_id == club_id).count()
                         finally:
@@ -128,9 +131,12 @@ async def log_requests(request: Request, call_next):
                             book = db.query(Book).filter(Book.id == book_id).first()
                             if book:
                                 book_title = book.title
+                                book_cover = book.cover_url
                                 club = db.query(Club).filter(Club.id == book.club_id).first()
                                 if club:
+                                    club_id = club.id
                                     club_name = club.name
+                                    club_cover = club.cover_url
                         finally:
                             db.close()
                     except:
@@ -152,13 +158,68 @@ async def log_requests(request: Request, call_next):
                                 book = db.query(Book).filter(Book.id == book_id).first()
                                 if book:
                                     book_title = book.title
+                                    book_cover = book.cover_url
                                     club = db.query(Club).filter(Club.id == book.club_id).first()
                                     if club:
+                                        club_id = club.id
                                         club_name = club.name
+                                        club_cover = club.cover_url
                             finally:
                                 db.close()
                         except:
                             pass
+                
+                # Book borrowed
+                borrow_match = re.search(r'/books/(\d+)/borrow$', request.url.path)
+                if borrow_match and request.method == "POST":
+                    activity_type = "book_borrowed"
+                    book_id = int(borrow_match.group(1))
+                    
+                    try:
+                        from app.database import SessionLocal
+                        from app.models.db_models import Book, Club
+                        
+                        db = SessionLocal()
+                        try:
+                            book = db.query(Book).filter(Book.id == book_id).first()
+                            if book:
+                                book_title = book.title
+                                book_cover = book.cover_url
+                                club = db.query(Club).filter(Club.id == book.club_id).first()
+                                if club:
+                                    club_id = club.id
+                                    club_name = club.name
+                                    club_cover = club.cover_url
+                        finally:
+                            db.close()
+                    except:
+                        pass
+                
+                # Book returned
+                return_match = re.search(r'/books/(\d+)/return$', request.url.path)
+                if return_match and request.method == "POST":
+                    activity_type = "book_returned"
+                    book_id = int(return_match.group(1))
+                    
+                    try:
+                        from app.database import SessionLocal
+                        from app.models.db_models import Book, Club
+                        
+                        db = SessionLocal()
+                        try:
+                            book = db.query(Book).filter(Book.id == book_id).first()
+                            if book:
+                                book_title = book.title
+                                book_cover = book.cover_url
+                                club = db.query(Club).filter(Club.id == book.club_id).first()
+                                if club:
+                                    club_id = club.id
+                                    club_name = club.name
+                                    club_cover = club.cover_url
+                        finally:
+                            db.close()
+                    except:
+                        pass
                 
                 # Member joined (approved join request)
                 if re.search(r'/clubs/\d+/requests/\d+$', request.url.path) and request.method == "POST":
@@ -172,8 +233,10 @@ async def log_requests(request: Request, call_next):
                         user_id=user_id,
                         club_id=club_id,
                         club_name=club_name,
+                        club_cover=club_cover,
                         book_id=book_id,
                         book_title=book_title,
+                        book_cover=book_cover,
                         members_count=members_count,
                         books_count=books_count
                     )

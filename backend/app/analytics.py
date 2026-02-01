@@ -45,7 +45,9 @@ def save_stats(stats: Dict[str, Any]):
 
 def track_activity(activity_type: str, user_id: Optional[str] = None,
                    club_id: Optional[int] = None, club_name: Optional[str] = None,
+                   club_cover: Optional[str] = None,
                    book_id: Optional[int] = None, book_title: Optional[str] = None,
+                   book_cover: Optional[str] = None,
                    members_count: Optional[int] = None, books_count: Optional[int] = None):
     """
     Track business activity instead of raw requests
@@ -67,13 +69,17 @@ def track_activity(activity_type: str, user_id: Optional[str] = None,
         if club_key not in stats["clubs"]:
             stats["clubs"][club_key] = {
                 "name": club_name,
+                "cover_url": club_cover,
                 "views": 0,
                 "members_count": members_count or 0,
                 "books_count": books_count or 0,
+                "books": {},
                 "last_activity": now
             }
         
         stats["clubs"][club_key]["name"] = club_name  # Update in case changed
+        if club_cover:
+            stats["clubs"][club_key]["cover_url"] = club_cover
         stats["clubs"][club_key]["last_activity"] = now
         
         if activity_type == "club_view":
@@ -94,6 +100,7 @@ def track_activity(activity_type: str, user_id: Optional[str] = None,
         if book_key not in stats["books"]:
             stats["books"][book_key] = {
                 "title": book_title,
+                "cover_url": book_cover,
                 "club_name": club_name or "Unknown",
                 "views": 0,
                 "borrows": 0,
@@ -102,7 +109,20 @@ def track_activity(activity_type: str, user_id: Optional[str] = None,
             }
         
         stats["books"][book_key]["title"] = book_title  # Update in case changed
+        if book_cover:
+            stats["books"][book_key]["cover_url"] = book_cover
         stats["books"][book_key]["last_activity"] = now
+        
+        # Add book to club's books list
+        if club_id:
+            club_key = str(club_id)
+            if club_key in stats["clubs"]:
+                if "books" not in stats["clubs"][club_key]:
+                    stats["clubs"][club_key]["books"] = {}
+                stats["clubs"][club_key]["books"][book_key] = {
+                    "title": book_title,
+                    "cover_url": book_cover
+                }
         
         if activity_type == "book_view":
             stats["books"][book_key]["views"] += 1
