@@ -532,7 +532,7 @@
 
 .star-half .star-icon {
     display: block;
-    width: 5rem;
+    width: 2.5rem;
     height: 2.5rem;
     position: absolute;
     top: 0;
@@ -540,7 +540,7 @@
 
 /* Ліва половина зірки */
 .star-half-left {
-    width: 2.5rem;
+    width: 1.25rem;
     overflow: hidden;
 }
 
@@ -550,7 +550,7 @@
 
 /* Права половина зірки */
 .star-half-right {
-    width: 2.5rem;
+    width: 1.25rem;
     overflow: hidden;
     margin-right: 0.25rem;
 }
