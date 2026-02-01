@@ -24,7 +24,8 @@
 }
 
 .star-half-display {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     width: 1.2em;
     height: 1.2em;
     position: relative;
