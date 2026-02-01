@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="css/layout.css?v=20260127-v3">
     <link rel="stylesheet" href="css/components.css?v=20260129-v1">
     <link rel="stylesheet" href="css/clubs.css?v=20260129-v1">
-    <link rel="stylesheet" href="css/club-detail.css?v=20260129-v1">
+    <link rel="stylesheet" href="css/club-detail.css?v=20260201-v5">
     <link rel="stylesheet" href="css/club-form.css?v=20260129-v3">
     <link rel="stylesheet" href="css/club-management.css?v=20260129-v7">
     <link rel="stylesheet" href="css/onboarding.css?v=20260130-v4">
@@ -156,13 +156,33 @@
                         <span class="icon-emoji search-icon">🔍</span>
                         <input type="text" id="search-input" class="search-input" placeholder="Пошук книги">
                     </div>
-                    <select id="sort-by" class="filter-select">
-                        <option value="">За датою додавання</option>
-                        <option value="author">За автором</option>
-                        <option value="title">За назвою</option>
-                        <option value="rating">За популярністю</option>
-                        <option value="readers">За кількістю читачів</option>
-                    </select>
+                    <div class="sort-button-container">
+                        <button id="sort-button" class="sort-button" type="button">
+                            <span class="icon-emoji">⇅</span>
+                        </button>
+                        <div id="sort-menu" class="sort-menu" style="display: none;">
+                            <div class="sort-menu-item" data-sort="" id="sort-default">
+                                <span class="sort-check">✓</span>
+                                <span>За датою додавання</span>
+                            </div>
+                            <div class="sort-menu-item" data-sort="author" id="sort-author">
+                                <span class="sort-check"></span>
+                                <span>За автором</span>
+                            </div>
+                            <div class="sort-menu-item" data-sort="title" id="sort-title">
+                                <span class="sort-check"></span>
+                                <span>За назвою</span>
+                            </div>
+                            <div class="sort-menu-item" data-sort="rating" id="sort-rating">
+                                <span class="sort-check"></span>
+                                <span>За популярністю</span>
+                            </div>
+                            <div class="sort-menu-item" data-sort="readers" id="sort-readers">
+                                <span class="sort-check"></span>
+                                <span>За кількістю читачів</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- Books List -->
@@ -548,6 +568,6 @@
     <script src="js/clubs-ui.js?v=20260127-v1"></script>
     
     <!-- App -->
-    <script src="js/app.js?v=20260130-v6"></script>
+    <script src="js/app.js?v=20260201-v7"></script>
 </body>
 </html>

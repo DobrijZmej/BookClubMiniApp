@@ -235,12 +235,39 @@
         });
     }
     
-    const sortBySelect = document.getElementById('sort-by');
-    if (sortBySelect) {
-        sortBySelect.addEventListener('change', () => {
-            if (ClubsUI.currentClubId) {
-                UI.loadBooks(ClubsUI.currentClubId);
+    // Sort button and menu
+    const sortButton = document.getElementById('sort-button');
+    const sortMenu = document.getElementById('sort-menu');
+    if (sortButton && sortMenu) {
+        // Toggle menu
+        sortButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isVisible = sortMenu.style.display === 'block';
+            sortMenu.style.display = isVisible ? 'none' : 'block';
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!sortButton.contains(e.target) && !sortMenu.contains(e.target)) {
+                sortMenu.style.display = 'none';
             }
+        });
+        
+        // Handle sort option selection
+        const sortMenuItems = document.querySelectorAll('.sort-menu-item');
+        sortMenuItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Remove active class from all items
+                sortMenuItems.forEach(i => i.classList.remove('active'));
+                // Add active class to clicked item
+                item.classList.add('active');
+                // Close menu
+                sortMenu.style.display = 'none';
+                // Reload books
+                if (ClubsUI.currentClubId) {
+                    UI.loadBooks(ClubsUI.currentClubId);
+                }
+            });
         });
     }
     

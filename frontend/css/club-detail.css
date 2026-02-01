@@ -6,11 +6,11 @@
 .club-detail-header {
     display: flex;
     align-items: flex-start;
-    gap: var(--space-md);
-    padding: var(--space-lg);
+    gap: var(--space-sm);
+    padding: var(--space-md);
     background-color: var(--color-bg-secondary);
     border-radius: var(--radius-lg);
-    margin-bottom: var(--space-lg);
+    margin-bottom: var(--space-md);
     box-shadow: var(--shadow-sm);
 }
 
@@ -84,7 +84,7 @@
 .club-detail-stats {
     display: flex;
     align-items: center;
-    gap: var(--space-md);
+    gap: var(--space-sm);
     flex-wrap: wrap;
 }
 
@@ -102,11 +102,11 @@
 
 /* Club Description */
 .club-detail-description {
-    padding: var(--space-lg);
+    padding: var(--space-md);
     background-color: var(--color-bg-secondary);
     border-radius: var(--radius-lg);
-    margin-bottom: var(--space-lg);
-    line-height: 1.6;
+    margin-bottom: var(--space-md);
+    line-height: 1.5;
     color: var(--color-text-secondary);
     box-shadow: var(--shadow-sm);
 }
@@ -115,8 +115,8 @@
 .books-controls {
     display: flex;
     align-items: center;
-    gap: var(--space-md);
-    margin-bottom: var(--space-lg);
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
 }
 
 .search-box {
@@ -151,20 +151,78 @@
     box-shadow: 0 0 0 3px var(--color-primary-light);
 }
 
-.filter-select {
-    padding: var(--space-sm) var(--space-md);
+/* Sort Button and Menu */
+.sort-button-container {
+    position: relative;
+}
+
+.sort-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
-    font-size: 0.9375rem;
     background-color: var(--color-bg-secondary);
     color: var(--color-text-primary);
+    font-size: 1.25rem;
     cursor: pointer;
     transition: all var(--transition-fast);
 }
 
-.filter-select:focus {
-    outline: none;
+.sort-button:hover {
+    background-color: var(--color-bg-tertiary);
     border-color: var(--color-primary);
+}
+
+.sort-button:active {
+    transform: scale(0.95);
+}
+
+.sort-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 4px);
+    min-width: 220px;
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    z-index: 100;
+}
+
+.sort-menu-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+    font-size: 0.9375rem;
+    color: var(--color-text-primary);
+}
+
+.sort-menu-item:hover {
+    background-color: var(--color-bg-tertiary);
+}
+
+.sort-menu-item.active {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+.sort-check {
+    width: 16px;
+    font-size: 0.875rem;
+    color: var(--color-primary);
+    font-weight: bold;
+}
+
+.sort-menu-item:not(.active) .sort-check {
+    opacity: 0;
 }
 
 /* Books List */

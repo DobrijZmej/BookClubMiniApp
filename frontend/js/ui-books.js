@@ -14,10 +14,10 @@ const UIBooks = {
             this.clearBooksList();
             this.setBooksLoading(true);
                         
-            const sortBySelect = document.getElementById('sort-by');
+            const sortByActive = document.querySelector('.sort-menu-item.active');
             const searchInput = document.getElementById('search-input');
             
-            const sort_by = sortBySelect ? sortBySelect.value : '';
+            const sort_by = sortByActive ? sortByActive.getAttribute('data-sort') : '';
             const search = searchInput ? searchInput.value : '';
             
             console.log(`Loading books for club ${clubId}, sort_by: ${sort_by}, search: ${search}`);
