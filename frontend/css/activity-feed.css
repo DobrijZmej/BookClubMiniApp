@@ -145,6 +145,8 @@
 }
 
 .activity-event-stars {
+    display: inline-flex;
+    align-items: center;
     color: var(--color-warning);
     font-size: 0.875rem;
 }
