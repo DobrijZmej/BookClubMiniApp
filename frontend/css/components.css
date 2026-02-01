@@ -507,13 +507,12 @@
 }
 
 /* Rating Input - Interactive Stars */
-/* Half-star rating system - простий підхід */
+/* Half-star rating system - з SVG */
 .half-star-rating {
     display: inline-flex;
     flex-direction: row;
     gap: 0;
     padding: var(--space-sm) 0;
-    font-size: 2.5rem;
     line-height: 1;
 }
 
@@ -525,43 +524,39 @@
     position: relative;
     cursor: pointer;
     user-select: none;
+    height: 2.5rem;
+    display: inline-block;
     color: var(--color-border);
     transition: color var(--transition-fast);
-    height: 1em;
-    display: inline-block;
 }
 
 .star-half .star-icon {
     display: block;
+    width: 5rem;
+    height: 2.5rem;
     position: absolute;
     top: 0;
-    left: 0;
-    width: 2em;
-    height: 1em;
-    line-height: 1;
 }
 
 /* Ліва половина зірки */
 .star-half-left {
-    width: 0.5em;
+    width: 2.5rem;
     overflow: hidden;
 }
 
 .star-half-left .star-icon {
-    text-align: left;
+    left: 0;
 }
 
 /* Права половина зірки */
 .star-half-right {
-    width: 0.5em;
+    width: 2.5rem;
     overflow: hidden;
-    margin-right: 0.25em;
+    margin-right: 0.25rem;
 }
 
 .star-half-right .star-icon {
     right: 0;
-    left: auto;
-    text-align: right;
 }
 
 /* Hover ефект */
@@ -569,9 +564,12 @@
     color: var(--color-warning);
 }
 
-/* Підсвітка всіх попередніх */
-.half-star-rating input[type="radio"]:checked ~ input ~ .star-half,
-.half-star-rating input[type="radio"]:checked + .star-half {
+/* Підсвітка вибраних зірок (всі попередні) */
+.half-star-rating .star-half:has(~ input:checked) {
+    color: var(--color-warning);
+}
+
+.half-star-rating input:checked + .star-half {
     color: var(--color-warning);
 }
 
