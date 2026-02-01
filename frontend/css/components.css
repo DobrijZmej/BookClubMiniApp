@@ -538,14 +538,13 @@
     transform: scale(0.95);
 }
 
-/* Half-star rating system */
+/* Half-star rating system - простий підхід */
 .half-star-rating {
     display: inline-flex;
-    flex-direction: row-reverse;
-    justify-content: flex-end;
+    flex-direction: row;
     gap: 0;
     padding: var(--space-sm) 0;
-    font-size: 2rem;
+    font-size: 2.5rem;
     line-height: 1;
 }
 
@@ -555,40 +554,58 @@
 
 .star-half {
     position: relative;
-    display: inline-block;
-    width: 1em;
-    height: 1em;
     cursor: pointer;
+    user-select: none;
     color: var(--color-border);
     transition: color var(--transition-fast);
-    user-select: none;
+}
+
+.star-half .star-icon {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2em;
+    height: 1em;
+}
+
+/* Ліва половина зірки */
+.star-half-left {
+    width: 0.5em;
     overflow: hidden;
 }
 
-/* Обрізання через clip-path (враховуючи row-reverse) */
-.star-left {
-    clip-path: inset(0 0 0 50%); /* Обрізає ліву частину, показує праву */
+.star-half-left .star-icon {
+    text-align: left;
 }
 
-.star-right {
-    clip-path: inset(0 50% 0 0); /* Обрізає праву частину, показує ліву */
-    margin-right: var(--space-xs);
+/* Права половина зірки */
+.star-half-right {
+    width: 0.5em;
+    overflow: hidden;
+    margin-right: 0.25em;
 }
 
-/* Hover ефект - підсвічуємо всі зірки справа від наведеної */
-.half-star-rating .star-half:hover,
-.half-star-rating .star-half:hover ~ .star-half {
+.star-half-right .star-icon {
+    right: 0;
+    left: auto;
+    text-align: right;
+}
+
+/* Hover ефект */
+.half-star-rating .star-half:hover {
     color: var(--color-warning);
 }
 
-/* Вибрані зірки */
-.half-star-rating input[type="radio"]:checked ~ .star-half {
+/* Підсвітка всіх попередніх */
+.half-star-rating input[type="radio"]:checked ~ input ~ .star-half,
+.half-star-rating input[type="radio"]:checked + .star-half {
     color: var(--color-warning);
 }
 
 /* Active стан */
 .half-star-rating .star-half:active {
-    transform: scale(0.95);
+    transform: scale(0.9);
 }
 
 .book-modal-actions {
