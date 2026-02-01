@@ -242,6 +242,12 @@ const ClubsDetail = {
         if (tagCloud) {
             tagCloud.style.display = 'none';
         }
+        
+        // Очищуємо пошуковий фільтр при переході між клубами
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) {
+            searchInput.value = '';
+        }
     }
 };
 
