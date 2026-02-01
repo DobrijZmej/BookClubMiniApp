@@ -79,6 +79,19 @@
     font-size: 0.875rem;
 }
 
+.book-holder {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8125rem;
+    color: var(--color-text-tertiary);
+    margin-top: 4px;
+}
+
+.book-holder .holder-icon {
+    font-size: 0.875rem;
+}
+
 /* Book Status - Compact Row with Indicator */
 .book-status-col {
     display: flex;

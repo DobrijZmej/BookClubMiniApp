@@ -80,6 +80,9 @@ class BookResponse(BaseModel):
     created_at: datetime
     average_rating: Optional[float] = None
     readers_count: Optional[int] = None
+    holder_id: Optional[str] = None
+    holder_name: Optional[str] = None
+    holder_username: Optional[str] = None
     
     class Config:
         from_attributes = True

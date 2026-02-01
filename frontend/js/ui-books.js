@@ -64,6 +64,10 @@ const UIBooks = {
             const rating = book.average_rating || 0;
             const readersCount = book.readers_count || 0;
             
+            // Тримач книги
+            const holderUsername = book.holder_username || 'невідомо';
+            const holderName = book.holder_name || holderUsername;
+            
             // Перевірка прав власника
             const currentUserId = tg.initDataUnsafe?.user?.id?.toString();
             const isOwner = book.owner_id === currentUserId;
@@ -86,6 +90,10 @@ const UIBooks = {
                         <div class="book-readers">
                             <span class="readers-icon">👥</span>
                             <span>${readersCount} ${UIUtils.getPluralForm(readersCount, 'читач', 'читачі', 'читачів')}</span>
+                        </div>
+                        <div class="book-holder">
+                            <span class="holder-icon">👤</span>
+                            <span>Тримач: @${UIUtils.escapeHtml(holderUsername)}</span>
                         </div>
                     </div>
                     <div class="book-status-col">
@@ -246,6 +254,7 @@ const UIBooks = {
                 <div class="book-modal-info">
                     <strong>Автор:</strong> ${UIUtils.escapeHtml(book.author)}<br>
                     <strong>Додав:</strong> ${UIUtils.escapeHtml(book.owner_name || book.owner_username || 'невідомо')}<br>
+                    <strong>Тримач:</strong> ${UIUtils.escapeHtml(book.holder_name || book.holder_username || 'невідомо')} (@${UIUtils.escapeHtml(book.holder_username || 'невідомо')})<br>
                     <strong>Статус:</strong> ${book.status === 'AVAILABLE' ? '🟢 Доступна' : '🔴 Позичена'}
                 </div>
                 

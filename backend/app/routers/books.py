@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form
 import datetime
 from sqlalchemy.orm import Session
-from sqlalchemy import desc
+from sqlalchemy import desc, func
 from typing import List, Optional
 from loguru import logger
 
@@ -63,16 +63,55 @@ async def get_books(
     # Перевіряємо членство в клубі
     verify_club_membership(db, club_id, user_id)
     
-    query = db.query(Book).filter(
-        Book.club_id == club_id,
-        Book.status != BookStatus.DELETED
+    # Підзапит для знаходження останнього loan для кожної книги
+    subquery = (
+        db.query(
+            BookLoan.book_id,
+            BookLoan.user_id.label('last_reader_id'),
+            BookLoan.username.label('last_reader_username'),
+            func.row_number().over(
+                partition_by=BookLoan.book_id,
+                order_by=desc(BookLoan.borrowed_at)
+            ).label('row_num')
+        )
+        .subquery()
+    )
+    
+    # Підзапит для отримання тільки останніх loans
+    last_loans = (
+        db.query(subquery)
+        .filter(subquery.c.row_num == 1)
+        .subquery()
+    )
+    
+    # Додаємо ClubMember для отримання імені останнього читача
+    query = (
+        db.query(
+            Book,
+            last_loans.c.last_reader_id,
+            last_loans.c.last_reader_username,
+            ClubMember.user_name.label('last_reader_name')
+        )
+        .outerjoin(last_loans, Book.id == last_loans.c.book_id)
+        .outerjoin(
+            ClubMember,
+            (last_loans.c.last_reader_id == ClubMember.user_id) & (ClubMember.club_id == club_id)
+        )
+        .filter(
+            Book.club_id == club_id,
+            Book.status != BookStatus.DELETED
+        )
     )
     
     if search:
         search_pattern = f"%{search}%"
         query = query.filter(
             (Book.title.like(search_pattern)) |
-            (Book.author.like(search_pattern))
+            (Book.author.like(search_pattern)) |
+            (Book.owner_name.like(search_pattern)) |
+            (Book.owner_username.like(search_pattern)) |
+            (last_loans.c.last_reader_username.like(search_pattern)) |
+            (ClubMember.user_name.like(search_pattern))
         )
     
     # Застосовуємо сортування (за замовчуванням - за датою створення)
@@ -84,11 +123,11 @@ async def get_books(
         # За замовчуванням - за датою створення (найновіші першими)
         query = query.order_by(desc(Book.created_at))
     
-    books = query.all()
+    books_data = query.all()
     
-    # Додаємо current_reader_id, average_rating та readers_count для кожної книги
+    # Додаємо current_reader_id, average_rating, readers_count та holder для кожної книги
     result = []
-    for book in books:
+    for book, last_reader_id, last_reader_username, last_reader_name in books_data:
         book_dict = BookResponse.model_validate(book).model_dump()
         
         # Знаходимо активний loan
@@ -99,6 +138,17 @@ async def get_books(
         
         if active_loan:
             book_dict['current_reader_id'] = active_loan.user_id
+        
+        # Визначаємо holder: якщо є історія читання - останній читач, інакше - власник
+        if last_reader_id:
+            book_dict['holder_id'] = last_reader_id
+            book_dict['holder_username'] = last_reader_username
+            book_dict['holder_name'] = last_reader_name
+        else:
+            # Якщо історії немає - holder це owner
+            book_dict['holder_id'] = book.owner_id
+            book_dict['holder_username'] = book.owner_username
+            book_dict['holder_name'] = book.owner_name
         
         # Додаємо статистику
         book_dict = enrich_book_with_stats(book_dict, book.id, db)
@@ -164,6 +214,18 @@ async def get_book_details(
     
     result_dict = book.__dict__.copy()
     result_dict['current_reader_id'] = active_loan.user_id if active_loan else None
+    
+    # Визначаємо holder: якщо є історія читання - останній читач, інакше - власник
+    if loans:
+        last_loan = loans[0]  # Вже відсортовано за borrowed_at DESC
+        result_dict['holder_id'] = last_loan.user_id
+        result_dict['holder_username'] = last_loan.username
+        result_dict['holder_name'] = last_loan.user_name
+    else:
+        # Якщо історії немає - holder це owner
+        result_dict['holder_id'] = book.owner_id
+        result_dict['holder_username'] = book.owner_username
+        result_dict['holder_name'] = book.owner_name
     
     # Додаємо статистику
     result_dict = enrich_book_with_stats(result_dict, book_id, db)
