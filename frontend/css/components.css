@@ -558,6 +558,8 @@
     user-select: none;
     color: var(--color-border);
     transition: color var(--transition-fast);
+    height: 1em;
+    display: inline-block;
 }
 
 .star-half .star-icon {
@@ -567,6 +569,7 @@
     left: 0;
     width: 2em;
     height: 1em;
+    line-height: 1;
 }
 
 /* Ліва половина зірки */
