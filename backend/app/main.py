@@ -116,6 +116,27 @@ async def log_requests(request: Request, call_next):
                     except:
                         pass
                 
+                # Activity Feed views
+                activity_feed_match = re.search(r'/clubs/(\d+)/activity$', request.url.path)
+                if activity_feed_match and request.method == "GET":
+                    activity_type = "activity_feed_view"
+                    club_id = int(activity_feed_match.group(1))
+                    
+                    try:
+                        from app.database import SessionLocal
+                        from app.models.db_models import Club
+                        
+                        db = SessionLocal()
+                        try:
+                            club = db.query(Club).filter(Club.id == club_id).first()
+                            if club:
+                                club_name = club.name
+                                club_cover = club.cover_url
+                        finally:
+                            db.close()
+                    except:
+                        pass
+                
                 # Book views
                 book_match = re.search(r'/books/book/(\d+)$', request.url.path)
                 if book_match and request.method == "GET":
@@ -225,6 +246,31 @@ async def log_requests(request: Request, call_next):
                 if re.search(r'/clubs/\d+/requests/\d+$', request.url.path) and request.method == "POST":
                     # Will be tracked when processing the join request with action=approve
                     pass
+                
+                # Search used
+                books_list_match = re.search(r'/books/club/(\d+)$', request.url.path)
+                if books_list_match and request.method == "GET":
+                    # Check if search parameter is present
+                    if "search=" in str(request.url.query):
+                        search_value = request.query_params.get("search", "")
+                        if search_value and len(search_value) > 0:
+                            activity_type = "search_used"
+                            club_id = int(books_list_match.group(1))
+                            
+                            try:
+                                from app.database import SessionLocal
+                                from app.models.db_models import Club
+                                
+                                db = SessionLocal()
+                                try:
+                                    club = db.query(Club).filter(Club.id == club_id).first()
+                                    if club:
+                                        club_name = club.name
+                                        club_cover = club.cover_url
+                                finally:
+                                    db.close()
+                            except:
+                                pass
                 
                 # Track if we identified an activity
                 if activity_type:

@@ -138,7 +138,9 @@ def track_activity(activity_type: str, user_id: Optional[str] = None,
             "clubs_views": 0,
             "books_views": 0,
             "reviews": 0,
-            "joins": 0
+            "joins": 0,
+            "activity_feed_views": 0,
+            "search_count": 0
         }
     
     if activity_type == "club_view":
@@ -149,6 +151,10 @@ def track_activity(activity_type: str, user_id: Optional[str] = None,
         stats["daily_activity"][today]["reviews"] += 1
     elif activity_type == "member_joined":
         stats["daily_activity"][today]["joins"] += 1
+    elif activity_type == "activity_feed_view":
+        stats["daily_activity"][today]["activity_feed_views"] += 1
+    elif activity_type == "search_used":
+        stats["daily_activity"][today]["search_count"] += 1
     
     # Recent activity log (keep last 50)
     activity_entry = {
