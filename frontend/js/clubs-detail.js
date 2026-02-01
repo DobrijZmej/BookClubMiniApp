@@ -2,9 +2,14 @@
 const ClubsDetail = {
     currentClubId: null,
     currentClubData: null,
+    membersCache: null, // Кеш учасників клубу
+    membersTagCloudVisible: false, // Стан хмари тегів
 
     async openClub(clubId, clubName) {
         this.currentClubId = clubId;
+        
+        // Очищуємо кеш при зміні клубу
+        this.clearMembersCache();
         
         // Оновлюємо header
         document.getElementById('header-title').textContent = clubName;
@@ -22,6 +27,10 @@ const ClubsDetail = {
         // Завантажуємо дані клубу
         await this.loadClubDetails(clubId);
         await this.checkClubPermissions(clubId);
+        
+        // Ініціалізуємо хмару тегів учасників
+        this.initMembersTagCloud();
+        
         await UIBooks.loadBooks(clubId);
     },
 
@@ -105,6 +114,133 @@ const ClubsDetail = {
             }
         } catch (error) {
             console.error('❌ Error loading requests count:', error);
+        }
+    },
+
+    /**
+     * Ініціалізує обробник для клікабельної кількості учасників
+     */
+    initMembersTagCloud() {
+        const membersCount = document.getElementById('club-members-count');
+        if (membersCount) {
+            membersCount.onclick = () => this.toggleMembersTagCloud();
+        }
+    },
+
+    /**
+     * Перемикає відображення хмари тегів учасників
+     */
+    async toggleMembersTagCloud() {
+        const tagCloud = document.getElementById('members-tag-cloud');
+        
+        if (this.membersTagCloudVisible) {
+            // Приховуємо хмару
+            tagCloud.style.display = 'none';
+            this.membersTagCloudVisible = false;
+        } else {
+            // Показуємо хмару
+            await this.loadAndRenderMembers();
+            tagCloud.style.display = 'flex';
+            this.membersTagCloudVisible = true;
+        }
+    },
+
+    /**
+     * Завантажує учасників клубу (з кешем)
+     */
+    async loadMembers() {
+        if (this.membersCache && this.membersCache.clubId === this.currentClubId) {
+            return this.membersCache.members;
+        }
+
+        try {
+            const members = await API.clubs.getMembers(this.currentClubId);
+            this.membersCache = {
+                clubId: this.currentClubId,
+                members: members
+            };
+            return members;
+        } catch (error) {
+            console.error('❌ Error loading members:', error);
+            if (tg.showAlert) {
+                tg.showAlert(`Помилка завантаження учасників: ${error.message}`);
+            }
+            return [];
+        }
+    },
+
+    /**
+     * Завантажує та рендерить учасників у хмарі тегів
+     */
+    async loadAndRenderMembers() {
+        const members = await this.loadMembers();
+        this.renderMembersTagCloud(members);
+    },
+
+    /**
+     * Рендерить хмару тегів учасників
+     */
+    renderMembersTagCloud(members) {
+        const tagCloud = document.getElementById('members-tag-cloud');
+        
+        if (!members || members.length === 0) {
+            tagCloud.innerHTML = '<div style="color: var(--color-text-secondary); font-size: 0.875rem;">Учасники відсутні</div>';
+            return;
+        }
+
+        // Сортуємо за display_name (user_name або username)
+        const sortedMembers = [...members].sort((a, b) => {
+            const nameA = (a.user_name || a.username || '').toLowerCase();
+            const nameB = (b.user_name || b.username || '').toLowerCase();
+            return nameA.localeCompare(nameB, 'uk');
+        });
+
+        // Генеруємо теги
+        tagCloud.innerHTML = sortedMembers.map(member => {
+            const displayName = member.user_name || member.username || 'Невідомо';
+            return `
+                <div class="member-tag" data-member-name="${displayName}">
+                    <span class="icon-emoji">🔍</span>
+                    <span>${displayName}</span>
+                </div>
+            `;
+        }).join('');
+
+        // Додаємо обробники подій
+        tagCloud.querySelectorAll('.member-tag').forEach(tag => {
+            tag.onclick = () => {
+                const memberName = tag.getAttribute('data-member-name');
+                this.filterBooksByMember(memberName);
+            };
+        });
+    },
+
+    /**
+     * Фільтрує книги по вибраному учаснику
+     */
+    filterBooksByMember(memberName) {
+        // Закриваємо хмару тегів
+        document.getElementById('members-tag-cloud').style.display = 'none';
+        this.membersTagCloudVisible = false;
+
+        // Вставляємо ім'я учасника в пошук
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) {
+            searchInput.value = memberName;
+            // Викликаємо пошук
+            UIBooks.loadBooks(this.currentClubId);
+        }
+    },
+
+    /**
+     * Очищує кеш учасників (викликати при зміні клубу)
+     */
+    clearMembersCache() {
+        this.membersCache = null;
+        this.membersTagCloudVisible = false;
+        const tagCloud = document.getElementById('members-tag-cloud');
+        if (tagCloud) {
+            tagCloud.style.display = 'none';
         }
     }
 };
