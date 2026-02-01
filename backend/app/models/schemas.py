@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 from typing import Optional, List
 from datetime import datetime
 from enum import Enum
@@ -30,12 +30,31 @@ class BookUpdate(BaseModel):
     cover_url: Optional[str] = None
 
 class BookReviewCreate(BaseModel):
-    rating: int = Field(..., ge=1, le=5)  # Рейтинг від 1 до 5 зірок
+    rating: float = Field(..., ge=0.5, le=5.0)  # Рейтинг від 0.5 до 5.0 з кроком 0.5
     comment: Optional[str] = Field(None, max_length=1000)
+    
+    @validator('rating')
+    def validate_rating_step(cls, v):
+        # Перевірка кратності 0.5
+        if round(v * 10) % 5 != 0:
+            raise ValueError('Rating must be in 0.5 increments (0.5, 1.0, 1.5, ..., 5.0)')
+        return v
 
 class BookReviewUpdate(BaseModel):
-    rating: Optional[int] = Field(None, ge=1, le=5)
+    rating: Optional[float] = Field(None, ge=0.5, le=5.0)
     comment: Optional[str] = Field(None, max_length=1000)
+    
+    @validator('rating')
+    def validate_rating_step(cls, v):
+        if v is not None and round(v * 10) % 5 != 0:
+            raise ValueError('Rating must be in 0.5 increments (0.5, 1.0, 1.5, ..., 5.0)')
+        return v
+    
+    @validator('rating')
+    def validate_rating_step(cls, v):
+        if v is not None and round(v * 10) % 5 != 0:
+            raise ValueError('Rating must be in 0.5 increments (0.5, 1.0, 1.5, ..., 5.0)')
+        return v
 
 
 # Response schemas
@@ -57,7 +76,7 @@ class BookReviewResponse(BaseModel):
     user_id: str
     user_name: Optional[str]
     username: Optional[str]
-    rating: int
+    rating: float
     comment: Optional[str]
     created_at: datetime
     updated_at: Optional[datetime]

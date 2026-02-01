@@ -538,6 +538,60 @@
     transform: scale(0.95);
 }
 
+/* Half-star rating system */
+.half-star-rating {
+    display: inline-flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 0;
+    padding: var(--space-sm) 0;
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.half-star-rating input[type="radio"] {
+    display: none;
+}
+
+.star-half {
+    position: relative;
+    display: inline-block;
+    width: 0.5em;
+    height: 1em;
+    overflow: hidden;
+    cursor: pointer;
+    color: var(--color-border);
+    transition: color var(--transition-fast);
+    user-select: none;
+}
+
+/* Ліва половина - показуємо ліву частину зірки */
+.star-left {
+    text-align: left;
+}
+
+/* Права половина - показуємо праву частину зірки */
+.star-right {
+    text-align: right;
+    margin-right: var(--space-xs);
+}
+
+/* Hover ефект - підсвічуємо всі зірки справа від наведеної */
+.half-star-rating .star-half:hover,
+.half-star-rating .star-half:hover ~ .star-half {
+    color: var(--color-warning);
+}
+
+/* Вибрані зірки */
+.half-star-rating input[type="radio"]:checked ~ .star-half {
+    color: var(--color-warning);
+}
+
+/* Active стан */
+.half-star-rating .star-half:active {
+    transform: scale(0.95);
+}
+
 .book-modal-actions {
     margin-top: var(--space-lg);
     display: flex;

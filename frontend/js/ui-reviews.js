@@ -100,12 +100,12 @@ const UIReviews = {
             const comment = commentField ? commentField.value.trim() : '';
             
             if (!rating) {
-                tg.showAlert('Оберіть рейтинг від 1 до 5 зірок');
+                tg.showAlert('Оберіть рейтинг від 0.5 до 5.0 зірок');
                 return;
             }
             
             const reviewData = {
-                rating: parseInt(rating),
+                rating: parseFloat(rating),
                 comment: comment || null
             };
             

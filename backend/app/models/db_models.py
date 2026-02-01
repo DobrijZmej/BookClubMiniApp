@@ -129,7 +129,7 @@ class BookReview(Base):
     user_id = Column(String(50), nullable=False, index=True)  # Telegram user ID
     user_name = Column(String(255))  # Повне ім'я користувача
     username = Column(String(100))  # @username з Telegram
-    rating = Column(Integer, nullable=False)  # Рейтинг від 1 до 5
+    rating = Column(Float, nullable=False)  # Рейтинг від 0.5 до 5.0 з кроком 0.5
     comment = Column(Text)  # Коментар до відгука
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), nullable=True)
