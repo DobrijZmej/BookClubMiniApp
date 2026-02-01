@@ -12,18 +12,18 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <!-- Styles - All CSS modules -->
-    <link rel="stylesheet" href="css/variables.css?v=20260127-v1">
-    <link rel="stylesheet" href="css/base.css?v=20260127-v1">
-    <link rel="stylesheet" href="css/layout.css?v=20260127-v3">
-    <link rel="stylesheet" href="css/components.css?v=20260129-v1">
-    <link rel="stylesheet" href="css/clubs.css?v=20260129-v1">
-    <link rel="stylesheet" href="css/club-detail.css?v=20260201-v7">
-    <link rel="stylesheet" href="css/club-form.css?v=20260129-v3">
-    <link rel="stylesheet" href="css/club-management.css?v=20260129-v7">
-    <link rel="stylesheet" href="css/onboarding.css?v=20260130-v4">
-    <link rel="stylesheet" href="css/books.css?v=20260201-v4">
-    <link rel="stylesheet" href="css/book-form.css?v=20260127-v1">
-    <link rel="stylesheet" href="css/activity-feed.css?v=20260201-v1">
+    <link rel="stylesheet" href="css/variables.css?v=20260201-v2">
+    <link rel="stylesheet" href="css/base.css?v=20260201-v2">
+    <link rel="stylesheet" href="css/layout.css?v=20260201-v4">
+    <link rel="stylesheet" href="css/components.css?v=20260201-v2">
+    <link rel="stylesheet" href="css/clubs.css?v=20260201-v2">
+    <link rel="stylesheet" href="css/club-detail.css?v=20260201-v8">
+    <link rel="stylesheet" href="css/club-form.css?v=20260201-v4">
+    <link rel="stylesheet" href="css/club-management.css?v=20260201-v8">
+    <link rel="stylesheet" href="css/onboarding.css?v=20260201-v5">
+    <link rel="stylesheet" href="css/books.css?v=20260201-v5">
+    <link rel="stylesheet" href="css/book-form.css?v=20260201-v2">
+    <link rel="stylesheet" href="css/activity-feed.css?v=20260201-v2">
 </head>
 <body>
     <!-- Loader -->
@@ -239,15 +239,21 @@
                         <div class="empty-description">Активність клубу з'явиться тут</div>
                     </div>
                 </div>
-                        <div class="club-form-header-left">
-                            <div class="app-icon">📚</div>
-                            <span class="app-title">Книжковий Обмін</span>
-                        </div>
-                        <button class="modal-close" id="book-close-button">&times;</button>
+            </div>
+            
+            <!-- Book Form View (Create/Edit) -->
+            <div id="add-book-view" class="view">
+                <!-- Modal Header -->
+                <div class="club-form-header">
+                    <div class="club-form-header-left">
+                        <div class="app-icon">📚</div>
+                        <span class="app-title">Книжковий Обмін</span>
                     </div>
+                    <button class="modal-close" id="book-close-button">&times;</button>
+                </div>
 
-                    <!-- Modal Title -->
-                    <h2 class="club-form-title" id="book-form-title">Редагування книги</h2>
+                <!-- Modal Title -->
+                <h2 class="club-form-title" id="book-form-title">Редагування книги</h2>
 
                     <!-- Form Container -->
                     <div class="club-form-container" style="display: block; padding: 0 20px 24px;">
@@ -285,7 +291,6 @@
                             </div>
                         </form>
                     </div>
-                </div>
             </div>
 
             <!-- Club Form Modal (Create/Edit) -->
@@ -586,26 +591,26 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="js/config.js?v=20260127-v1"></script>
-    <script src="js/api.js?v=20260129-v3"></script>
+    <script src="js/config.js?v=20260201-v2"></script>
+    <script src="js/api.js?v=20260201-v4"></script>
     
     <!-- UI Modules -->
-    <script src="js/ui-utils.js?v=20260127-v1"></script>
-    <script src="js/ui-books.js?v=20260201-v8"></script>
-    <script src="js/ui-activity.js?v=20260201-v1"></script>
-    <script src="js/ui-book-form.js?v=20260129-v2"></script>
-    <script src="js/ui-reviews.js?v=20260127-v4"></script>
-    <script src="js/ui.js?v=20260127-v2"></script>
+    <script src="js/ui-utils.js?v=20260201-v2"></script>
+    <script src="js/ui-books.js?v=20260201-v9"></script>
+    <script src="js/ui-activity.js?v=20260201-v2"></script>
+    <script src="js/ui-book-form.js?v=20260201-v3"></script>
+    <script src="js/ui-reviews.js?v=20260201-v5"></script>
+    <script src="js/ui.js?v=20260201-v3"></script>
     
     <!-- Clubs Modules -->
-    <script src="js/clubs-list.js?v=20260130-v4"></script>
-    <script src="js/club-management.js?v=20260129-v10"></script>
-    <script src="js/clubs-detail.js?v=20260129-v2"></script>
-    <script src="js/clubs-requests.js?v=20260129-v3"></script>
-    <script src="js/clubs-form.js?v=20260130-v3"></script>
-    <script src="js/clubs-ui.js?v=20260127-v1"></script>
+    <script src="js/clubs-list.js?v=20260201-v5"></script>
+    <script src="js/club-management.js?v=20260201-v11"></script>
+    <script src="js/clubs-detail.js?v=20260201-v3"></script>
+    <script src="js/clubs-requests.js?v=20260201-v4"></script>
+    <script src="js/clubs-form.js?v=20260201-v4"></script>
+    <script src="js/clubs-ui.js?v=20260201-v2"></script>
     
     <!-- App -->
-    <script src="js/app.js?v=20260201-v8"></script>
+    <script src="js/app.js?v=20260201-v9"></script>
 </body>
 </html>
