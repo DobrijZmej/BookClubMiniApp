@@ -556,23 +556,22 @@
 .star-half {
     position: relative;
     display: inline-block;
-    width: 0.5em;
+    width: 1em;
     height: 1em;
-    overflow: hidden;
     cursor: pointer;
     color: var(--color-border);
     transition: color var(--transition-fast);
     user-select: none;
+    overflow: hidden;
 }
 
-/* Ліва половина - показуємо ліву частину зірки */
+/* Обрізання через clip-path */
 .star-left {
-    text-align: left;
+    clip-path: inset(0 50% 0 0);
 }
 
-/* Права половина - показуємо праву частину зірки */
 .star-right {
-    text-align: right;
+    clip-path: inset(0 0 0 50%);
     margin-right: var(--space-xs);
 }
 
