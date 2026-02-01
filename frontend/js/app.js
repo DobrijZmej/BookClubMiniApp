@@ -271,6 +271,59 @@
         });
     }
     
+    // View Mode Switcher (Books / Activity Feed)
+    const viewModeButtons = document.querySelectorAll('.view-mode-button');
+    viewModeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const mode = button.dataset.mode;
+            
+            // Update active button
+            viewModeButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            
+            // Show/hide corresponding views
+            if (mode === 'books') {
+                document.getElementById('books-view').style.display = 'block';
+                document.getElementById('activity-view').style.display = 'none';
+            } else if (mode === 'activity') {
+                document.getElementById('books-view').style.display = 'none';
+                document.getElementById('activity-view').style.display = 'block';
+                
+                // Load activity feed if club is selected
+                if (ClubsUI.currentClubId) {
+                    UIActivity.loadActivity(ClubsUI.currentClubId);
+                }
+            }
+            
+            tg.HapticFeedback.impactOccurred('light');
+        });
+    });
+    
+    // Activity Filter Chips
+    const filterChips = document.querySelectorAll('.filter-chip');
+    filterChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            const eventType = chip.dataset.eventType;
+            UIActivity.setEventTypeFilter(eventType);
+            tg.HapticFeedback.impactOccurred('light');
+        });
+    });
+    
+    // Load More Activity Button
+    const loadMoreButton = document.getElementById('load-more-activity');
+    if (loadMoreButton) {
+        loadMoreButton.addEventListener('click', () => {
+            if (ClubsUI.currentClubId) {
+                UIActivity.loadActivity(
+                    ClubsUI.currentClubId, 
+                    UIActivity.currentEventType, 
+                    UIActivity.currentOffset
+                );
+            }
+            tg.HapticFeedback.impactOccurred('light');
+        });
+    }
+    
     // Форма додавання книги обробляється в модулі `UIBookForm`.
     
     // Закриття модального вікна

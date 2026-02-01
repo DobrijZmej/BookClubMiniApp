@@ -285,6 +285,17 @@ const API = {
                 method: 'PATCH',
                 body: JSON.stringify({ role })
             });
+        },
+        
+        // Отримати стрічку активностей клубу
+        async getActivity(clubId, eventType = '', limit = 50, offset = 0) {
+            const params = new URLSearchParams();
+            if (eventType) params.append('event_type', eventType);
+            params.append('limit', limit.toString());
+            params.append('offset', offset.toString());
+            
+            const query = params.toString() ? `?${params}` : '';
+            return API.request(`/api/clubs/${clubId}/activity${query}`);
         }
     },
 

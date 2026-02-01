@@ -185,3 +185,47 @@ class JoinRequestAction(BaseModel):
 class MemberRoleUpdate(BaseModel):
     """Схема для зміни ролі учасника клубу"""
     role: str = Field(..., pattern="^(ADMIN|MEMBER)$")  # Тільки ADMIN або MEMBER, OWNER не можна змінювати
+
+
+# Activity Feed Schemas
+class ActivityEventType(str, Enum):
+    ADD_BOOK = "ADD_BOOK"
+    BORROW_BOOK = "BORROW_BOOK"
+    RETURN_BOOK = "RETURN_BOOK"
+    REVIEW_BOOK = "REVIEW_BOOK"
+
+
+class ActivityActor(BaseModel):
+    """Актор події (користувач, який виконав дію)"""
+    user_id: str
+    display_name: str
+    username: Optional[str] = None
+
+
+class ActivityBook(BaseModel):
+    """Книга, до якої відноситься подія"""
+    book_id: int
+    title: str
+    author: Optional[str] = None
+    cover_url: Optional[str] = None
+
+
+class ActivityEvent(BaseModel):
+    """Подія стрічки активностей клубу"""
+    event_id: str
+    event_type: ActivityEventType
+    event_time: datetime
+    actor: ActivityActor
+    book: ActivityBook
+    rating: Optional[int] = Field(None, ge=1, le=5)
+    review_text: Optional[str] = None
+    
+    class Config:
+        from_attributes = True
+
+
+class ActivityFeedResponse(BaseModel):
+    """Відповідь зі стрічкою подій"""
+    events: List[ActivityEvent]
+    total_count: int
+    has_more: bool

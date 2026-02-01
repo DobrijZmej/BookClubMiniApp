@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="css/onboarding.css?v=20260130-v4">
     <link rel="stylesheet" href="css/books.css?v=20260201-v4">
     <link rel="stylesheet" href="css/book-form.css?v=20260127-v1">
+    <link rel="stylesheet" href="css/activity-feed.css?v=20260201-v1">
 </head>
 <body>
     <!-- Loader -->
@@ -150,8 +151,22 @@
                     Опис клубу завантажується...
                 </div>
                 
-                <!-- Search and Filter Section -->
-                <div class="books-controls">
+                <!-- View Mode Switcher -->
+                <div class="view-mode-switcher">
+                    <button class="view-mode-button active" id="view-mode-books" data-mode="books">
+                        <span class="icon-emoji">📚</span>
+                        <span>Книги</span>
+                    </button>
+                    <button class="view-mode-button" id="view-mode-activity" data-mode="activity">
+                        <span class="icon-emoji">📰</span>
+                        <span>Стрічка</span>
+                    </button>
+                </div>
+                
+                <!-- Books View -->
+                <div id="books-view" class="club-content-view">
+                    <!-- Search and Filter Section -->
+                    <div class="books-controls">
                     <div class="search-box">
                         <span class="icon-emoji search-icon">🔍</span>
                         <input type="text" id="search-input" class="search-input" placeholder="Пошук книги">
@@ -196,12 +211,34 @@
                     <div class="empty-description">Додайте першу книгу!</div>
                 </div>
             </div>
-
-            <!-- Add/Edit Book Modal -->
-            <div id="add-book-view" class="modal">
-                <div class="modal-content club-form-modal-content">
-                    <!-- Modal Header -->
-                    <div class="club-form-header">
+                
+                <!-- Activity Feed View -->
+                <div id="activity-view" class="club-content-view" style="display: none;">
+                    <!-- Event Type Filter -->
+                    <div class="activity-filter-chips">
+                        <button class="filter-chip active" data-event-type="">Усе</button>
+                        <button class="filter-chip" data-event-type="ADD_BOOK">Додали</button>
+                        <button class="filter-chip" data-event-type="BORROW_BOOK">Взяли</button>
+                        <button class="filter-chip" data-event-type="RETURN_BOOK">Повернули</button>
+                        <button class="filter-chip" data-event-type="REVIEW_BOOK">Відгуки</button>
+                    </div>
+                    
+                    <!-- Activity Feed List -->
+                    <div id="activity-feed" class="activity-feed">
+                        <!-- Events will be loaded here -->
+                    </div>
+                    
+                    <!-- Load More Button -->
+                    <button id="load-more-activity" class="btn btn-secondary btn-full" style="display: none; margin-top: var(--space-md);">
+                        Показати ще
+                    </button>
+                    
+                    <div id="activity-empty-state" class="empty-state" style="display: none;">
+                        <div class="empty-icon">📰</div>
+                        <div class="empty-title">Подій поки немає</div>
+                        <div class="empty-description">Активність клубу з'явиться тут</div>
+                    </div>
+                </div>
                         <div class="club-form-header-left">
                             <div class="app-icon">📚</div>
                             <span class="app-title">Книжковий Обмін</span>
@@ -555,6 +592,7 @@
     <!-- UI Modules -->
     <script src="js/ui-utils.js?v=20260127-v1"></script>
     <script src="js/ui-books.js?v=20260201-v8"></script>
+    <script src="js/ui-activity.js?v=20260201-v1"></script>
     <script src="js/ui-book-form.js?v=20260129-v2"></script>
     <script src="js/ui-reviews.js?v=20260127-v4"></script>
     <script src="js/ui.js?v=20260127-v2"></script>
@@ -568,6 +606,6 @@
     <script src="js/clubs-ui.js?v=20260127-v1"></script>
     
     <!-- App -->
-    <script src="js/app.js?v=20260201-v7"></script>
+    <script src="js/app.js?v=20260201-v8"></script>
 </body>
 </html>

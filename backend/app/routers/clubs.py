@@ -11,12 +11,14 @@ from app.database import get_db
 from app.auth import get_current_user
 from app.models.db_models import (
     Club, ClubMember, ClubJoinRequest, ClubStatus, 
-    MemberRole, JoinRequestStatus, Book, BookStatus
+    MemberRole, JoinRequestStatus, Book, BookStatus,
+    BookLoan, BookReview
 )
 from app.models.schemas import (
     ClubCreate, ClubUpdate, ClubResponse, ClubDetailResponse,
     ClubMemberResponse, JoinRequestCreate, JoinRequestResponse,
-    JoinRequestAction, MemberRoleUpdate
+    JoinRequestAction, MemberRoleUpdate, ActivityFeedResponse,
+    ActivityEvent, ActivityEventType, ActivityActor, ActivityBook
 )
 from app.utils import file_storage
 
@@ -724,3 +726,173 @@ async def delete_club(
     logger.success(f"✅ Club {club_id} marked as deleted by owner {user_id}")
     
     return None
+
+
+@router.get("/{club_id}/activity", response_model=ActivityFeedResponse)
+async def get_club_activity(
+    club_id: int,
+    event_type: str = Query(None, description="Фільтр по типу події: ADD_BOOK, BORROW_BOOK, RETURN_BOOK, REVIEW_BOOK"),
+    limit: int = Query(50, ge=1, le=100, description="Кількість подій на сторінку"),
+    offset: int = Query(0, ge=0, description="Зсув для пагінації"),
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user)
+):
+    """Отримати стрічку активностей клубу"""
+    user_id = str(user['user']['id'])
+    
+    # Перевірка членства в клубі
+    member = db.query(ClubMember).filter(
+        ClubMember.club_id == club_id,
+        ClubMember.user_id == user_id
+    ).first()
+    
+    if not member:
+        raise HTTPException(status_code=403, detail="Ви не є членом цього клубу")
+    
+    # SQL-запит з UNION ALL для агрегації всіх типів подій
+    from sqlalchemy import text
+    
+    # Базовий SQL для кожного типу події
+    add_book_query = """
+        SELECT 
+            CONCAT('book_', b.id) as event_id,
+            'ADD_BOOK' as event_type,
+            b.created_at as event_time,
+            b.owner_id as actor_id,
+            b.owner_name as actor_name,
+            b.owner_username as actor_username,
+            b.id as book_id,
+            b.title as book_title,
+            b.author as book_author,
+            b.cover_url as book_cover_url,
+            NULL as rating,
+            NULL as review_text
+        FROM books b
+        WHERE b.club_id = :club_id AND b.status != 'DELETED'
+    """
+    
+    borrow_query = """
+        SELECT 
+            CONCAT('loan_', bl.id, '_borrow') as event_id,
+            'BORROW_BOOK' as event_type,
+            bl.borrowed_at as event_time,
+            bl.user_id as actor_id,
+            cm.user_name as actor_name,
+            bl.username as actor_username,
+            b.id as book_id,
+            b.title as book_title,
+            b.author as book_author,
+            b.cover_url as book_cover_url,
+            NULL as rating,
+            NULL as review_text
+        FROM book_loans bl
+        JOIN books b ON bl.book_id = b.id
+        LEFT JOIN club_members cm ON (bl.user_id = cm.user_id AND cm.club_id = :club_id)
+        WHERE b.club_id = :club_id AND b.status != 'DELETED'
+    """
+    
+    return_query = """
+        SELECT 
+            CONCAT('loan_', bl.id, '_return') as event_id,
+            'RETURN_BOOK' as event_type,
+            bl.returned_at as event_time,
+            bl.user_id as actor_id,
+            cm.user_name as actor_name,
+            bl.username as actor_username,
+            b.id as book_id,
+            b.title as book_title,
+            b.author as book_author,
+            b.cover_url as book_cover_url,
+            NULL as rating,
+            NULL as review_text
+        FROM book_loans bl
+        JOIN books b ON bl.book_id = b.id
+        LEFT JOIN club_members cm ON (bl.user_id = cm.user_id AND cm.club_id = :club_id)
+        WHERE b.club_id = :club_id AND b.status != 'DELETED' AND bl.returned_at IS NOT NULL
+    """
+    
+    review_query = """
+        SELECT 
+            CONCAT('review_', br.id) as event_id,
+            'REVIEW_BOOK' as event_type,
+            br.created_at as event_time,
+            br.user_id as actor_id,
+            cm.user_name as actor_name,
+            br.username as actor_username,
+            b.id as book_id,
+            b.title as book_title,
+            b.author as book_author,
+            b.cover_url as book_cover_url,
+            br.rating as rating,
+            br.comment as review_text
+        FROM book_reviews br
+        JOIN books b ON br.book_id = b.id
+        LEFT JOIN club_members cm ON (br.user_id = cm.user_id AND cm.club_id = :club_id)
+        WHERE b.club_id = :club_id AND b.status != 'DELETED'
+    """
+    
+    # Фільтр по типу події
+    queries = []
+    if not event_type or event_type == "ADD_BOOK":
+        queries.append(add_book_query)
+    if not event_type or event_type == "BORROW_BOOK":
+        queries.append(borrow_query)
+    if not event_type or event_type == "RETURN_BOOK":
+        queries.append(return_query)
+    if not event_type or event_type == "REVIEW_BOOK":
+        queries.append(review_query)
+    
+    # Об'єднуємо запити через UNION ALL
+    combined_query = " UNION ALL ".join(queries)
+    
+    # Додаємо сортування та пагінацію
+    final_query = f"""
+        WITH all_events AS ({combined_query})
+        SELECT * FROM all_events
+        ORDER BY event_time DESC
+        LIMIT :limit OFFSET :offset
+    """
+    
+    # Виконуємо запит
+    result = db.execute(text(final_query), {"club_id": club_id, "limit": limit + 1, "offset": offset}).fetchall()
+    
+    # Перевіряємо чи є ще події (для has_more)
+    has_more = len(result) > limit
+    events_data = result[:limit] if has_more else result
+    
+    # Конвертуємо результат в Pydantic моделі
+    events = []
+    for row in events_data:
+        actor = ActivityActor(
+            user_id=row.actor_id,
+            display_name=row.actor_name or row.actor_username or "Невідомо",
+            username=row.actor_username
+        )
+        
+        book = ActivityBook(
+            book_id=row.book_id,
+            title=row.book_title,
+            author=row.book_author,
+            cover_url=row.book_cover_url
+        )
+        
+        event = ActivityEvent(
+            event_id=row.event_id,
+            event_type=row.event_type,
+            event_time=row.event_time,
+            actor=actor,
+            book=book,
+            rating=row.rating,
+            review_text=row.review_text
+        )
+        events.append(event)
+    
+    # Підрахунок загальної кількості (без фільтра limit/offset)
+    count_query = f"SELECT COUNT(*) as total FROM ({combined_query}) as all_events"
+    total_count = db.execute(text(count_query), {"club_id": club_id}).scalar()
+    
+    return ActivityFeedResponse(
+        events=events,
+        total_count=total_count,
+        has_more=has_more
+    )
