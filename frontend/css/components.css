@@ -565,13 +565,13 @@
     overflow: hidden;
 }
 
-/* Обрізання через clip-path */
+/* Обрізання через clip-path (враховуючи row-reverse) */
 .star-left {
-    clip-path: inset(0 50% 0 0);
+    clip-path: inset(0 0 0 50%); /* Обрізає ліву частину, показує праву */
 }
 
 .star-right {
-    clip-path: inset(0 0 0 50%);
+    clip-path: inset(0 50% 0 0); /* Обрізає праву частину, показує ліву */
     margin-right: var(--space-xs);
 }
 
