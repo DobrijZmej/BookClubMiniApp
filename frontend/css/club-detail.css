@@ -152,12 +152,15 @@
     user-select: none;
 }
 
-.member-tag:hover {
-    background-color: var(--color-primary);
-    border-color: var(--color-primary);
-    color: white;
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-sm);
+/* Hover ефект тільки для пристроїв з мишкою */
+@media (hover: hover) {
+    .member-tag:hover {
+        background-color: var(--color-primary);
+        border-color: var(--color-primary);
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-sm);
+    }
 }
 
 .member-tag .icon-emoji {
