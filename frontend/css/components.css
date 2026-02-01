@@ -11,6 +11,38 @@
     line-height: 1;
 }
 
+/* Star Display (для відображення рейтингів SVG) */
+.star-display {
+    display: inline-block;
+    width: 1.2em;
+    height: 1.2em;
+    vertical-align: middle;
+}
+
+.star-full {
+    color: var(--color-warning);
+}
+
+.star-half-display {
+    color: var(--color-warning);
+    position: relative;
+    overflow: hidden;
+}
+
+.star-half-display::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    background: var(--color-background);
+}
+
+.star-empty {
+    color: var(--color-border);
+}
+
 /* Generic Buttons */
 .btn {
     padding: var(--space-sm) var(--space-md);

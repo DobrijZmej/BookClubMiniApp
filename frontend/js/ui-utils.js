@@ -48,28 +48,40 @@ const UIUtils = {
     },
 
     /**
-     * Згенерувати зірки рейтингу для відображення
+     * Згенерувати зірки рейтингу для відображення (SVG з підтримкою половинок)
      */
     generateStarRating(rating) {
         const fullStars = Math.floor(rating);
-        const hasHalfStar = rating % 1 >= 0.5;
-        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+        const remainder = rating % 1;
+        const hasHalfStar = remainder >= 0.25 && remainder < 0.75;
+        const hasFullFromHalf = remainder >= 0.75;
+        const actualFullStars = fullStars + (hasFullFromHalf ? 1 : 0);
+        const emptyStars = 5 - actualFullStars - (hasHalfStar ? 1 : 0);
+        
+        const svgStar = (type) => {
+            const classes = {
+                'full': 'star-display star-full',
+                'half': 'star-display star-half-display',
+                'empty': 'star-display star-empty'
+            };
+            return `<svg viewBox="0 0 24 24" class="${classes[type]}" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
+        };
         
         let stars = '';
         
         // Повні зірки
-        for (let i = 0; i < fullStars; i++) {
-            stars += '⭐';
+        for (let i = 0; i < actualFullStars; i++) {
+            stars += svgStar('full');
         }
         
         // Половина зірки
         if (hasHalfStar) {
-            stars += '⭐'; // Використаємо повну зірку
+            stars += svgStar('half');
         }
         
         // Порожні зірки
         for (let i = 0; i < emptyStars; i++) {
-            stars += '☆';
+            stars += svgStar('empty');
         }
         
         return stars;

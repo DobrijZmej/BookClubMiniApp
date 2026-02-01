@@ -85,7 +85,7 @@ const UIActivity = {
         
         let reviewHtml = '';
         if (event.event_type === 'REVIEW_BOOK' && event.rating) {
-            const stars = '⭐'.repeat(event.rating);
+            const stars = UIUtils.generateStarRating(event.rating);
             const reviewPreview = event.review_text ? 
                 ` – ${UIUtils.escapeHtml(event.review_text.substring(0, 50))}${event.review_text.length > 50 ? '…' : ''}` : '';
             reviewHtml = `
