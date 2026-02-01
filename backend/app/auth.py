@@ -68,7 +68,9 @@ def validate_telegram_init_data(init_data: str, bot_token: str) -> dict:
     except json.JSONDecodeError:
         raise HTTPException(status_code=401, detail="Invalid user data")
     except Exception as e:
-        raise HTTPException(status_code=401, detail=f"Validation failed: {str(e)}")
+        # Log the actual error but don't expose it to the client
+        logger.error(f"Telegram validation error: {str(e)}")
+        raise HTTPException(status_code=401, detail="Authentication failed")
 
 
 async def get_current_user(x_telegram_init_data: Optional[str] = Header(None)):

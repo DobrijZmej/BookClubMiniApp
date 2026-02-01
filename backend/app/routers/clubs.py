@@ -846,26 +846,12 @@ async def get_club_activity(
             NULL as rating,
             NULL as review_text
         FROM club_members cm
-        WHERE cm.club_id = :club_id AND cm.status = 'APPROVED'
+        WHERE cm.club_id = :club_id
     """
     
-    member_left_query = """
-        SELECT 
-            CONCAT('member_leave_', cm.id) as event_id,
-            'MEMBER_LEFT' as event_type,
-            cm.left_at as event_time,
-            cm.user_id as actor_id,
-            cm.user_name as actor_name,
-            cm.username as actor_username,
-            NULL as book_id,
-            NULL as book_title,
-            NULL as book_author,
-            NULL as book_cover_url,
-            NULL as rating,
-            NULL as review_text
-        FROM club_members cm
-        WHERE cm.club_id = :club_id AND cm.status = 'LEFT' AND cm.left_at IS NOT NULL
-    """
+    # Note: MEMBER_LEFT events cannot be tracked because when a member leaves,
+    # they are deleted from club_members table. We would need a separate audit table for this.
+    member_left_query = None
     
     # Фільтр по типу події
     queries = []
@@ -879,8 +865,7 @@ async def get_club_activity(
         queries.append(review_query)
     if not event_type or event_type == "MEMBER_JOINED":
         queries.append(member_joined_query)
-    if not event_type or event_type == "MEMBER_LEFT":
-        queries.append(member_left_query)
+    # MEMBER_LEFT is not available because members are deleted from the table
     
     # Об'єднуємо запити через UNION ALL
     combined_query = " UNION ALL ".join(queries)

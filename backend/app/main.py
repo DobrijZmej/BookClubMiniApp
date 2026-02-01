@@ -363,18 +363,27 @@ async def global_exception_handler(request: Request, exc: Exception):
         f"Traceback: {traceback.format_exc()}"
     )
     
+    # SECURITY: Never expose SQL queries, tracebacks, or detailed error messages to frontend
+    # Even in debug mode, only log detailed errors, don't send them to client
+    
+    # Generic error message for all cases
+    error_message = "Помилка сервера. Спробуйте пізніше."
+    
+    # In debug mode, we can be slightly more helpful but still safe
     if os.getenv("DEBUG") == "True":
+        error_type = exc.__class__.__name__
+        # Only expose safe error type, not the message (which may contain SQL)
         return JSONResponse(
             status_code=500,
             content={
-                "detail": str(exc),
-                "traceback": traceback.format_exc()
+                "detail": error_message,
+                "error_type": error_type
             }
         )
     
     return JSONResponse(
         status_code=500,
-        content={"detail": "Internal server error"}
+        content={"detail": error_message}
     )
 
 
