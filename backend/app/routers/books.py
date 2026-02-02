@@ -860,6 +860,10 @@ async def download_google_cover(
         response = requests.get(secure_url, headers=headers, timeout=10)
         response.raise_for_status()
         
+        # Log response headers for debugging
+        content_type = response.headers.get('content-type', 'image/jpeg')
+        logger.debug(f"Google Books image response: content-type={content_type}, size={len(response.content)} bytes")
+        
         # Create UploadFile-like object from bytes
         image_bytes = response.content
         
@@ -881,6 +885,10 @@ async def download_google_cover(
         
         # Create UploadFile with proper parameters
         upload_file = UploadFile(filename=filename, file=temp_file)
+        # Set content_type manually BEFORE calling save
+        upload_file.content_type = content_type
+        
+        logger.debug(f"UploadFile created: filename={filename}, content_type={upload_file.content_type}")
         
         # Save using file_storage
         if book_id:
