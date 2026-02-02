@@ -6,6 +6,8 @@ from typing import List, Optional
 from loguru import logger
 from collections import defaultdict
 from datetime import datetime as dt, timedelta
+import requests
+import io
 
 from app.database import get_db
 from app.models.db_models import Book, BookLoan, BookStatus, LoanStatus, Club, BookReview, ClubMember
@@ -827,4 +829,90 @@ async def search_google_books(
         raise HTTPException(
             status_code=500,
             detail="Помилка при пошуку в Google Books"
+        )
+
+
+@router.post("/google/download-cover")
+async def download_google_cover(
+    image_url: str = Query(..., description="Google Books image URL"),
+    book_id: Optional[int] = Query(None, description="Book ID for naming (optional)"),
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user)
+):
+    """
+    Download Google Books cover image through backend to avoid CORS issues.
+    Returns local URL of saved image.
+    """
+    user_id = str(user['user']['id'])
+    
+    try:
+        # Convert http to https
+        secure_url = image_url.replace('http://', 'https://')
+        
+        logger.info(f"Downloading Google cover for user {user_id}: {secure_url}")
+        
+        # Download image
+        headers = {
+            'User-Agent': 'BookClubMiniApp/1.0 (Telegram Mini App)',
+            'Accept': 'image/*'
+        }
+        
+        response = requests.get(secure_url, headers=headers, timeout=10)
+        response.raise_for_status()
+        
+        # Create UploadFile-like object from bytes
+        image_bytes = response.content
+        
+        # Determine filename
+        if book_id:
+            filename = f"google_cover_book_{book_id}.jpg"
+        else:
+            import hashlib
+            url_hash = hashlib.md5(secure_url.encode()).hexdigest()[:8]
+            filename = f"google_cover_{url_hash}.jpg"
+        
+        # Create a file-like object
+        file_obj = io.BytesIO(image_bytes)
+        
+        # Save through file_storage (create temporary UploadFile wrapper)
+        from fastapi import UploadFile
+        from tempfile import SpooledTemporaryFile
+        
+        temp_file = SpooledTemporaryFile(max_size=10 * 1024 * 1024)  # 10MB max
+        temp_file.write(image_bytes)
+        temp_file.seek(0)
+        
+        upload_file = UploadFile(
+            filename=filename,
+            file=temp_file,
+            content_type=response.headers.get('content-type', 'image/jpeg')
+        )
+        
+        # Save using file_storage
+        if book_id:
+            cover_url = file_storage.save_book_cover(book_id, upload_file)
+        else:
+            # Save to temporary location
+            cover_url = file_storage.save_book_cover(0, upload_file)  # Use 0 for temp
+        
+        temp_file.close()
+        
+        logger.success(f"✅ Google cover downloaded and saved: {cover_url}")
+        
+        return {
+            "cover_url": cover_url,
+            "original_url": secure_url
+        }
+        
+    except requests.RequestException as e:
+        logger.error(f"Failed to download Google image: {e}")
+        raise HTTPException(
+            status_code=502,
+            detail="Не вдалося завантажити зображення з Google Books"
+        )
+    except Exception as e:
+        logger.error(f"Error processing Google cover: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail="Помилка при обробці зображення"
         )

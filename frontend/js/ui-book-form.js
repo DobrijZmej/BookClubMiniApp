@@ -297,29 +297,32 @@ const UIBookForm = (() => {
   }
   
   async function applyGoogleData(bookData, applyCover, applyDescription) {
-    // Apply cover - download and convert to file
+    // Apply cover - download through backend to avoid CORS
     if (applyCover && bookData.image) {
       const coverUrl = bookData.image.thumbnail || bookData.image.smallThumbnail;
       if (coverUrl && els.coverPreview) {
         try {
-          // Download image
-          const response = await fetch(coverUrl);
-          const blob = await response.blob();
-          const file = new File([blob], 'google-cover.jpg', { type: blob.type });
+          // Download image through backend
+          const bookId = getEditingId(); // Current book ID if editing
+          const result = await API.books.downloadGoogleCover(coverUrl, bookId);
           
-          // Update preview
-          els.coverPreview.src = URL.createObjectURL(blob);
-          
-          // Update file input
-          const dataTransfer = new DataTransfer();
-          dataTransfer.items.add(file);
-          if (els.coverInput) {
-            els.coverInput.files = dataTransfer.files;
+          if (result && result.cover_url) {
+            // Update preview with local URL
+            els.coverPreview.src = result.cover_url;
+            
+            // Mark that cover is from Google (already saved)
+            coverSource = 'google';
+            
+            // Clear file input - cover already uploaded
+            if (els.coverInput) {
+              els.coverInput.value = '';
+            }
+            
+            console.log('✅ Google cover downloaded and saved:', result.cover_url);
           }
-          
-          coverSource = 'google';
         } catch (err) {
           console.error('Failed to download Google cover:', err);
+          tg.showAlert?.('Не вдалося завантажити обкладинку');
         }
       }
     }

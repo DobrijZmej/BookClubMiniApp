@@ -175,6 +175,16 @@ const API = {
             if (author) params.append('author', author);
             
             return API.request(`/api/books/google/search?${params.toString()}`);
+        },
+        
+        async downloadGoogleCover(imageUrl, bookId = null) {
+            const params = new URLSearchParams();
+            params.append('image_url', imageUrl);
+            if (bookId) params.append('book_id', bookId);
+            
+            return API.request(`/api/books/google/download-cover?${params.toString()}`, {
+                method: 'POST'
+            });
         }
     },
 
