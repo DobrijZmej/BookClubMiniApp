@@ -23,7 +23,12 @@ class GoogleBooksService:
     
     def __init__(self, db: Session):
         self.db = db
-        self.api_key = os.getenv('GOOGLE_BOOKS_API_KEY', '')
+        self.api_key = os.getenv('GOOGLE_BOOKS_API_KEY', '').strip()
+        
+        if self.api_key:
+            logger.info(f"✅ Google Books API key configured: {self.api_key[:10]}...")
+        else:
+            logger.warning("⚠️ GOOGLE_BOOKS_API_KEY not set in .env - rate limits will be strict (1000 req/day)")
         
     def normalize_string(self, s: str) -> str:
         """Normalize string for comparison: lowercase, remove extra spaces, trim"""
@@ -204,10 +209,19 @@ class GoogleBooksService:
         
         if self.api_key:
             params['key'] = self.api_key
+            logger.debug(f"Using API key: {self.api_key[:10]}...")
+        else:
+            logger.warning("⚠️ No API key provided - rate limits will be strict")
+        
+        # Add headers
+        headers = {
+            'User-Agent': 'BookClubMiniApp/1.0 (Telegram Mini App)',
+            'Accept': 'application/json'
+        }
         
         try:
             logger.info(f"🔍 Searching Google Books: {query}")
-            response = requests.get(self.API_BASE_URL, params=params, timeout=10)
+            response = requests.get(self.API_BASE_URL, params=params, headers=headers, timeout=10)
             response.raise_for_status()
             data = response.json()
             
@@ -301,8 +315,17 @@ class GoogleBooksService:
             
             return result
             
+        except requests.HTTPError as e:
+            if e.response.status_code == 429:
+                logger.error(f"❌ Google Books API rate limit exceeded (429). Please add GOOGLE_BOOKS_API_KEY to .env")
+                # Check if API key is configured
+                if not self.api_key:
+                    logger.error("💡 Hint: Get API key from https://console.cloud.google.com/ → Books API")
+            else:
+                logger.error(f"Google Books API HTTP error: {e.response.status_code} - {e}")
+            return None
         except requests.RequestException as e:
-            logger.error(f"Google Books API error: {e}")
+            logger.error(f"Google Books API request error: {e}")
             return None
         except Exception as e:
             logger.error(f"Unexpected error in Google Books search: {e}")
