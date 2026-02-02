@@ -55,7 +55,7 @@
         
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 12px;
             margin-bottom: 16px;
         }
@@ -327,6 +327,16 @@
                     <h3>Активних користувачів</h3>
                     <div class="stat-value" id="unique-users">0</div>
                 </div>
+                
+                <div class="stat-card">
+                    <h3>Відкриттів додатку</h3>
+                    <div class="stat-value" id="app-opens">0</div>
+                </div>
+                
+                <div class="stat-card">
+                    <h3>Нових користувачів</h3>
+                    <div class="stat-value" id="new-users">0</div>
+                </div>
             </div>
             
             <div class="section">
@@ -409,7 +419,9 @@
                 'review_created': '⭐ Новий відгук',
                 'member_joined': '👥 Приєднався',
                 'book_borrowed': '📚 Взяв книгу',
-                'book_returned': '✅ Повернув книгу'
+                'book_returned': '✅ Повернув книгу',
+                'app_opened': '🚀 Відкрив додаток',
+                'activity_feed_view': '📰 Переглянув стрічку'
             };
             return labels[type] || type;
         }
@@ -505,6 +517,12 @@
                 document.getElementById('books-count').textContent = Object.keys(data.books || {}).length;
                 document.getElementById('reviews-count').textContent = (data.reviews_total || 0).toLocaleString();
                 document.getElementById('unique-users').textContent = (data.unique_users?.length || 0).toLocaleString();
+                
+                // Нові метрики: відкриття додатку
+                const totalAppOpens = Object.values(data.daily_activity || {}).reduce((sum, day) => sum + (day.app_opens || 0), 0);
+                const totalNewUsers = Object.values(data.daily_activity || {}).reduce((sum, day) => sum + (day.new_users || 0), 0);
+                document.getElementById('app-opens').textContent = totalAppOpens.toLocaleString();
+                document.getElementById('new-users').textContent = totalNewUsers.toLocaleString();
                 
                 // Clubs table
                 const clubsTable = document.getElementById('clubs-table');

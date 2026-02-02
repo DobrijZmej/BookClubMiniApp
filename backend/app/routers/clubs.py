@@ -111,7 +111,15 @@ async def get_my_clubs(
     user: dict = Depends(get_current_user)
 ):
     """Отримати список клубів користувача (включно з pending заявками)"""
+    from app.analytics import track_activity
+    
     user_id = str(user['user']['id'])
+    
+    # Відстежуємо відкриття додатку
+    track_activity(
+        activity_type="app_opened",
+        user_id=user_id
+    )
     
     result = []
     

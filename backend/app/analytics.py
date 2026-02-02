@@ -18,10 +18,11 @@ def ensure_stats_file():
             "books": {},  # {book_id: {title, club_name, views, borrows, reviews, last_activity}}
             "reviews_total": 0,
             "unique_users": [],
-            "daily_activity": {},  # {date: {clubs_views, books_views, reviews, joins}}
+            "daily_activity": {},  # {date: {clubs_views, books_views, reviews, joins, app_opens, new_users}}
             "recent_activity": [],  # Last 50 activities
             "first_activity": None,
-            "last_activity": None
+            "last_activity": None,
+            "app_opens": {}  # {user_id: {first_open, last_open, total_opens}}
         }, indent=2))
 
 def load_stats() -> Dict[str, Any]:
@@ -42,7 +43,8 @@ def load_stats() -> Dict[str, Any]:
             "daily_activity": {},
             "recent_activity": [],
             "first_activity": None,
-            "last_activity": None
+            "last_activity": None,
+            "app_opens": {}  # {user_id: {first_open, last_open, total_opens}}
         }
         
         for key, default_value in default_structure.items():
@@ -58,7 +60,9 @@ def load_stats() -> Dict[str, Any]:
             "reviews": 0,
             "joins": 0,
             "activity_feed_views": 0,
-            "search_count": 0
+            "search_count": 0,
+            "app_opens": 0,
+            "new_users": 0
         }
         
         for date, daily_data in stats.get("daily_activity", {}).items():
@@ -186,7 +190,9 @@ def track_activity(activity_type: str, user_id: Optional[str] = None,
                 "reviews": 0,
                 "joins": 0,
                 "activity_feed_views": 0,
-                "search_count": 0
+                "search_count": 0,
+                "app_opens": 0,
+                "new_users": 0
             }
         
         if activity_type == "club_view":
@@ -201,6 +207,24 @@ def track_activity(activity_type: str, user_id: Optional[str] = None,
             stats["daily_activity"][today]["activity_feed_views"] += 1
         elif activity_type == "search_used":
             stats["daily_activity"][today]["search_count"] += 1
+        elif activity_type == "app_opened":
+            stats["daily_activity"][today]["app_opens"] += 1
+            
+            # Track per-user app opens
+            if user_id:
+                if "app_opens" not in stats:
+                    stats["app_opens"] = {}
+                
+                if user_id not in stats["app_opens"]:
+                    stats["app_opens"][user_id] = {
+                        "first_open": now,
+                        "last_open": now,
+                        "total_opens": 1
+                    }
+                    stats["daily_activity"][today]["new_users"] += 1
+                else:
+                    stats["app_opens"][user_id]["last_open"] = now
+                    stats["app_opens"][user_id]["total_opens"] += 1
         
         # Recent activity log (keep last 50)
         activity_entry = {
