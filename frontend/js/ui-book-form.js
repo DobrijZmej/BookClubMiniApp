@@ -115,9 +115,15 @@ const UIBookForm = (() => {
     // Track existing data sources
     if (book.cover_url && book.cover_url !== 'images/book_default_cover.png') {
       coverSource = book.cover_source || 'user';
+    } else {
+      // Explicitly set to default if no cover or default cover
+      coverSource = 'default';
+      googleCoverUrl = null; // Ensure Google cover URL is cleared
     }
     if (book.description) {
       descriptionSource = book.description_source || 'user';
+    } else {
+      descriptionSource = 'empty';
     }
     
     updateGoogleSearchButton();
@@ -372,6 +378,8 @@ const UIBookForm = (() => {
   }
   
   async function applyGoogleData(bookData, applyCover, applyDescription) {
+    console.log('📘 applyGoogleData called:', { applyCover, applyDescription, hasImage: !!bookData.image, bookId: getEditingId() });
+    
     // Apply cover - download through backend to avoid CORS
     if (applyCover && bookData.image) {
       const coverUrl = bookData.image.thumbnail || bookData.image.smallThumbnail;
@@ -379,7 +387,11 @@ const UIBookForm = (() => {
         try {
           // Download image through backend
           const bookId = getEditingId(); // Current book ID if editing
+          console.log('⬇️ Downloading cover from Google:', { coverUrl, bookId });
+          
           const result = await API.books.downloadGoogleCover(coverUrl, bookId);
+          
+          console.log('✅ Download result:', result);
           
           if (result && result.cover_url) {
             // Update preview with local URL
@@ -396,13 +408,17 @@ const UIBookForm = (() => {
               els.coverInput.value = '';
             }
             
-            console.log('✅ Google cover downloaded and saved:', result.cover_url);
+            console.log('✅ Google cover applied:', { googleCoverUrl, coverSource });
           }
         } catch (err) {
           console.error('Failed to download Google cover:', err);
           tg.showAlert?.('Не вдалося завантажити обкладинку');
         }
+      } else {
+        console.warn('❌ Cover not applied: coverUrl or coverPreview missing', { coverUrl, hasPreview: !!els.coverPreview });
       }
+    } else {
+      console.log('⏭️ Skipping cover:', { applyCover, hasImage: !!bookData.image });
     }
     
     // Apply description
