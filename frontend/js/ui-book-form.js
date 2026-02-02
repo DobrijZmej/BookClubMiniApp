@@ -6,6 +6,7 @@ const UIBookForm = (() => {
   let coverSource = 'default'; // 'default' | 'user' | 'google'
   let descriptionSource = 'empty'; // 'empty' | 'user' | 'google'
   let googleBookData = null; // Cache Google Books result
+  let googleCoverUrl = null; // URL of downloaded Google cover
 
   function q(id) { return document.getElementById(id); }
 
@@ -58,6 +59,7 @@ const UIBookForm = (() => {
     coverSource = 'default';
     descriptionSource = 'empty';
     googleBookData = null;
+    googleCoverUrl = null;
     
     updateGoogleSearchButton();
   }
@@ -138,6 +140,11 @@ const UIBookForm = (() => {
     // Add source tracking
     payload.cover_source = coverSource;
     payload.description_source = descriptionSource;
+    
+    // Add Google cover URL if available
+    if (googleCoverUrl) {
+      payload.cover_url = googleCoverUrl;
+    }
     
     return payload;
   }
@@ -377,6 +384,9 @@ const UIBookForm = (() => {
           if (result && result.cover_url) {
             // Update preview with local URL
             els.coverPreview.src = result.cover_url;
+            
+            // Store the cover URL for submission
+            googleCoverUrl = result.cover_url;
             
             // Mark that cover is from Google (already saved)
             coverSource = 'google';
