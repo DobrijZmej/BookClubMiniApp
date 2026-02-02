@@ -378,6 +378,112 @@
   color: var(--color-text-primary);
 }
 
+.btn-cancel {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
+/* Google Books Selection List */
+.google-selection-header {
+  padding: var(--space-sm);
+  margin-bottom: var(--space-sm);
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+.google-books-list {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.google-book-item {
+  display: flex;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.google-book-item:hover {
+  background: var(--color-bg-tertiary);
+}
+
+.google-book-item:last-child {
+  border-bottom: none;
+}
+
+.google-book-item.best-match {
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.google-book-thumbnail {
+  width: 60px;
+  height: 85px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.google-book-no-cover {
+  width: 60px;
+  height: 85px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-sm);
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.google-book-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.google-book-details h5 {
+  margin: 0 0 4px 0;
+  font-size: 0.95rem;
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge-best {
+  background: var(--color-success);
+  color: white;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.book-author {
+  margin: 2px 0;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+.book-meta {
+  margin: 2px 0;
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+}
+
+.book-description {
+  margin: 4px 0 0 0;
+  font-size: 0.8rem;
+  color: var(--color-text-tertiary);
+  line-height: 1.3;
+}
+
 #add-book-view .form-textarea {
   resize: vertical;
   min-height: 96px;

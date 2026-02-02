@@ -184,19 +184,26 @@ const UIBookForm = (() => {
       }
       
       const bestMatch = result.bestMatch;
+      const candidates = result.candidates || [];
       googleBookData = bestMatch;
       
       // Check if user has modified cover or description
       const userHasCover = coverSource === 'user';
       const userHasDescription = descriptionSource === 'user' && els.desc?.value?.trim();
       
-      const needsConfirmation = userHasCover || userHasDescription;
+      // Decide whether to auto-apply or show selection modal
+      const highConfidence = bestMatch.confidence >= 0.80;
+      const hasMultipleCandidates = candidates.length > 0;
+      const needsUserConfirmation = userHasCover || userHasDescription;
       
-      if (needsConfirmation) {
-        // Show confirmation modal
+      if (needsUserConfirmation) {
+        // User has existing data - ask what to replace
         showGoogleConfirmationModal(bestMatch, userHasCover, userHasDescription);
+      } else if (!highConfidence || hasMultipleCandidates) {
+        // Low confidence or multiple options - show selection modal
+        showGoogleSelectionModal(bestMatch, candidates);
       } else {
-        // Auto-apply if user hasn't modified anything
+        // High confidence, no candidates - auto-apply
         applyGoogleData(bestMatch, true, true);
         tg.showAlert?.('✅ Дані з Google Books застосовано');
       }
@@ -294,6 +301,67 @@ const UIBookForm = (() => {
     if (els.googleModal) {
       els.googleModal.style.display = 'none';
     }
+  }
+  
+  function showGoogleSelectionModal(bestMatch, candidates) {
+    if (!els.googleModal || !els.googleModalBody) return;
+    
+    // Create list of all options: bestMatch + candidates
+    const allOptions = [bestMatch, ...candidates];
+    
+    let html = `
+      <div class="google-selection-header">
+        <p>Знайдено ${allOptions.length} варіантів. Оберіть потрібну книгу:</p>
+      </div>
+      <div class="google-books-list">
+    `;
+    
+    allOptions.forEach((book, index) => {
+      const coverUrl = book.image?.thumbnail || book.image?.smallThumbnail || '';
+      const authors = book.authors?.join(', ') || 'Невідомий автор';
+      const description = book.description || '';
+      const isBest = index === 0;
+      
+      html += `
+        <div class="google-book-item ${isBest ? 'best-match' : ''}" data-index="${index}">
+          ${coverUrl ? `<img src="${coverUrl}" alt="Обкладинка" class="google-book-thumbnail">` : '<div class="google-book-no-cover">📚</div>'}
+          <div class="google-book-details">
+            <h5>${book.title}${isBest ? ' <span class="badge-best">Найкраще</span>' : ''}</h5>
+            <p class="book-author">${authors}</p>
+            ${book.publishedDate ? `<p class="book-meta">Рік: ${book.publishedDate}</p>` : ''}
+            <p class="book-meta">Збіг: ${(book.confidence_score * 100).toFixed(0)}%</p>
+            ${description ? `<p class="book-description">${description.substring(0, 150)}${description.length > 150 ? '...' : ''}</p>` : ''}
+          </div>
+        </div>
+      `;
+    });
+    
+    html += `
+      </div>
+      <div class="google-modal-actions">
+        <button class="btn-cancel" data-action="cancel">Скасувати</button>
+      </div>
+    `;
+    
+    els.googleModalBody.innerHTML = html;
+    
+    // Wire up book selection
+    els.googleModalBody.querySelectorAll('.google-book-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const index = parseInt(item.dataset.index);
+        const selectedBook = allOptions[index];
+        applyGoogleData(selectedBook, true, true);
+        tg.showAlert?.('✅ Дані з Google Books застосовано');
+        closeGoogleModal();
+      });
+    });
+    
+    // Cancel button
+    els.googleModalBody.querySelector('[data-action="cancel"]')?.addEventListener('click', () => {
+      closeGoogleModal();
+    });
+    
+    els.googleModal.style.display = 'flex';
   }
   
   async function applyGoogleData(bookData, applyCover, applyDescription) {
