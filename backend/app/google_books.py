@@ -7,7 +7,7 @@ import re
 import json
 import requests
 from datetime import datetime, timedelta
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Tuple
 from sqlalchemy.orm import Session
 from loguru import logger
 
@@ -41,7 +41,7 @@ class GoogleBooksService:
         result_authors: List[str],
         result_language: Optional[str],
         has_isbn: bool
-    ) -> tuple[float, str]:
+    ) -> Tuple[float, str]:
         """
         Calculate confidence score for a search result
         Returns: (score, reason)
