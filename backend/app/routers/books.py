@@ -860,44 +860,15 @@ async def download_google_cover(
         response = requests.get(secure_url, headers=headers, timeout=10)
         response.raise_for_status()
         
-        # Log response headers for debugging
-        content_type = response.headers.get('content-type', 'image/jpeg')
-        logger.debug(f"Google Books image response: content-type={content_type}, size={len(response.content)} bytes")
-        
-        # Create UploadFile-like object from bytes
         image_bytes = response.content
+        logger.debug(f"Downloaded {len(image_bytes)} bytes from Google Books")
         
-        # Determine filename
+        # Save using file_storage function that works with raw bytes
         if book_id:
-            filename = f"google_cover_book_{book_id}.jpg"
+            cover_url = file_storage.save_book_cover_from_bytes(book_id, image_bytes)
         else:
-            import hashlib
-            url_hash = hashlib.md5(secure_url.encode()).hexdigest()[:8]
-            filename = f"google_cover_{url_hash}.jpg"
-        
-        # Save through file_storage (create temporary UploadFile wrapper)
-        from fastapi import UploadFile
-        from tempfile import SpooledTemporaryFile
-        
-        temp_file = SpooledTemporaryFile(max_size=10 * 1024 * 1024)  # 10MB max
-        temp_file.write(image_bytes)
-        temp_file.seek(0)
-        
-        # Create UploadFile with proper parameters
-        upload_file = UploadFile(filename=filename, file=temp_file)
-        # Set content_type manually BEFORE calling save
-        upload_file.content_type = content_type
-        
-        logger.debug(f"UploadFile created: filename={filename}, content_type={upload_file.content_type}")
-        
-        # Save using file_storage
-        if book_id:
-            cover_url = file_storage.save_book_cover(book_id, upload_file)
-        else:
-            # Save to temporary location
-            cover_url = file_storage.save_book_cover(0, upload_file)  # Use 0 for temp
-        
-        temp_file.close()
+            # Save to temporary location with ID 0
+            cover_url = file_storage.save_book_cover_from_bytes(0, image_bytes)
         
         logger.success(f"✅ Google cover downloaded and saved: {cover_url}")
         

@@ -266,6 +266,50 @@ def save_book_cover(book_id: int, file: UploadFile) -> str:
         )
 
 
+def save_book_cover_from_bytes(book_id: int, image_bytes: bytes) -> str:
+    """
+    Save book cover image from raw bytes (e.g., from external API)
+    
+    Args:
+        book_id: Book ID
+        image_bytes: Raw image data
+        
+    Returns:
+        Relative URL path to saved image
+    """
+    # Validate image content and load
+    img = validate_image_content(image_bytes)
+    
+    # Resize to max dimensions
+    img = resize_image(img, MAX_IMAGE_SIZE)
+    
+    # Optimize
+    optimized_data = optimize_image(img)
+    
+    # Generate unique filename
+    filename = f"{book_id}_cover_{uuid.uuid4().hex[:8]}.jpg"
+    filepath = BOOK_COVERS_DIR / filename
+    
+    # Delete old cover if exists
+    delete_old_files(BOOK_COVERS_DIR, f"{book_id}_cover_*.jpg")
+    
+    # Save file
+    try:
+        with open(filepath, 'wb') as f:
+            f.write(optimized_data)
+        
+        logger.success(f"✅ Book cover saved from bytes: {filepath}")
+        
+        # Return relative URL
+        return f"/uploads/books/{filename}"
+    except Exception as e:
+        logger.error(f"Failed to save file: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail="Помилка збереження файлу"
+        )
+
+
 def delete_old_files(directory: Path, pattern: str) -> None:
     """
     Delete old files matching pattern
