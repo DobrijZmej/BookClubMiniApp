@@ -104,6 +104,12 @@ class GoogleBooksService:
             score += 0.15
             reasons.append("has ISBN")
         
+        # Penalty for collection/bundle keywords
+        collection_keywords = ['комплект', 'набір', 'збірка', 'коллекция', 'collection', 'bundle', 'set of']
+        if any(keyword in result_title_norm for keyword in collection_keywords):
+            score *= 0.6  # 40% penalty
+            reasons.append("collection penalty")
+        
         return round(score, 2), "; ".join(reasons)
     
     def check_cache(self, title: str, author: Optional[str] = None) -> Optional[Dict]:
