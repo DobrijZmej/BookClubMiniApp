@@ -1,9 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form
+from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form, Query
 import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy import desc, func
 from typing import List, Optional
 from loguru import logger
+from collections import defaultdict
+from datetime import datetime as dt, timedelta
 
 from app.database import get_db
 from app.models.db_models import Book, BookLoan, BookStatus, LoanStatus, Club, BookReview, ClubMember
@@ -13,6 +15,7 @@ from app.models.schemas import (
 )
 from app.auth import get_current_user
 from app.utils import file_storage
+from app.google_books import GoogleBooksService
 
 router = APIRouter(prefix="/api/books", tags=["Books"])
 
@@ -747,3 +750,81 @@ def upload_book_cover(
     except Exception as e:
         logger.error(f"Error uploading book cover for book_id={book_id}: {e}")
         raise HTTPException(status_code=500, detail="Failed to upload book cover")
+
+
+# Rate limiting storage (simple in-memory, for production use Redis)
+_rate_limit_storage = defaultdict(list)
+_rate_limit_window = 60  # seconds
+_rate_limit_max_requests = 10
+
+def check_rate_limit(user_id: str) -> bool:
+    """Simple rate limiting: max 10 requests per minute per user"""
+    now = dt.now()
+    cutoff = now - timedelta(seconds=_rate_limit_window)
+    
+    # Clean old entries
+    _rate_limit_storage[user_id] = [
+        ts for ts in _rate_limit_storage[user_id] if ts > cutoff
+    ]
+    
+    # Check limit
+    if len(_rate_limit_storage[user_id]) >= _rate_limit_max_requests:
+        return False
+    
+    # Add new request
+    _rate_limit_storage[user_id].append(now)
+    return True
+
+
+@router.get("/google/search")
+async def search_google_books(
+    title: str = Query(..., min_length=3, description="Book title to search"),
+    author: Optional[str] = Query(None, description="Book author (optional)"),
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user)
+):
+    """
+    Search for books using Google Books API
+    
+    Returns best match with confidence score and up to 5 candidates.
+    Results are cached for 30 days.
+    """
+    user_id = str(user['user']['id'])
+    
+    # Rate limiting
+    if not check_rate_limit(user_id):
+        raise HTTPException(
+            status_code=429, 
+            detail="Забагато запитів. Спробуйте через хвилину."
+        )
+    
+    # Validate author if provided
+    if author and len(author.strip()) < 3:
+        raise HTTPException(
+            status_code=400,
+            detail="Автор має містити мінімум 3 символи"
+        )
+    
+    try:
+        # Initialize Google Books service
+        service = GoogleBooksService(db)
+        
+        # Search
+        result = service.search_google_books(title=title, author=author)
+        
+        if not result:
+            return {
+                "bestMatch": None,
+                "candidates": [],
+                "source": "google_books",
+                "message": "Нічого не знайдено"
+            }
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Error searching Google Books: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail="Помилка при пошуку в Google Books"
+        )

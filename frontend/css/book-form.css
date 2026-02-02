@@ -197,6 +197,181 @@
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
+/* Compact inputs for title and author */
+.form-group-compact {
+  margin-bottom: 10px;
+}
+
+.form-input-compact {
+  padding: 8px 12px !important;
+  font-size: 0.9rem;
+}
+
+/* Google Books Section */
+.google-books-section {
+  margin: 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.btn-google-search {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid #4285f4;
+  background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-google-search:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-google-search:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-google-search:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-border);
+  color: var(--color-text-tertiary);
+}
+
+.btn-google-search.loading {
+  position: relative;
+  color: transparent;
+}
+
+.btn-google-search.loading::after {
+  content: "⏳";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.2rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.google-attribution {
+  font-size: 0.7rem;
+  color: var(--color-text-tertiary);
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Google Books Modal */
+#google-books-modal .modal-content {
+  max-width: 500px;
+}
+
+#google-books-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+#google-books-modal .modal-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--color-text-primary);
+}
+
+#google-books-modal .modal-body {
+  padding: var(--space-md);
+}
+
+.google-book-preview {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.google-book-cover {
+  width: 100px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+}
+
+.google-book-info {
+  flex: 1;
+}
+
+.google-book-info h4 {
+  margin: 0 0 8px 0;
+  font-size: 1rem;
+  color: var(--color-text-primary);
+}
+
+.google-book-info p {
+  margin: 4px 0;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.google-book-description {
+  margin-top: var(--space-sm);
+  padding: var(--space-sm);
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.google-modal-actions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.google-modal-actions button {
+  flex: 1;
+  padding: 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  font-weight: 600;
+  transition: opacity var(--transition-fast);
+}
+
+.google-modal-actions button:hover {
+  opacity: 0.9;
+}
+
+.btn-replace {
+  background: var(--color-success);
+  color: white;
+  border-color: var(--color-success);
+}
+
+.btn-keep {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
 #add-book-view .form-textarea {
   resize: vertical;
   min-height: 96px;

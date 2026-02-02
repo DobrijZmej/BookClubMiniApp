@@ -270,14 +270,23 @@
                                     <input type="file" id="book-cover-input" accept="image/*" style="display:none;">
                                 </div>
                                 <div class="tg-book-fields-col">
-                                    <div class="form-group">
+                                    <div class="form-group form-group-compact">
                                         <label class="form-label" for="book-title">Назва книги</label>
-                                        <input type="text" id="book-title" class="form-input" required maxlength="500" placeholder="Назва книги">
+                                        <input type="text" id="book-title" class="form-input form-input-compact" required maxlength="500" placeholder="Назва книги">
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group form-group-compact">
                                         <label class="form-label" for="book-author">Автор</label>
-                                        <input type="text" id="book-author" class="form-input" maxlength="255" placeholder="Автор">
+                                        <input type="text" id="book-author" class="form-input form-input-compact" maxlength="255" placeholder="Автор">
                                     </div>
+                                    
+                                    <!-- Google Books Search Section -->
+                                    <div class="google-books-section">
+                                        <button type="button" id="google-search-btn" class="btn-google-search" disabled>
+                                            🔍 Знайти в Google Books
+                                        </button>
+                                        <div class="google-attribution">Powered by Google</div>
+                                    </div>
+                                    
                                     <div class="form-group">
                                         <label class="form-label" for="book-description">Опис книги</label>
                                         <textarea id="book-description" class="form-textarea" rows="3" maxlength="1000" placeholder="Опис книги"></textarea>
@@ -651,6 +660,19 @@
             <span class="footer-emoji">🌐</span>
         </a>
     </footer>
+
+    <!-- Google Books Confirmation Modal -->
+    <div id="google-books-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📚 Знайдено в Google Books</h3>
+                <button class="modal-close" id="google-modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="google-modal-body">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+        </div>
+    </div>
 
     <!-- Scripts -->
     <script src="js/config.js?v=20260201-v2"></script>

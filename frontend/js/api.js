@@ -166,6 +166,15 @@ const API = {
 
         async getReviews(bookId) {
             return API.request(`/api/books/${bookId}/reviews`);
+        },
+        
+        // Google Books search
+        async searchGoogleBooks(title, author = null) {
+            const params = new URLSearchParams();
+            params.append('title', title);
+            if (author) params.append('author', author);
+            
+            return API.request(`/api/books/google/search?${params.toString()}`);
         }
     },
 

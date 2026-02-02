@@ -22,12 +22,24 @@ class BookCreate(BaseModel):
     cover_url: Optional[str] = None
     club_id: int  # Замість chat_id використовуємо club_id
     client_request_id: Optional[str] = None
+    # Google Books fields
+    google_volume_id: Optional[str] = None
+    isbn_10: Optional[str] = None
+    isbn_13: Optional[str] = None
+    cover_source: Optional[str] = Field(None, description="Source of cover: default, user, google")
+    description_source: Optional[str] = Field(None, description="Source of description: empty, user, google")
 
 class BookUpdate(BaseModel):
     title: Optional[str] = Field(None, min_length=1, max_length=500)
     author: Optional[str] = Field(None, max_length=255)
     description: Optional[str] = Field(None, max_length=2000)
     cover_url: Optional[str] = None
+    # Google Books fields
+    google_volume_id: Optional[str] = None
+    isbn_10: Optional[str] = None
+    isbn_13: Optional[str] = None
+    cover_source: Optional[str] = None
+    description_source: Optional[str] = None
 
 class BookReviewCreate(BaseModel):
     rating: float = Field(..., ge=0.5, le=5.0)  # Рейтинг від 0.5 до 5.0 з кроком 0.5

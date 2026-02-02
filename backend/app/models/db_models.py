@@ -15,6 +15,16 @@ class BookStatus(str, enum.Enum):
     READING = "READING"
     DELETED = "DELETED"
 
+class CoverSource(str, enum.Enum):
+    DEFAULT = "DEFAULT"
+    USER = "USER"
+    GOOGLE = "GOOGLE"
+
+class DescriptionSource(str, enum.Enum):
+    EMPTY = "EMPTY"
+    USER = "USER"
+    GOOGLE = "GOOGLE"
+
 class LoanStatus(str, enum.Enum):
     READING = "READING"
     RETURNED = "RETURNED"
@@ -98,6 +108,14 @@ class Book(Base):
     status = Column(Enum(BookStatus), default=BookStatus.AVAILABLE)
     cover_url = Column(String(500))  # Для майбутньої можливості додавати обкладинки
     description = Column(Text)  # Опис книги
+    
+    # Google Books integration
+    google_volume_id = Column(String(50), nullable=True, index=True)  # Google Books ID
+    isbn_10 = Column(String(20), nullable=True)
+    isbn_13 = Column(String(20), nullable=True)
+    cover_source = Column(Enum(CoverSource), default=CoverSource.DEFAULT)  # Джерело обкладинки
+    description_source = Column(Enum(DescriptionSource), default=DescriptionSource.EMPTY)  # Джерело опису
+    
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
     # Relationships
@@ -140,4 +158,22 @@ class BookReview(Base):
     # Унікальний індекс: один користувач може залишити тільки один відгук на книгу
     __table_args__ = (
         Index('idx_book_user_review', 'book_id', 'user_id', unique=True),
+    )
+
+
+class GoogleBooksCache(Base):
+    """Кеш результатів пошуку Google Books API"""
+    __tablename__ = "google_books_cache"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    google_volume_id = Column(String(50), unique=True, nullable=False, index=True)
+    title_norm = Column(String(500), nullable=False, index=True)  # Нормалізована назва для пошуку
+    author_norm = Column(String(255), index=True)  # Нормалізований автор
+    payload_json = Column(Text, nullable=False)  # JSON з даними книги
+    fetched_at = Column(DateTime(timezone=True), server_default=func.now())
+    ttl_days = Column(Integer, default=30)  # TTL в днях
+    
+    # Індекс для швидкого пошуку по title+author
+    __table_args__ = (
+        Index('idx_title_author_search', 'title_norm', 'author_norm'),
     )
