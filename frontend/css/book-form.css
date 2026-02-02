@@ -197,9 +197,23 @@
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
-/* Compact inputs for title and author */
+/* Compact inputs for title and author - horizontal layout */
 .form-group-compact {
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.form-group-compact .form-label {
+  flex: 0 0 auto;
+  min-width: 80px;
+  margin-bottom: 0;
+  white-space: nowrap;
+}
+
+.form-group-compact .form-input {
+  flex: 1;
 }
 
 .form-input-compact {
@@ -210,30 +224,28 @@
 /* Google Books Section */
 .google-books-section {
   margin: 12px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
 }
 
 .btn-google-search {
   width: 100%;
   padding: 10px 14px;
   border-radius: var(--radius-md);
-  border: 1px solid #4285f4;
-  background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
-  color: white;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  transition: background var(--transition-fast), transform var(--transition-fast);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  flex-direction: column;
 }
 
 .btn-google-search:hover:not(:disabled) {
-  opacity: 0.9;
+  background: var(--color-bg-secondary);
   transform: translateY(-1px);
 }
 
@@ -244,9 +256,14 @@
 .btn-google-search:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  background: var(--color-bg-tertiary);
-  border-color: var(--color-border);
   color: var(--color-text-tertiary);
+}
+
+.btn-google-search-main {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
 }
 
 .btn-google-search.loading {
@@ -270,10 +287,10 @@
 }
 
 .google-attribution {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   color: var(--color-text-tertiary);
-  text-align: center;
-  font-weight: 500;
+  font-weight: 400;
+  margin-top: 2px;
 }
 
 /* Google Books Modal */
