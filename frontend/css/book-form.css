@@ -197,23 +197,14 @@
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
-/* Compact inputs for title and author - horizontal layout */
+/* Compact inputs for title and author - vertical but compressed */
 .form-group-compact {
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  margin-bottom: 8px;
 }
 
 .form-group-compact .form-label {
-  flex: 0 0 auto;
-  min-width: 80px;
-  margin-bottom: 0;
-  white-space: nowrap;
-}
-
-.form-group-compact .form-input {
-  flex: 1;
+  margin-bottom: 4px;
+  font-size: 0.85rem;
 }
 
 .form-input-compact {
