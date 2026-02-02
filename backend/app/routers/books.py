@@ -871,9 +871,6 @@ async def download_google_cover(
             url_hash = hashlib.md5(secure_url.encode()).hexdigest()[:8]
             filename = f"google_cover_{url_hash}.jpg"
         
-        # Create a file-like object
-        file_obj = io.BytesIO(image_bytes)
-        
         # Save through file_storage (create temporary UploadFile wrapper)
         from fastapi import UploadFile
         from tempfile import SpooledTemporaryFile
@@ -882,11 +879,8 @@ async def download_google_cover(
         temp_file.write(image_bytes)
         temp_file.seek(0)
         
-        upload_file = UploadFile(
-            filename=filename,
-            file=temp_file,
-            content_type=response.headers.get('content-type', 'image/jpeg')
-        )
+        # Create UploadFile with proper parameters
+        upload_file = UploadFile(filename=filename, file=temp_file)
         
         # Save using file_storage
         if book_id:
