@@ -400,6 +400,15 @@ const UIBookForm = (() => {
       els.desc.value = bookData.description;
       descriptionSource = 'google';
     }
+    
+    // Apply author if field is empty
+    if (bookData.authors && bookData.authors.length > 0 && els.author) {
+      const currentAuthor = els.author.value?.trim();
+      if (!currentAuthor) {
+        els.author.value = bookData.authors.join(', ');
+        console.log('✅ Author from Google Books applied:', els.author.value);
+      }
+    }
   }
 
   async function handleSubmit(e) {
