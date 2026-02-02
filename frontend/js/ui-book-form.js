@@ -216,7 +216,7 @@ const UIBookForm = (() => {
         // Low confidence or multiple options - show selection modal
         showGoogleSelectionModal(bestMatch, candidates);
       } else {
-        // High confidence, no candidates - auto-apply
+        // High confidence, no candidates, no user data - auto-apply everything
         applyGoogleData(bestMatch, true, true);
         tg.showAlert?.('✅ Дані з Google Books застосовано');
       }
@@ -286,7 +286,7 @@ const UIBookForm = (() => {
     els.googleModalBody.querySelectorAll('button[data-action]').forEach(btn => {
       btn.addEventListener('click', () => {
         const action = btn.dataset.action;
-        let replaceCover = false;
+        let replaceCover = !userHasCover; // Always replace cover if not from user
         let replaceDesc = false;
         
         if (action === 'replace-all') {
@@ -296,6 +296,10 @@ const UIBookForm = (() => {
           replaceCover = true;
         } else if (action === 'replace-desc') {
           replaceDesc = true;
+        } else if (action === 'keep-cover') {
+          replaceCover = false;
+        } else if (action === 'keep-desc') {
+          replaceDesc = false;
         }
         
         if (replaceCover || replaceDesc) {
