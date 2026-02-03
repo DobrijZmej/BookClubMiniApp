@@ -233,7 +233,8 @@ const UIBookForm = (() => {
   function showGoogleConfirmationModal(bookData, userHasCover, userHasDescription) {
     if (!els.googleModal || !els.googleModalBody) return;
     
-    const coverUrl = bookData.image?.thumbnail || bookData.image?.smallThumbnail || '';
+    const coverUrlRaw = bookData.image?.thumbnail || bookData.image?.smallThumbnail || '';
+    const coverUrl = coverUrlRaw.replace('http://', 'https://'); // Convert to HTTPS
     const description = bookData.description || '';
     const authors = bookData.authors?.join(', ') || 'Невідомий автор';
     
@@ -334,7 +335,8 @@ const UIBookForm = (() => {
     `;
     
     allOptions.forEach((book, index) => {
-      const coverUrl = book.image?.thumbnail || book.image?.smallThumbnail || '';
+      const coverUrlRaw = book.image?.thumbnail || book.image?.smallThumbnail || '';
+      const coverUrl = coverUrlRaw.replace('http://', 'https://'); // Convert to HTTPS
       const authors = book.authors?.join(', ') || 'Невідомий автор';
       const description = book.description || '';
       const isBest = index === 0;
@@ -423,6 +425,12 @@ const UIBookForm = (() => {
       }
     } else {
       console.log('⏭️ Skipping cover:', { applyCover, hasImage: !!bookData.image });
+    }
+    
+    // Apply title from Google Books (when shown in confirmation modal)
+    if (bookData.title && els.title) {
+      els.title.value = bookData.title;
+      console.log('✅ Title from Google Books applied:', els.title.value);
     }
     
     // Apply description
