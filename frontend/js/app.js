@@ -462,12 +462,39 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!isTelegram && !devMode) {
         document.body.innerHTML = `
             <style>
+                /* Темна тема за замовчуванням */
+                :root {
+                    --bg-primary: #0f172a;
+                    --bg-secondary: #020617;
+                    --bg-card: #1e293b;
+                    --text-primary: #e5e7eb;
+                    --text-secondary: #9ca3af;
+                    --accent-green: #22c55e;
+                    --accent-green-dark: #052e16;
+                    --border-color: rgba(148,163,184,0.15);
+                }
+
+                /* Світла тема */
+                @media (prefers-color-scheme: light) {
+                    :root {
+                        --bg-primary: #ffffff;
+                        --bg-secondary: #f8fafc;
+                        --bg-card: #f1f5f9;
+                        --text-primary: #1e293b;
+                        --text-secondary: #64748b;
+                        --accent-green: #16a34a;
+                        --accent-green-dark: #ffffff;
+                        --border-color: rgba(148,163,184,0.25);
+                    }
+                }
+
                 body {
                     margin: 0;
                     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
                                  Roboto, Helvetica, Arial, sans-serif;
-                    background: #0f172a;
-                    color: #e5e7eb;
+                    background: var(--bg-primary);
+                    color: var(--text-primary);
+                    transition: background-color 0.3s ease, color 0.3s ease;
                 }
                 .wrapper {
                     max-width: 520px;
@@ -478,21 +505,37 @@ document.addEventListener("DOMContentLoaded", () => {
                 h1 {
                     font-size: 26px;
                     margin-bottom: 8px;
+                    color: var(--text-primary);
                 }
                 .subtitle {
-                    color: #9ca3af;
+                    color: var(--text-secondary);
                     font-size: 15px;
                     margin-bottom: 24px;
                 }
                 .cta {
-                    display: inline-block;
-                    margin: 16px 0 28px;
+                    display: block;
+                    width: 100%;
                     padding: 14px 22px;
-                    background: #22c55e;
-                    color: #052e16;
+                    background: var(--accent-green);
+                    color: var(--accent-green-dark);
                     font-weight: 600;
-                    border-radius: 10px;
+                    border-radius: 12px;
                     text-decoration: none;
+                    transition: all 0.2s ease;
+                    box-shadow: 0 2px 8px rgba(34,197,94,0.15);
+                }
+                .cta:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 12px rgba(34,197,94,0.25);
+                }
+                .cta.secondary {
+                    background: var(--bg-card);
+                    color: var(--text-primary);
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                    border: 1px solid var(--border-color);
+                }
+                .cta.secondary:hover {
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
                 }
                 .section {
                     text-align: left;
@@ -501,6 +544,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 .section h2 {
                     font-size: 18px;
                     margin-bottom: 12px;
+                    color: var(--text-primary);
                 }
                 ul {
                     padding-left: 18px;
@@ -509,15 +553,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 li {
                     margin-bottom: 8px;
                     line-height: 1.5;
+                    color: var(--text-primary);
                 }
                 .steps {
-                    background: #020617;
+                    background: var(--bg-secondary);
                     border-radius: 12px;
                     padding: 16px;
                     margin-top: 12px;
+                    border: 1px solid var(--border-color);
                 }
                 .step {
                     margin-bottom: 8px;
+                    color: var(--text-primary);
                 }
                 .step:last-child {
                     margin-bottom: 0;
@@ -525,15 +572,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 .footer {
                     margin-top: 32px;
                     font-size: 13px;
-                    color: #9ca3af;
+                    color: var(--text-secondary);
                 }
                 .notice {
                     margin: 18px 0 22px;
                     padding: 14px 14px;
-                    background: rgba(245, 158, 11, 0.10); /* amber-ish */
+                    background: rgba(245, 158, 11, 0.10);
                     border: 1px solid rgba(245, 158, 11, 0.35);
                     border-radius: 12px;
                     text-align: left;
+                }
+                @media (prefers-color-scheme: light) {
+                    .notice {
+                        background: rgba(245, 158, 11, 0.08);
+                        border-color: rgba(245, 158, 11, 0.25);
+                    }
                 }
                 .notice strong {
                     display: block;
@@ -543,26 +596,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 .notice p {
                     margin: 0;
-                    color: #e5e7eb;
+                    color: var(--text-primary);
                     line-height: 1.5;
                     font-size: 14px;
                 }
                 .notice .muted {
                     display: block;
                     margin-top: 6px;
-                    color: #9ca3af;
+                    color: var(--text-secondary);
                     font-size: 13px;
                 }
                 .community {
                     margin-top: 28px;
                     padding-top: 16px;
-                    border-top: 1px solid rgba(148,163,184,0.15);
+                    border-top: 1px solid var(--border-color);
                     font-size: 14px;
                 }
                 .community-title {
                     margin-bottom: 10px;
                     font-size: 15px;
                     font-weight: 600;
+                    color: var(--text-primary);
                 }
                 .community-links {
                     display: flex;
@@ -570,7 +624,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     gap: 12px;
                 }
                 .community-links a {
-                    color: #22c55e;
+                    color: var(--accent-green);
                     text-decoration: none;
                     font-weight: 500;
                 }
@@ -588,10 +642,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     justify-content: space-between;
                     align-items: center;
                     padding: 14px 16px;
-                    background: #020617;
-                    border: 1px solid rgba(148,163,184,0.15);
+                    background: var(--bg-secondary);
+                    border: 1px solid var(--border-color);
                     border-radius: 12px;
-                    color: #e5e7eb;
+                    color: var(--text-primary);
                     font-size: 15px;
                     font-weight: 500;
                     cursor: pointer;
@@ -605,6 +659,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 .accordion-icon {
                     transition: transform 0.2s ease;
                     font-size: 12px;
+                    color: var(--text-secondary);
                 }
                 .accordion-header.active .accordion-icon {
                     transform: rotate(180deg);
@@ -620,13 +675,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 .guide-steps {
                     margin: 16px 0 12px;
                     padding: 16px 20px 16px 32px;
-                    background: rgba(2,6,23,0.5);
+                    background: var(--bg-secondary);
                     border-radius: 8px;
                     line-height: 1.6;
+                    border: 1px solid var(--border-color);
                 }
                 .guide-steps li {
                     margin-bottom: 10px;
-                    color: #e5e7eb;
+                    color: var(--text-primary);
                 }
                 .guide-steps li:last-child {
                     margin-bottom: 0;
@@ -639,21 +695,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     border-radius: 8px;
                     font-size: 14px;
                     line-height: 1.5;
-                    color: #e5e7eb;
+                    color: var(--text-primary);
                 }
                 .guide-tip b {
-                    color: #22c55e;
+                    color: var(--accent-green);
                 }
 
                 /* Carousel mini-styles (fallback) */
-                .fb-carousel { max-width: 420px; margin: 12px 0; border-radius: 12px; overflow: hidden; background: #020617; position: relative; }
+                .fb-carousel { max-width: 420px; margin: 12px 0; border-radius: 12px; overflow: hidden; background: var(--bg-secondary); position: relative; border: 1px solid var(--border-color); }
                 .fb-slides { position: relative; width: 100%; height: 0; padding-bottom: 72%; }
                 .fb-slides img { position: absolute; top:0; left:0; width:100%; height:100%; object-fit: contain; display:none; }
                 .fb-slides img.active { display:block; }
-                .fb-btn { position:absolute; top:50%; transform:translateY(-50%); width:40px; height:40px; border-radius:20px; border:none; background: rgba(2,6,23,0.6); color:#fff; font-size:20px; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+                .fb-btn { position:absolute; top:50%; transform:translateY(-50%); width:40px; height:40px; border-radius:20px; border:none; background: rgba(0,0,0,0.4); color:#fff; font-size:20px; display:flex; align-items:center; justify-content:center; cursor:pointer; }
                 .fb-btn.left { left:8px; }
                 .fb-btn.right { right:8px; }
-                .fb-counter { text-align:center; color:#9ca3af; font-size:13px; margin-top:8px; }
+                .fb-counter { text-align:center; color: var(--text-secondary); font-size:13px; margin-top:8px; }
 
                 /* Lightbox / fullscreen preview */
                 .fb-lightbox { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.92); z-index: 9999; opacity: 0; visibility: hidden; transition: opacity 160ms ease; }
@@ -682,16 +738,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     Щоб користуватись усіма можливостями — відкрийте бота.
                 </div>
 
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 24px;">
+                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 20px;">
                     <a class="cta" href="https://t.me/my_book_club_bot" target="_blank">
                         🤖 Відкрити бота
                     </a>
-                    <a class="cta" href="https://t.me/my_book_club_app" target="_blank" 
-                       style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+                    <a class="cta secondary" href="https://t.me/my_book_club_app" target="_blank">
                         📰 Канал новин
                     </a>
-                    <a class="cta" href="https://t.me/+7t2mLMB7ovY5MWNi" target="_blank"
-                       style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+                    <a class="cta secondary" href="https://t.me/+7t2mLMB7ovY5MWNi" target="_blank">
                         💬 Чат спільноти
                     </a>
                 </div>
