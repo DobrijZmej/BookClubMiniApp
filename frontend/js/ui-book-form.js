@@ -7,6 +7,7 @@ const UIBookForm = (() => {
   let descriptionSource = 'empty'; // 'empty' | 'user' | 'google'
   let googleBookData = null; // Cache Google Books result
   let googleCoverUrl = null; // URL of downloaded Google cover
+  let googleOriginalUrl = null; // Original Google Books image URL
 
   function q(id) { return document.getElementById(id); }
 
@@ -60,6 +61,7 @@ const UIBookForm = (() => {
     descriptionSource = 'empty';
     googleBookData = null;
     googleCoverUrl = null;
+    googleOriginalUrl = null;
     
     updateGoogleSearchButton();
   }
@@ -406,6 +408,9 @@ const UIBookForm = (() => {
             // Store the cover URL for submission
             googleCoverUrl = result.cover_url;
             
+            // Store original Google URL for re-downloading with correct book_id later
+            googleOriginalUrl = coverUrl;
+            
             // Mark that cover is from Google (already saved)
             coverSource = 'google';
             
@@ -414,7 +419,7 @@ const UIBookForm = (() => {
               els.coverInput.value = '';
             }
             
-            console.log('✅ Google cover applied:', { googleCoverUrl, coverSource });
+            console.log('✅ Google cover applied:', { googleCoverUrl, googleOriginalUrl, coverSource });
           }
         } catch (err) {
           console.error('Failed to download Google cover:', err);
@@ -488,7 +493,24 @@ const UIBookForm = (() => {
         throw new Error('No book id returned');
       }
 
-      // 2) upload cover (якщо вибрали файл)
+      // 2) Якщо книга створена з Google обкладинкою (googleCoverUrl існує і це новий запис),
+      // потрібно перезавантажити обкладинку з правильним book_id
+      if (!bookId && googleCoverUrl && googleOriginalUrl) {
+        console.debug('Re-downloading Google cover with correct book_id', { effectiveBookId, googleOriginalUrl });
+        try {
+          const redownloadResult = await API.books.downloadGoogleCover(googleOriginalUrl, effectiveBookId);
+          if (redownloadResult?.cover_url) {
+            // Update book with correct cover URL
+            await API.books.update(effectiveBookId, { cover_url: redownloadResult.cover_url });
+            console.log('✅ Cover re-downloaded with correct book_id:', redownloadResult.cover_url);
+          }
+        } catch (err) {
+          console.error('Failed to re-download cover with correct book_id:', err);
+          // Non-critical error, continue
+        }
+      }
+
+      // 3) upload cover (якщо вибрали файл)
       const file = els.coverInput?.files?.[0];
       if (file) {
         console.debug('Uploading cover', { effectiveBookId, clientRequestId, fileName: file.name });
@@ -502,12 +524,12 @@ const UIBookForm = (() => {
 
       tg.showAlert?.(bookId ? '✅ Зміни збережено' : '✅ Книгу додано');
 
-      // 3) refresh списку книг
+      // 4) refresh списку книг
       if (clubId) await UIBooks.loadBooks(clubId);
 
       backToClub();
       
-      // 4) прокрутити до відредагованої книги
+      // 5) прокрутити до відредагованої книги
       if (bookId) {
         // Невелика затримка для завершення рендерингу
         setTimeout(() => {
