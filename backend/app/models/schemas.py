@@ -250,7 +250,7 @@ class ActivityEvent(BaseModel):
     event_time: datetime
     actor: ActivityActor
     book: Optional[ActivityBook] = None  # Optional for member events
-    rating: Optional[int] = Field(None, ge=1, le=5)
+    rating: Optional[float] = Field(None, ge=1, le=5)
     review_text: Optional[str] = None
     
     class Config:
