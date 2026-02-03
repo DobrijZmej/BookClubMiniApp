@@ -682,9 +682,19 @@ document.addEventListener("DOMContentLoaded", () => {
                     Щоб користуватись усіма можливостями — відкрийте бота.
                 </div>
 
-                <a class="cta" href="https://t.me/my_book_club_bot" target="_blank">
-                    👉 Відкрити у Telegram
-                </a>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 24px;">
+                    <a class="cta" href="https://t.me/my_book_club_bot" target="_blank">
+                        🤖 Відкрити бота
+                    </a>
+                    <a class="cta" href="https://t.me/my_book_club_app" target="_blank" 
+                       style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+                        📰 Канал новин
+                    </a>
+                    <a class="cta" href="https://t.me/+7t2mLMB7ovY5MWNi" target="_blank"
+                       style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+                        💬 Чат спільноти
+                    </a>
+                </div>
 
                 <div class="notice">
                     <strong>⚠️ Важливо про обмін</strong>
@@ -780,14 +790,6 @@ document.addEventListener("DOMContentLoaded", () => {
                                 💡 <b>Порада:</b> Коли берете книгу, одразу напишіть власнику в Telegram щоб домовитись про передачу.
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <div class="community">
-                    <div class="community-title">Спільнота і підтримка</div>
-                    <div class="community-links">
-                        <a href="https://t.me/my_book_club_app" target="_blank">📰 Новини</a>
-                        <a href="https://t.me/+7t2mLMB7ovY5MWNi" target="_blank">💬 Обговорення</a>
                     </div>
                 </div>
 
