@@ -72,7 +72,8 @@ class BookReviewUpdate(BaseModel):
 # Response schemas
 class BookLoanResponse(BaseModel):
     id: int
-    user_id: str
+    user_id: Optional[str] = None  # Telegram user ID (deprecated)
+    internal_user_id: Optional[int] = None  # FK to internal_users.id
     user_name: Optional[str] = None
     username: str
     status: str
@@ -85,7 +86,8 @@ class BookLoanResponse(BaseModel):
 class BookReviewResponse(BaseModel):
     id: int
     book_id: int
-    user_id: str
+    user_id: Optional[str] = None  # Telegram user ID (deprecated)
+    internal_user_id: Optional[int] = None  # FK to internal_users.id
     user_name: Optional[str]
     username: Optional[str]
     rating: float
@@ -148,7 +150,8 @@ class ClubUpdate(BaseModel):
 
 class ClubMemberResponse(BaseModel):
     id: int
-    user_id: str
+    user_id: Optional[str] = None  # Telegram user ID (deprecated)
+    internal_user_id: Optional[int] = None  # FK to internal_users.id
     user_name: Optional[str]
     username: Optional[str]
     role: str
@@ -197,7 +200,8 @@ class JoinRequestCreate(BaseModel):
 class JoinRequestResponse(BaseModel):
     id: int
     club_id: int
-    user_id: str
+    user_id: Optional[str] = None  # Telegram user ID (deprecated)
+    internal_user_id: Optional[int] = None  # FK to internal_users.id
     user_name: Optional[str]
     username: Optional[str]
     message: Optional[str]
@@ -230,7 +234,8 @@ class ActivityEventType(str, Enum):
 
 class ActivityActor(BaseModel):
     """Актор події (користувач, який виконав дію)"""
-    user_id: str
+    user_id: Optional[str] = None  # Telegram user ID (deprecated)
+    internal_user_id: Optional[int] = None  # FK to internal_users.id
     display_name: str
     username: Optional[str] = None
 
