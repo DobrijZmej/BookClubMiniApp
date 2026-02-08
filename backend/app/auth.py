@@ -8,6 +8,8 @@ from sqlalchemy.orm import Session
 import os
 from loguru import logger
 
+from app.database import get_db
+
 def validate_telegram_init_data(init_data: str, bot_token: str) -> dict:
     """
     Валідує initData від Telegram Web App.
@@ -130,7 +132,56 @@ async def get_current_user(x_telegram_init_data: Optional[str] = Header(None)):
     return validate_telegram_init_data(x_telegram_init_data, bot_token)
 
 
-async def get_current_user_with_internal_id(
+def validate_telegram_init_data_wrapper(x_telegram_init_data: Optional[str]):
+    """
+    Синхронна wrapper-функція для валідації Telegram init data.
+    Використовується всередині get_current_user_with_internal_id.
+    """
+    if not x_telegram_init_data:
+        raise HTTPException(status_code=401, detail="Missing Telegram auth data")
+    
+    logger.debug(f"Init data received: {x_telegram_init_data[:100]}...")
+    
+    # Dev режим - дозволено ТІЛЬКИ не в production
+    env = os.getenv('ENV', 'development')
+    is_dev_mode = 'dev_mock_hash' in x_telegram_init_data
+    
+    if is_dev_mode:
+        if env.lower() == 'production':
+            logger.warning("⚠️ Dev mode attempt blocked in production environment")
+            raise HTTPException(
+                status_code=401,
+                detail="Dev mode is disabled in production"
+            )
+        
+        logger.warning("🔧 Dev mode detected - bypassing Telegram validation")
+        from urllib.parse import unquote
+        
+        try:
+            parsed = parse_qs(x_telegram_init_data)
+            user_json = unquote(parsed.get('user', ['{}'])[0])
+            user = json.loads(user_json)
+            
+            logger.info(f"Dev mode user authenticated: {user.get('id')} (@{user.get('username', 'unknown')})")
+            
+            return {
+                'user': user,
+                'chat_instance': 'dev_mode',
+                'chat_type': 'private',
+                'auth_date': int(parsed.get('auth_date', ['0'])[0])
+            }
+        except Exception as e:
+            logger.error(f"Dev mode parsing failed: {e}")
+            pass  # Fallback to normal validation
+    
+    bot_token = os.getenv('BOT_TOKEN')
+    if not bot_token:
+        raise HTTPException(status_code=500, detail="Bot token not configured")
+    
+    return validate_telegram_init_data(x_telegram_init_data, bot_token)
+
+
+def get_current_user_with_internal_id(
     x_telegram_init_data: Optional[str] = Header(None),
     db: Session = Depends(get_db)
 ):
@@ -155,11 +206,10 @@ async def get_current_user_with_internal_id(
             'internal_user_id': int     # 🆕 Internal user ID (auto-created)
         }
     """
-    from app.database import get_db
     from app.services.user_service import get_or_create_internal_user_from_telegram
     
     # 1. Валідувати Telegram дані
-    telegram_data = await get_current_user(x_telegram_init_data)
+    telegram_data = validate_telegram_init_data_wrapper(x_telegram_init_data)
     
     # 2. Отримати або створити internal_user (lazy migration)
     try:
