@@ -40,6 +40,13 @@ class JoinRequestStatus(str, enum.Enum):
     APPROVED = "APPROVED"
     REJECTED = "REJECTED"
 
+class IdentityProvider(str, enum.Enum):
+    TELEGRAM = "TELEGRAM"
+    GOOGLE = "GOOGLE"
+    EMAIL = "EMAIL"
+    APPLE = "APPLE"
+    FACEBOOK = "FACEBOOK"
+
 
 class Club(Base):
     __tablename__ = "clubs"
@@ -177,3 +184,59 @@ class GoogleBooksCache(Base):
     __table_args__ = (
         Index('idx_title_author_search', 'title_norm', 'author_norm'),
     )
+
+
+# ============================================
+# NEW USER SYSTEM (Internal Users)
+# ============================================
+
+class InternalUser(Base):
+    """Внутрішня таблиця користувачів (core)"""
+    __tablename__ = "internal_users"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    created_at = Column(DateTime, nullable=False)
+    updated_at = Column(DateTime, nullable=False)
+    
+    # Relationships
+    identities = relationship("UserIdentity", back_populates="user", cascade="all, delete-orphan")
+    profile = relationship("UserProfile", back_populates="user", uselist=False, cascade="all, delete-orphan")
+
+
+class UserIdentity(Base):
+    """Auth providers (Telegram, Google, etc.)"""
+    __tablename__ = "user_identities"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("internal_users.id", ondelete="CASCADE"), nullable=False, index=True)
+    provider = Column(Enum(IdentityProvider), nullable=False, index=True)
+    provider_user_id = Column(String(255), nullable=False)  # Telegram ID, Google ID, etc.
+    email = Column(String(255), index=True)
+    verified = Column(Boolean, nullable=False, default=False)
+    created_at = Column(DateTime, nullable=False)
+    updated_at = Column(DateTime, nullable=False)
+    
+    # Relationships
+    user = relationship("InternalUser", back_populates="identities")
+    
+    # Унікальність: один provider_user_id на один provider
+    __table_args__ = (
+        Index('idx_provider_user', 'provider', 'provider_user_id', unique=True),
+    )
+
+
+class UserProfile(Base):
+    """User profile data"""
+    __tablename__ = "user_profiles"
+    
+    user_id = Column(Integer, ForeignKey("internal_users.id", ondelete="CASCADE"), primary_key=True)
+    first_name = Column(String(255))
+    last_name = Column(String(255))
+    username = Column(String(100), index=True)
+    avatar_url = Column(String(500))
+    bio = Column(Text)
+    created_at = Column(DateTime, nullable=False)
+    updated_at = Column(DateTime, nullable=False)
+    
+    # Relationships
+    user = relationship("InternalUser", back_populates="profile")

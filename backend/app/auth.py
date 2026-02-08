@@ -3,7 +3,8 @@ import hmac
 import json
 from urllib.parse import parse_qs
 from typing import Optional
-from fastapi import HTTPException, Header
+from fastapi import HTTPException, Header, Depends
+from sqlalchemy.orm import Session
 import os
 from loguru import logger
 
@@ -76,6 +77,10 @@ def validate_telegram_init_data(init_data: str, bot_token: str) -> dict:
 async def get_current_user(x_telegram_init_data: Optional[str] = Header(None)):
     """
     FastAPI dependency для отримання поточного користувача.
+    
+    ВАЖЛИВО: Тільки валідує Telegram дані, БЕЗ створення internal_user.
+    Для автоматичного створення internal_user використовуйте get_current_user_with_internal_id.
+    
     Використання:
         @app.get("/api/profile")
         async def get_profile(user: dict = Depends(get_current_user)):
@@ -123,3 +128,54 @@ async def get_current_user(x_telegram_init_data: Optional[str] = Header(None)):
         raise HTTPException(status_code=500, detail="Bot token not configured")
     
     return validate_telegram_init_data(x_telegram_init_data, bot_token)
+
+
+async def get_current_user_with_internal_id(
+    x_telegram_init_data: Optional[str] = Header(None),
+    db: Session = Depends(get_db)
+):
+    """
+    FastAPI dependency для отримання користувача З АВТОМАТИЧНИМ створенням internal_user.
+    
+    Викликає get_current_user + автоматично створює internal_user якщо його ще немає.
+    Це основний dependency для нових ендпоїнтів.
+    
+    Використання:
+        @app.post("/api/clubs")
+        async def create_club(user: dict = Depends(get_current_user_with_internal_id)):
+            telegram_id = user['user']['id']
+            internal_user_id = user['internal_user_id']  # ✅ Завжди є
+    
+    Returns:
+        dict {
+            'user': {...},              # Telegram user data
+            'chat_instance': str,
+            'chat_type': str,
+            'auth_date': int,
+            'internal_user_id': int     # 🆕 Internal user ID (auto-created)
+        }
+    """
+    from app.database import get_db
+    from app.services.user_service import get_or_create_internal_user_from_telegram
+    
+    # 1. Валідувати Telegram дані
+    telegram_data = await get_current_user(x_telegram_init_data)
+    
+    # 2. Отримати або створити internal_user (lazy migration)
+    try:
+        internal_user_id = get_or_create_internal_user_from_telegram(
+            telegram_data['user'],
+            db
+        )
+        
+        # 3. Додати internal_user_id до результату
+        telegram_data['internal_user_id'] = internal_user_id
+        
+        return telegram_data
+        
+    except Exception as e:
+        logger.error(f"Failed to get/create internal_user: {e}")
+        # Якщо не вдалося створити internal_user - все одно пропускаємо
+        # (backward compatibility з legacy кодом)
+        telegram_data['internal_user_id'] = None
+        return telegram_data

@@ -8,7 +8,7 @@ import string
 from loguru import logger
 
 from app.database import get_db
-from app.auth import get_current_user
+from app.auth import get_current_user, get_current_user_with_internal_id
 from app.models.db_models import (
     Club, ClubMember, ClubJoinRequest, ClubStatus, 
     MemberRole, JoinRequestStatus, Book, BookStatus,
@@ -44,13 +44,14 @@ def get_user_club_role(db: Session, club_id: int, user_id: str) -> str:
 async def create_club(
     club_data: ClubCreate,
     db: Session = Depends(get_db),
-    user: dict = Depends(get_current_user)
+    user: dict = Depends(get_current_user_with_internal_id)  # 🆕 Auto-create internal_user
 ):
     """Створити новий клуб"""
     telegram_user = user['user']
     user_id = str(telegram_user['id'])
+    internal_user_id = user.get('internal_user_id')  # 🆕 Internal user ID
     
-    logger.info(f"Creating new club '{club_data.name}' by user {user_id} (@{telegram_user.get('username', 'unknown')})")
+    logger.info(f"Creating new club '{club_data.name}' by user {user_id} (@{telegram_user.get('username', 'unknown')}) internal_id={internal_user_id}")
     
     # Формуємо повне ім'я
     first_name = telegram_user.get('first_name', '')
@@ -70,7 +71,8 @@ async def create_club(
         name=club_data.name,
         description=club_data.description,
         chat_id=chat_id,
-        owner_id=user_id,
+        owner_id=user_id,  # Legacy Telegram ID
+        owner_internal_id=internal_user_id,  # 🆕 Internal user ID
         invite_code=invite_code,
         is_public=club_data.is_public,
         requires_approval=club_data.requires_approval,
@@ -83,7 +85,8 @@ async def create_club(
     # Додаємо засновника як члена з роллю owner
     owner_member = ClubMember(
         club_id=new_club.id,
-        user_id=user_id,
+        user_id=user_id,  # Legacy Telegram ID
+        internal_user_id=internal_user_id,  # 🆕 Internal user ID
         user_name=user_name,
         username=telegram_user.get('username', ''),
         role=MemberRole.OWNER
@@ -295,11 +298,12 @@ async def update_club(
 async def request_to_join_club(
     request_data: JoinRequestCreate,
     db: Session = Depends(get_db),
-    user: dict = Depends(get_current_user)
+    user: dict = Depends(get_current_user_with_internal_id)
 ):
     """Надіслати запит на приєднання до клубу"""
     telegram_user = user['user']
     user_id = str(telegram_user['id'])
+    internal_user_id = user.get('internal_user_id')
     
     # Знаходимо клуб по invite_code
     club = db.query(Club).filter(
@@ -342,6 +346,7 @@ async def request_to_join_club(
         new_member = ClubMember(
             club_id=club.id,
             user_id=user_id,
+            internal_user_id=internal_user_id,
             user_name=user_name,
             username=telegram_user.get('username', ''),
             role=MemberRole.MEMBER
@@ -352,6 +357,7 @@ async def request_to_join_club(
         join_request = ClubJoinRequest(
             club_id=club.id,
             user_id=user_id,
+            internal_user_id=internal_user_id,
             user_name=user_name,
             username=telegram_user.get('username', ''),
             message=request_data.message,
@@ -371,6 +377,7 @@ async def request_to_join_club(
     join_request = ClubJoinRequest(
         club_id=club.id,
         user_id=user_id,
+        internal_user_id=internal_user_id,
         user_name=user_name,
         username=telegram_user.get('username', ''),
         message=request_data.message,
@@ -432,7 +439,7 @@ async def review_join_request(
     request_id: int,
     action: JoinRequestAction,
     db: Session = Depends(get_db),
-    user: dict = Depends(get_current_user)
+    user: dict = Depends(get_current_user_with_internal_id)
 ):
     """Розглянути запит на приєднання (схвалити/відхилити)"""
     user_id = str(user['user']['id'])
@@ -462,6 +469,7 @@ async def review_join_request(
         new_member = ClubMember(
             club_id=club_id,
             user_id=join_request.user_id,
+            internal_user_id=join_request.internal_user_id,
             user_name=join_request.user_name,
             username=join_request.username,
             role=MemberRole.MEMBER

@@ -15,7 +15,7 @@ from app.models.schemas import (
     BookCreate, BookUpdate, BookResponse, 
     BookDetailResponse, BookReviewCreate, BookReviewUpdate, BookReviewResponse
 )
-from app.auth import get_current_user
+from app.auth import get_current_user, get_current_user_with_internal_id
 from app.utils import file_storage
 from app.google_books import GoogleBooksService
 
@@ -245,11 +245,12 @@ async def get_book_details(
 async def create_book(
     book_data: BookCreate,
     db: Session = Depends(get_db),
-    user: dict = Depends(get_current_user)
+    user: dict = Depends(get_current_user_with_internal_id)
 ):
     """Створити нову книгу"""
     telegram_user = user['user']
     user_id = str(telegram_user['id'])
+    internal_user_id = user.get('internal_user_id')
     
     client_request_id = getattr(book_data, 'client_request_id', None)
     logger.info(
@@ -298,6 +299,7 @@ async def create_book(
         description=book_data.description,
         cover_url=book_data.cover_url,
         owner_id=str(telegram_user['id']),
+        owner_internal_id=internal_user_id,
         owner_name=owner_name,
         owner_username=telegram_user.get('username', ''),
         club_id=book_data.club_id,
@@ -396,11 +398,12 @@ async def delete_book(
 async def borrow_book(
     book_id: int,
     db: Session = Depends(get_db),
-    user: dict = Depends(get_current_user)
+    user: dict = Depends(get_current_user_with_internal_id)
 ):
     """Позичити книгу"""
     telegram_user = user['user']
     user_id = str(telegram_user['id'])
+    internal_user_id = user.get('internal_user_id')
     
     book = db.query(Book).filter(
         Book.id == book_id,
@@ -420,6 +423,7 @@ async def borrow_book(
     loan = BookLoan(
         book_id=book_id,
         user_id=str(telegram_user['id']),
+        internal_user_id=internal_user_id,
         username=telegram_user.get('username') or telegram_user.get('first_name', 'Unknown'),
         status=LoanStatus.READING
     )
@@ -470,7 +474,7 @@ async def borrow_book(
 async def return_book(
     book_id: int,
     db: Session = Depends(get_db),
-    user: dict = Depends(get_current_user)
+    user: dict = Depends(get_current_user_with_internal_id)
 ):
     """Повернути книгу"""
     telegram_user = user['user']
@@ -546,11 +550,12 @@ async def create_or_update_review(
     book_id: int,
     review_data: BookReviewCreate,
     db: Session = Depends(get_db),
-    user: dict = Depends(get_current_user)
+    user: dict = Depends(get_current_user_with_internal_id)
 ):
     """Створити або оновити відгук на книгу"""
     telegram_user = user['user']
     user_id = str(telegram_user['id'])
+    internal_user_id = user.get('internal_user_id')
     
     # Перевіряємо, що книга існує
     book = db.query(Book).filter(
@@ -589,6 +594,7 @@ async def create_or_update_review(
         new_review = BookReview(
             book_id=book_id,
             user_id=user_id,
+            internal_user_id=internal_user_id,
             user_name=user_name,
             username=telegram_user.get('username', ''),
             rating=review_data.rating,
