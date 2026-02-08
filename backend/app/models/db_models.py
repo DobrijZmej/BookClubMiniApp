@@ -55,7 +55,8 @@ class Club(Base):
     name = Column(String(255), nullable=False)
     description = Column(Text)
     chat_id = Column(String(50), unique=True, nullable=False, index=True)
-    owner_id = Column(String(50), nullable=False, index=True)  # Telegram user ID засновника
+    owner_id = Column(String(50), nullable=True, index=True)  # Telegram user ID засновника
+    owner_internal_id = Column(Integer, ForeignKey("internal_users.id"), nullable=True, index=True)
     invite_code = Column(String(20), unique=True, nullable=False, index=True)  # Унікальний код для приєднання
     is_public = Column(Boolean, default=False)  # Публічний клуб (видимий у пошуку)
     cover_url = Column(String(500))  # URL аватару клубу (300x300px max)
@@ -74,7 +75,8 @@ class ClubMember(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     club_id = Column(Integer, ForeignKey("clubs.id"), nullable=False, index=True)
-    user_id = Column(String(50), nullable=False, index=True)  # Telegram user ID
+    user_id = Column(String(50), nullable=True, index=True)  # Telegram user ID
+    internal_user_id = Column(Integer, ForeignKey("internal_users.id"), nullable=True, index=True)
     user_name = Column(String(255))  # Повне ім'я
     username = Column(String(100))  # @username
     role = Column(Enum(MemberRole), default=MemberRole.MEMBER)
@@ -89,7 +91,8 @@ class ClubJoinRequest(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     club_id = Column(Integer, ForeignKey("clubs.id"), nullable=False, index=True)
-    user_id = Column(String(50), nullable=False, index=True)  # Telegram user ID
+    user_id = Column(String(50), nullable=True, index=True)  # Telegram user ID
+    internal_user_id = Column(Integer, ForeignKey("internal_users.id"), nullable=True, index=True)
     user_name = Column(String(255))  # Повне ім'я
     username = Column(String(100))  # @username
     message = Column(Text)  # Повідомлення від користувача
@@ -108,7 +111,8 @@ class Book(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(500), nullable=False)
     author = Column(String(255), default="Невідомий автор")
-    owner_id = Column(String(50), nullable=False)  # Telegram user ID
+    owner_id = Column(String(50), nullable=True)  # Telegram user ID
+    owner_internal_id = Column(Integer, ForeignKey("internal_users.id"), nullable=True, index=True)
     owner_name = Column(String(255))  # Повне ім'я користувача (first_name + last_name)
     owner_username = Column(String(100))  # @username з Telegram
     club_id = Column(Integer, ForeignKey("clubs.id"), nullable=False, index=True)
@@ -136,7 +140,8 @@ class BookLoan(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     book_id = Column(Integer, ForeignKey("books.id"), nullable=False, index=True)
-    user_id = Column(String(50), nullable=False)  # Telegram user ID
+    user_id = Column(String(50), nullable=True)  # Telegram user ID
+    internal_user_id = Column(Integer, ForeignKey("internal_users.id"), nullable=True, index=True)
     username = Column(String(100), nullable=False)
     status = Column(Enum(LoanStatus), default=LoanStatus.READING)
     borrowed_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -151,7 +156,8 @@ class BookReview(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     book_id = Column(Integer, ForeignKey("books.id"), nullable=False, index=True)
-    user_id = Column(String(50), nullable=False, index=True)  # Telegram user ID
+    user_id = Column(String(50), nullable=True, index=True)  # Telegram user ID
+    internal_user_id = Column(Integer, ForeignKey("internal_users.id"), nullable=True, index=True)
     user_name = Column(String(255))  # Повне ім'я користувача
     username = Column(String(100))  # @username з Telegram
     rating = Column(Float, nullable=False)  # Рейтинг від 0.5 до 5.0 з кроком 0.5
