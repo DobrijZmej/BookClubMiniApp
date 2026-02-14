@@ -103,7 +103,7 @@ class BookResponse(BaseModel):
     id: int
     title: str
     author: str
-    owner_id: str
+    owner_id: Optional[str] = None
     owner_name: Optional[str]
     owner_username: Optional[str]
     status: str
@@ -169,7 +169,7 @@ class ClubResponse(BaseModel):
     name: str
     description: Optional[str]
     chat_id: str
-    owner_id: str
+    owner_id: Optional[str] = None
     invite_code: str
     is_public: bool
     cover_url: Optional[str] = None
